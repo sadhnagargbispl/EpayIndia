@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Admin_epayindlocal", ".", "{5ADCCE8A-3A45-4DE0-B22B-82E32A023208}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_50112"
+		Debug.AspNetCompiler.PhysicalPath = "..\Admin_epayindlocal\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50112\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_50112"
+		Release.AspNetCompiler.PhysicalPath = "..\Admin_epayindlocal\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50112\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "50112"
+		SlnRelativePath = "..\Admin_epayindlocal\"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5ADCCE8A-3A45-4DE0-B22B-82E32A023208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ADCCE8A-3A45-4DE0-B22B-82E32A023208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBDFBB1F-D71A-49C4-A52F-89D21CDAAD84}
+	EndGlobalSection
+EndGlobal

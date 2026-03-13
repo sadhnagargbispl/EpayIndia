@@ -1,0 +1,93 @@
+http://localhost:57543/Padminiadmin/profile.aspx:  01-Mar-2019 05:59:43:812 
+Column 'Idtype' does not belong to table .
+--------------------------------------------------------
+http://localhost:57543/Padminiadmin/profile.aspx:  01-Mar-2019 06:04:22:647 
+'DDlArea' has a SelectedValue which is invalid because it does not exist in the list of items.
+Parameter name: value
+--------------------------------------------------------
+http://localhost:57543/Padminiadmin/profile.aspx:  01-Mar-2019 06:05:35:284 
+'DDlArea' has a SelectedValue which is invalid because it does not exist in the list of items.
+Parameter name: value
+--------------------------------------------------------
+http://localhost:58582/maplifeadmin/FundTransfer.aspx:  29-May-2019 11:57:49:406 
+Incorrect syntax near ','.
+--------------------------------------------------------
+http://localhost:58582/maplifeadmin/FundTransfer.aspx:  29-May-2019 11:58:02:936 
+Incorrect syntax near ','.
+--------------------------------------------------------
+http://localhost:58582/maplifeadmin/FundTransfer.aspx:  29-May-2019 11:58:04:427 
+Incorrect syntax near ','.
+--------------------------------------------------------
+http://localhost:58582/maplifeadmin/FundTransfer.aspx:  29-May-2019 11:58:43:076 
+Incorrect syntax near ','.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/NewsNSeminarMaster.aspx:  25-Feb-2021 04:33:01:680 
+Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/NewsNSeminarMaster.aspx:  25-Feb-2021 04:37:35:502 
+Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/NewsNSeminarMaster.aspx:  25-Feb-2021 04:37:47:360 
+Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/NewsNSeminarMaster.aspx:  25-Feb-2021 04:38:35:672 
+Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/NewsNSeminarMaster.aspx:  25-Feb-2021 04:43:10:592 
+Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/Coursedetail.aspx:  27-Feb-2021 05:47:41:719 
+Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/Coursedetail.aspx:  27-Feb-2021 05:50:25:619 
+A field or property with the name 'VideoUrl ' was not found on the selected data source.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/Coursedetail.aspx:  27-Feb-2021 05:52:15:716 
+A field or property with the name 'VideoUrl ' was not found on the selected data source.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/Coursedetail.aspx:  27-Feb-2021 05:52:23:763 
+A field or property with the name 'VideoUrl ' was not found on the selected data source.
+--------------------------------------------------------
+http://localhost:62168/RDM Admin/Coursedetail.aspx:  27-Feb-2021 05:53:41:318 
+A field or property with the name 'VideoUrl ' was not found on the selected data source.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:10:55:122 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:11:22:066 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:11:36:618 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:13:45:257 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:13:58:990 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:14:58:635 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:16:11:666 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:16:54:698 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:18:52:250 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:20:16:338 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:22:00:974 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:49976/profile.aspx:  21-Mar-2024 12:25:53:552 
+Input string was not in a correct format.
+--------------------------------------------------------
+http://localhost:64122/profile.aspx:  22-Mar-2024 04:07:06:537 Object reference not set to an instance of an object.
+--------------------------------------------------------
+http://localhost:64122/profile.aspx:  22-Mar-2024 05:12:29:305 Object reference not set to an instance of an object.
+--------------------------------------------------------

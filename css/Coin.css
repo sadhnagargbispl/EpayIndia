@@ -1,0 +1,28 @@
+﻿body {
+
+}
+.label {
+    padding: 1px 3px; /* Adjusted padding for smaller size */
+    border-radius: 3px;
+    display: inline-block;
+    font-size: 0.75em; /* Adjust font size for smaller labels */
+    width: auto; /* Adjust width as needed */
+    height: auto; /* Adjust height as needed */
+    line-height: 1.2;
+    /
+}
+
+.label-danger {
+    background-color: red;
+    color: white;
+}
+
+.label-success {
+    background-color: green;
+    color: white;
+}
+
+.label-default {
+    background-color: grey;
+    color: white;
+}
