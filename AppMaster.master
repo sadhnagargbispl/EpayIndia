@@ -1,0 +1,206 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="AppMaster.master.cs" Inherits="AppMaster" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ePay Web Application</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <div class="app-shell" id="appShell">
+
+                <!-- OVERLAY -->
+                <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+                <!-- DRAWER -->
+                <div class="drawer" id="drawer">
+                    <button type="button" class="close-btn" onclick="closeDrawer()"><i class="fa fa-times"></i></button>
+
+                    <div class="drawer-header">
+                        <img src="images/logo.png" alt="ePay" class="drawer-logo" onerror="this.style.display='none'" />
+                        <div class="drawer-brand">
+                            <h2>ePay India</h2>
+                            <p>Smart Digital &amp; eCommerce Platform</p>
+                        </div>
+                    </div>
+
+                    <div class="drawer-user">
+                        <div class="d-avatar">R</div>
+                        <div>
+                            <div class="d-name" id="ddUserName" runat="server"></div>
+                            <div class="d-id">
+                                ID:
+                                <asp:Label ID="LblIDD" runat="server" Text=""></asp:Label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="drawer-nav">
+                        <ul>
+
+
+
+
+
+                            <li><a href="WebApp.aspx" class="d-active" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-home"></i></span>Home</a></li>
+                            <li>
+                                <a href="StoreRedirect.aspx" target="_blank" onclick="closeDrawer()">
+                                    <span class="d-icon"><i class="fa fa-store"></i></span>Store Shopping</a>
+
+                            </li>
+                            <li>
+                                <a href="BrandRedirect.aspx" target="_blank" onclick="closeDrawer()">
+                                    <span class="d-icon"><i class="fa fa-shopping-cart"></i></span>E-Commerce Solutions</a>
+
+                            </li>
+                            <li>
+                                <a href="UtilityServicesRedirect.aspx" target="_blank" onclick="closeDrawer()">
+                                    <span class="d-icon"><i class="fa fa-bolt"></i></span>ePay Digital Services</a>
+
+                            </li>
+                            <li>
+                                <a href="GVRedirect.aspx" target="_blank" onclick="closeDrawer()">
+                                    <span class="d-icon"><i class="fa fa-gift"></i></span>Gift Vouchers</a>
+
+                            </li>
+                            <li>
+                                <a href="FoodBookingRedirect.aspx" target="_blank" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-utensils"></i></span>Food Order</a>
+
+                            </li>
+                            <li>
+                                <a href="MovieBookingRedirect.aspx" target="_blank" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-film"></i></span>Movie Booking</a>
+
+                            </li>
+                            <div class="d-hr"></div>
+                            <li>
+                                <a href="Apppurchase-coupon.aspx" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-ticket-alt"></i></span>Purchase Coupon</a>
+
+                            </li>
+                            <li>
+                                <a href="Appsubscription-now.aspx" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-crown"></i></span>Subscription Now</a>
+
+                            </li>
+                            <li>
+                                <a href="Appmonthly-activation-points.aspx" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-chart-bar"></i></span>Activation Points</a>
+
+                            </li>
+                            <div class="d-hr"></div>
+                            <li>
+                                <a href="index.aspx" onclick="closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-globe"></i></span>View Website</a>
+
+                            </li>
+                            <li><a href="AppLogout.aspx" onclick="showToast('Logged out!'); closeDrawer()">
+                                <span class="d-icon"><i class="fa fa-power-off"></i></span>Logout</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="drawer-footer-note">© 2025 ePay India. All rights reserved.</div>
+                </div>
+
+                <!-- HEADER -->
+                <header class="app-header">
+                    <div class="h-left">
+                        <button type="button" class="hamburger" onclick="openDrawer()" aria-label="Menu">
+                            <span></span><span></span><span></span>
+                        </button>
+                        <img src="images/logo_light.png" alt="ePay" class="h-logo" onerror="this.style.display='none'" />
+                    </div>
+                    <div class="h-right">
+                        <div class="notif-wrap">
+                            <a href="AppLogin.aspx" class="h-icon-btn" title="Login" style="text-decoration: none;">
+                                <i class="fa fa-sign-in-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- SCROLL BODY -->
+                <div class="scroll-body">
+
+                    <!-- HERO -->
+
+                    <!-- QUICK ACCESS -->
+
+
+                    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                    </asp:ContentPlaceHolder>
+                    <div style="height: 20px"></div>
+                </div>
+                <nav class="bottom-nav">
+
+                    <a href="WebApp.aspx" class="nav-tab active" id="tab-home" onclick="setTab('home')">
+                        <span class="n-bar"></span>
+                        <i class="fa fa-home n-icon"></i>
+                        <span>Home</span>
+                    </a>
+
+                    <a href="Applogin.aspx" class="nav-tab" id="tab-reg" onclick="setTab('reg'); showToast('Registration coming soon')">
+                        <span class="n-bar"></span>
+                        <i class="fa fa-user-plus n-icon"></i>
+                        <span>Registration</span>
+                    </a>
+
+                    <a href="Applogin.aspx" class="nav-tab" id="tab-acct" onclick="setTab('acct'); showToast('My Account')">
+                        <span class="n-bar"></span>
+                        <i class="fa fa-user-circle n-icon"></i>
+                        <span>My Account</span>
+                    </a>
+
+                    <a class="nav-tab" id="tab-login" href="AppLogout.aspx" onclick="setTab('login')">
+                        <span class="n-bar"></span>
+                       <i class="fa fa-sign-in-alt"></i>
+                        <span>Logout</span>
+                    </a>
+
+                </nav>
+
+
+            </div>
+        </div>
+        <div class="toast" id="toast"></div>
+
+        <script>
+            function openDrawer() {
+                document.getElementById('drawer').classList.add('open');
+                document.getElementById('overlay').classList.add('show');
+            }
+            function closeDrawer() {
+                document.getElementById('drawer').classList.remove('open');
+                document.getElementById('overlay').classList.remove('show');
+            }
+
+            function setTab(id) {
+                document.querySelectorAll('.nav-tab').forEach(function (t) { t.classList.remove('active'); });
+                var el = document.getElementById('tab-' + id);
+                if (el) el.classList.add('active');
+            }
+
+            var toastTimer;
+            function showToast(msg) {
+                var t = document.getElementById('toast');
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2500);
+            }
+</script>
+    </form>
+
+</body>
+</html>

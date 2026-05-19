@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Login – ePay India</title>
+  <link rel="icon" type="image/x-icon" href="images/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <link href="css/AppLogin.css" rel="stylesheet" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <a href="webapp.html" class="h-back" title="Back">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+    <img src="images/logo_light.png" alt="ePay" class="h-logo" onerror="this.style.display='none'" />
+    <div class="h-title">e<span>Pay</span> India</div>
+  </header>
+
+  <!-- HERO STRIP -->
+  <div class="hero-strip">
+    <div class="logo-circle">
+      <img src="images/logo.png" alt="ePay India" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+      <i class="fa fa-wallet logo-icon-fallback" style="display:none;"></i>
+    </div>
+    <div class="hero-h">Welcome Back!</div>
+    <div class="hero-sub">Sign in to your ePay India account</div>
+  </div>
+
+  <!-- LOGIN CARD -->
+  <div class="login-card">
+
+    <div class="card-title">
+      <i class="fa fa-sign-in-alt"></i>
+      Member Login
+    </div>
+
+    <!-- error box -->
+    <div class="err-msg" id="errMsg">
+      <i class="fa fa-exclamation-circle"></i>
+      <span id="errText">Invalid User ID or Password.</span>
+    </div>
+
+    <form action="webapp.html" id="loginForm" onsubmit="handleLogin(event)" novalidate>
+
+      <!-- User ID -->
+      <div class="field">
+        <label for="userId">User ID / Mobile / Email</label>
+        <div class="input-wrap">
+          <i class="fa fa-user f-icon"></i>
+          <input type="text" id="userId" name="userId"
+                 placeholder="Enter your User ID" autocomplete="username" required />
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <i class="fa fa-lock f-icon"></i>
+          <input type="password" id="password" name="password"
+                 placeholder="Enter your password" autocomplete="current-password" required />
+       <a href="webapp.html">   <button type="button" class="toggle-pw" onclick="togglePw()" id="pwToggle" title="Show / Hide">
+            <i class="fa fa-eye" id="pwIcon"></i>
+          </button></a>
+        </div>
+      </div>
+
+      <!-- Remember / Forgot -->
+      <div class="row-extra">
+        <label class="remember">
+          <input type="checkbox" id="rememberMe" /> Remember me
+        </label>
+        <a href="#" class="forgot-link" onclick="showToast('Password reset link will be sent to your registered email.')">
+          Forgot Password?
+        </a>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-login">
+        <i class="fa fa-sign-in-alt"></i>
+        Login to Account
+      </button>
+
+    </form>
+
+    <!-- Divider -->
+    <div class="divider">OR LOGIN WITH</div>
+
+    <!-- Social -->
+    <div class="social-row">
+      <button class="btn-social" onclick="showToast('Google login coming soon')">
+        <i class="fab fa-google"></i> Google
+      </button>
+      <button class="btn-social" onclick="showToast('OTP login coming soon')">
+        <i class="fa fa-mobile-alt"></i> OTP Login
+      </button>
+    </div>
+
+    <!-- Register link -->
+    <div class="register-row">
+      Don't have an account?
+      <a href="register.html">Register Now</a>
+    </div>
+
+  </div><!-- /login-card -->
+
+  <!-- FOOTER NOTE -->
+  <div class="page-footer">
+    By logging in you agree to our
+    <a href="#">Terms of Service</a> &amp;
+    <a href="#">Privacy Policy</a><br />
+    © 2025 ePay India. All rights reserved.
+  </div>
+
+</div><!-- /app-shell -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+ 
+</body>
+</html>

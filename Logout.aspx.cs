@@ -5,44 +5,31 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class Logout : System.Web.UI.Page
+public partial class logout : System.Web.UI.Page
 {
-    DAL objDal = new DAL();
-    protected void Page_Load(object sender, EventArgs e)
+    protected void Page_Load(object sender, System.EventArgs e)
     {
-       
-       Response.Cache.SetCacheability(HttpCacheability.NoCache);
-       Response.ExpiresAbsolute = DateTime.Now;
-       Session.Abandon();
-       Response.Cookies.Remove("");
-       Response.Cookies.Clear();
+        string nextpage = Session["Logout"] as string;
+        nextpage = "index.aspx";
+        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+        Response.Cache.SetAllowResponseInBrowserHistory(false);
+        Response.Cache.SetNoStore();
+        Session.Abandon();
+        Session.Clear();
+        Response.Cookies.Clear();
+        Session.RemoveAll();
+        System.Web.Security.FormsAuthentication.SignOut();
+        Session["Status"] = "";
+        Session["FormNo"] = "";
+        Session["Idno"] = "";
+        Session["MemName"] = "";
+        Session["RefIncome"] = "";
+        Session["KitId"] = "";
+        Session["Uid"] = "";
+        Session["CkyPinTransfer"] = "";
+        Response.Redirect(nextpage);
 
-        //int userId = Convert.ToInt32(Session["UserID"]);
-        //string username =Session["UserName"].ToString();
-        //string sql = "Update " + objDal.tblUserMaster + " set LastLogOutTime='" + DateTime.Now.ToString() + "',LoginStatus='N' where UserId='" + userId + "' AND UserName like'%" + username + "%' AND " + objDal.activeCondition;
-        //int a = objDal.UpdateData(sql);
-
-        string nextpage = "Default.aspx";
-       Response.Write("<script language=javascript>");
-
-       Response.Write("{");
-       Response.Write(" var Backlen=history.length;");
-
-       Response.Write(" history.go(-Backlen);");
-       Response.Write(" window.location.href='" + nextpage + "'; ");
-
-       Response.Write("}");
-       Response.Write("</script>");
-
-       Session["IDARR"] = null;
-       Session["AStatus"] = "";
-       Session["Username"] = "";
-       Session["Idno"] = "";
-       Session["MemName"] = "";
-       Session["FSessID"] = "";
-       Session["KitId"] = "";
-       Session["Uid"] = "";
-
-        Response.Redirect("Default.aspx");
     }
+
 }

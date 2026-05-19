@@ -1,0 +1,464 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="SiteMaster.master.cs" Inherits="SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <%--   <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Booking | Utility Service | Gift Voucher </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="https://thebrandtadka.com/websiteurl/epayindia/img/favicon.ico">--%>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
+    <title>ePay - India's Smart Digital & Ecommerce Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <%--<link rel="stylesheet" href="css/custom_stylesheet.css">
+<link rel="stylesheet" href="css/style.css">--%>
+    <link href="demoepay/css/custom_stylesheet.css?v=1.5" rel="stylesheet" />
+    <link href="demoepay/css/style.css?v=1.5" rel="stylesheet" />
+    <!-- CSS here -->
+    <%--    <link rel="stylesheet" href="Megamart.css?v=1">--%>
+    <style>
+        /* ════════════════════════════════════════
+     HERO SLIDER – LIGHT THEME OVERRIDES
+  ════════════════════════════════════════ */
+
+        /* ── Slide 1 – Light Green ── */
+        .hero-slide-1 {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 45%, #e0f2f1 100%) !important;
+            background-image: none !important;
+        }
+
+            .hero-slide-1::before {
+                background: radial-gradient(ellipse 55% 80% at 90% 50%, rgba(16,185,129,.14) 0%, transparent 60%), radial-gradient(circle 320px at 10% 80%, rgba(52,211,153,.10) 0%, transparent 55%) !important;
+            }
+            /* Decorative blob */
+            .hero-slide-1::after {
+                content: '';
+                position: absolute;
+                right: -60px;
+                top: -60px;
+                width: 420px;
+                height: 420px;
+                background: radial-gradient(circle, rgba(16,185,129,.13) 0%, transparent 65%);
+                border-radius: 50%;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .hero-slide-1 h1 {
+                color: #1A1A2E !important;
+            }
+
+                .hero-slide-1 h1 .accent {
+                    color: #E84000 !important;
+                }
+
+            .hero-slide-1 p {
+                color: #4B5563 !important;
+            }
+
+            .hero-slide-1 .hero-badge {
+                background: rgba(16,185,129,.15) !important;
+                border: 1px solid rgba(16,185,129,.35) !important;
+                color: #065f46 !important;
+            }
+
+            .hero-slide-1 .hero-badge-dot {
+                background: #10b981 !important;
+            }
+
+            .hero-slide-1 .btn-outline {
+                background: rgba(26,26,46,.07) !important;
+                color: #1A1A2E !important;
+                border-color: rgba(26,26,46,.18) !important;
+                backdrop-filter: none !important;
+            }
+
+                .hero-slide-1 .btn-outline:hover {
+                    background: rgba(26,26,46,.13) !important;
+                }
+
+        /* ── Slide 2 – Light Orange ── */
+        .hero-slide-2 {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 45%, #fff3e0 100%) !important;
+        }
+
+            .hero-slide-2::before {
+                background: radial-gradient(ellipse 55% 80% at 90% 50%, rgba(232,64,0,.13) 0%, transparent 60%), radial-gradient(circle 320px at 10% 80%, rgba(251,146,60,.10) 0%, transparent 55%) !important;
+            }
+
+            .hero-slide-2::after {
+                content: '';
+                position: absolute;
+                right: -60px;
+                top: -60px;
+                width: 420px;
+                height: 420px;
+                background: radial-gradient(circle, rgba(232,64,0,.12) 0%, transparent 65%);
+                border-radius: 50%;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .hero-slide-2 h1 {
+                color: #1A1A2E !important;
+            }
+
+                .hero-slide-2 h1 .accent {
+                    color: #E84000 !important;
+                }
+
+            .hero-slide-2 p {
+                color: #4B5563 !important;
+            }
+
+            .hero-slide-2 .hero-badge {
+                background: rgba(232,64,0,.12) !important;
+                border: 1px solid rgba(232,64,0,.3) !important;
+                color: #9a3412 !important;
+            }
+
+            .hero-slide-2 .hero-badge-dot {
+                background: #E84000 !important;
+            }
+
+            .hero-slide-2 .btn-outline {
+                background: rgba(232,64,0,.08) !important;
+                color: #9a3412 !important;
+                border-color: rgba(232,64,0,.28) !important;
+                backdrop-filter: none !important;
+            }
+
+                .hero-slide-2 .btn-outline:hover {
+                    background: rgba(232,64,0,.15) !important;
+                }
+
+        /* ── Slide 3 – White / Pearl ── */
+        .hero-slide-3 {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #ffffff 100%) !important;
+        }
+
+            .hero-slide-3::before {
+                background: radial-gradient(ellipse 55% 80% at 90% 50%, rgba(99,102,241,.10) 0%, transparent 60%), radial-gradient(circle 320px at 10% 80%, rgba(139,92,246,.07) 0%, transparent 55%) !important;
+            }
+
+            .hero-slide-3::after {
+                content: '';
+                position: absolute;
+                right: -60px;
+                top: -60px;
+                width: 420px;
+                height: 420px;
+                background: radial-gradient(circle, rgba(99,102,241,.10) 0%, transparent 65%);
+                border-radius: 50%;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .hero-slide-3 h1 {
+                color: #1A1A2E !important;
+            }
+
+                .hero-slide-3 h1 .accent {
+                    color: #E84000 !important;
+                }
+
+            .hero-slide-3 p {
+                color: #4B5563 !important;
+            }
+
+            .hero-slide-3 .hero-badge {
+                background: rgba(99,102,241,.1) !important;
+                border: 1px solid rgba(99,102,241,.25) !important;
+                color: #4338ca !important;
+            }
+
+            .hero-slide-3 .hero-badge-dot {
+                background: #6366f1 !important;
+            }
+
+            .hero-slide-3 .btn-outline {
+                background: rgba(26,26,46,.06) !important;
+                color: #1A1A2E !important;
+                border-color: rgba(26,26,46,.18) !important;
+                backdrop-filter: none !important;
+            }
+
+                .hero-slide-3 .btn-outline:hover {
+                    background: rgba(26,26,46,.12) !important;
+                }
+
+        /* ── Slider nav arrows – visible on light bg ── */
+        .slider-btn {
+            background: rgba(26,26,46,.1) !important;
+            border: 1.5px solid rgba(26,26,46,.18) !important;
+            color: #1A1A2E !important;
+        }
+
+            .slider-btn:hover {
+                background: #E84000 !important;
+                border-color: #E84000 !important;
+                color: #fff !important;
+            }
+
+        /* ── Dots – visible on light bg ── */
+        .slider-dot {
+            background: rgba(26,26,46,.25) !important;
+        }
+
+            .slider-dot.active {
+                background: #E84000 !important;
+            }
+
+        /* ── Bottom decorative ring ── */
+        .hero-slide-1 .hero-inner,
+        .hero-slide-2 .hero-inner,
+        .hero-slide-3 .hero-inner {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+
+            <!-- ─── TOP BAR ─── -->
+            <!-- ─── TOP BAR ─── -->
+            <div class="topbar">
+                <div class="topbar-inner">
+                    <div class="topbar-left">
+                        <span class="topbar-star">✦</span>
+                        <span>India's Leading ePay Digital &amp; E-commerce Platform</span>
+                    </div>
+                    <div class="topbar-right">
+                        <a href="#"><span>📱</span> <span class="hide-sm">Download App</span></a>
+                        <a href="#"><span>📦</span> <span class="hide-sm">Track Order</span></a>
+                        <a href="#"><span>🎧</span> <span class="hide-sm">Help Center</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── NAVBAR ─── -->
+            <nav class="navbar">
+                <div class="nav-inner">
+                    <a href="index.aspx" class="logo">
+                        <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader">
+                    </a>
+                    <ul class="nav-links">
+                        <li><a href="StoreRedirect.aspx" target="_blank">Store Shopping</a></li>
+                        <li><a href="BrandRedirect.aspx" target="_blank">e-Commerce</a></li>
+                        <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital</a></li>
+                        <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
+                        <li><a href="FoodBookingRedirect.aspx" target="_blank">Food Tadka</a></li>
+                        <li><a href="MovieBookingRedirect.aspx" target="_blank">Movie Tadka</a></li>
+                        <%--    <li><a class="text-uppercase" href="StoreRedirect.aspx" target="_blank">🏪 STORE SHOPPING</a></li>
+                        <li><a class="text-uppercase" href="UtilityServicesRedirect.aspx" target="_blank">⚙️ UTILITY </a></li>
+                        <li><a class="text-uppercase" href="GVRedirect.aspx" target="_blank">🎁 GIFT VOUCHERS</a></li>
+                        <li><a class="text-uppercase" href="BrandRedirect.aspx" target="_blank">🛒 E-COMMERCE </a></li>--%>
+                    </ul>
+
+
+
+                    <div class="nav-actions">
+                        <!-- <button class="bell-btn" aria-label="Notifications">🔔</button> -->
+
+                        <% if (Session["Status"] != null && Session["Status"].ToString() == "OK")
+                            { %>
+                        <div class="user-dropdown-wrap" id="userDropdownWrap">
+                            <button class="user-btn" id="userDropdownBtn" type="button">
+                                <span class="user-avatar">R</span>
+                                Hi, <span class="user-display-name" id="ddUserName" runat="server"></span>▾
+                            </button>
+                            <div class="user-dropdown" id="userDropdown">
+                                <div class="user-dropdown-header">
+                                    <div class="user-dropdown-name" id="mobileUserName" runat="server"></div>
+                                    <div class="user-dropdown-id">
+                                        ID:
+                                        <asp:Label ID="LblIDD" runat="server" Text=""></asp:Label>
+                                    </div>
+                                </div>
+                                <ul class="user-dropdown-menu">
+                                    <li><a href="MainAccountRedirect.aspx">👤 Main Account</a></li>
+                                    <li><a href="MyPurchaseDetail.aspx">🚪 Coupon Purchase</a></li>
+                                    <%--         <li><a href="#">💰 Wallet</a></li>
+                                    <li><a href="#">📦 My Orders</a></li>--%>
+                                    <li class="user-dropdown-divider"></li>
+                                    <li><a href="Logout.aspx" class="logout-link">🚪 Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <% }
+                            else
+                            {  %>
+                        <a href="Login.aspx" class="login-btn">Login / Sign Up</a>
+
+                        <% } %>
+
+
+
+                        <%--       <button class="login-btn">Login / Sign Up</button>--%>
+
+
+
+                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+
+                </div>
+
+
+
+                <!-- Mobile dropdown menu -->
+                <div class="mobile-nav" id="mobileNav">
+                    <ul>
+                        <li><a href="StoreRedirect.aspx" target="_blank">Store Shopping</a></li>
+                        <li><a href="BrandRedirect.aspx" target="_blank">e-Commerce</a></li>
+                        <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital</a></li>
+                        <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
+                        <li><a href="FoodBookingRedirect.aspx" target="_blank">Food Tadka</a></li>
+                        <li><a href="MovieBookingRedirect.aspx" target="_blank">Movie Tadka</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <!-- ─── NAVBAR ─── -->
+
+            <div class="search-bar-wrap">
+                <div class="search-inner">
+                    <div class="search-box">
+                        <div class="search-cat">
+                            <select>
+                                <option>All Categories</option>
+                                <option>Mobiles</option>
+                                <option>Fashion</option>
+                                <option>Electronics</option>
+                                <option>Home & Kitchen</option>
+                                <option>Beauty</option>
+                                <option>Books</option>
+                                <option>Baby & Kids</option>
+                                <option>Sports</option>
+                            </select>
+                            <span>▾</span>
+                        </div>
+                        <div class="search-input-wrap">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" placeholder="Search for products, services and more...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+
+        </div>
+        <!-- ─── FOOTER ─── -->
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">
+                        <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader">
+                    </a>
+                    <p>India's leading ePay Digital &amp; ecommerce platform, empowering millions to shop, pay, and grow every day.</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-btn" title="Facebook">f</a>
+                        <a href="#" class="social-btn" title="X (Twitter)">𝕏</a>
+                        <a href="#" class="social-btn" title="LinkedIn">in</a>
+                        <a href="#" class="social-btn" title="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-btn" title="YouTube">▶ </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <%-- <li><a href="#">Online store</a></li>
+                        <li><a href="#">eCommerce / Brand Shopping </a></li>
+                        <li><a href="#">Gift Voucher </a></li>
+                        <li><a href="#">ePay Digital Services</a></li>--%>
+                        <li><a href="StoreRedirect.aspx" target="_blank">Store Shopping</a></li>
+                        <li><a href="BrandRedirect.aspx" target="_blank">e-Commerce</a></li>
+                        <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital</a></li>
+                        <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
+                        <li><a href="FoodBookingRedirect.aspx" target="_blank">Food Tadka</a></li>
+                        <li><a href="MovieBookingRedirect.aspx" target="_blank">Movie Tadka</a></li>
+                        <%-- <li><a href="StoreRedirect.aspx" target="_blank">Online Store</a></li>
+                        <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital Services</a></li>
+                        <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
+                        <li><a href="BrandRedirect.aspx" target="_blank">eCommerce / Brand Shopping</a></li>
+                        <li><a href="#">Food Booking </a></li>
+                        <li><a href="#">Movie Booking</a></li>--%>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company </h4>
+                    <ul>
+                        <li><a href="aboutus.aspx">About Us</a></li>
+                        <li><a href="Certificate.aspx">Certificate</a></li>
+                        <li><a href="board-of-directors.aspx">Board of Directors</a></li>
+                        <li><a href="management-team.aspx">Management Team</a></li>
+                        <li><a href="#">Gallery Network</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact Us</a></li>
+
+
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Cancellation / Refund Policy</a></li>
+                        <li><a href="#">Shipping / Delivery Policy</a></li>
+                        <li><a href="#">Return & Replacement Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Track Order</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Download App</h4>
+                    <div class="app-badges">
+                        <a href="#" class="app-badge-img">
+                            <img src="demoepay/images/google_play.png" alt="Get it on Google Play">
+                        </a>
+                        <a href="#" class="app-badge-img">
+                            <img src="demoepay/images/app_store.png" alt="Download on the App Store">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2025 ePay Digital India Pvt. Ltd. All Rights Reserved.</span>
+                <div class="footer-certs">
+                    <div class="cert-badge"><span class="cert-icon">🔒</span> SSL Secured</div>
+                    <div class="cert-badge"><span class="cert-icon">✅</span> PCI DSS Certified</div>
+                </div>
+            </div>
+        </footer>
+
+
+    </form>
+</body>
+
+</html>

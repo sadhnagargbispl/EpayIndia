@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Subscription Now – ePay Web Application</title>
+  <link rel="icon" type="image/x-icon" href="images/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/mobile-app.css" />
+
+  <style>
+    /* ═══ SUBSCRIPTION SPECIFIC ═══ */
+
+    .sub-list {
+      padding: 8px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sub-card {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: relative;
+      border: 1.5px solid transparent;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .sub-card:active { transform: scale(.99); }
+    .sub-card.popular {
+      border-color: var(--primary);
+    }
+
+    .sub-popular-badge {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--primary);
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 800;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 50px;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(232,64,0,.3);
+    }
+
+    .sub-header {
+      background: linear-gradient(160deg, #fff7ed, #ffedd5);
+      padding: 22px 18px 18px;
+      text-align: center;
+      position: relative;
+    }
+    .sub-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, rgba(232,64,0,.2) 0 6px, transparent 6px 12px);
+    }
+    .sub-icon { font-size: 2rem; margin-bottom: 8px; }
+    .sub-name {
+      font-size: .72rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .sub-price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+    .sub-price sup {
+      font-size: 1rem;
+      vertical-align: top;
+      margin-top: 5px;
+      display: inline-block;
+      color: var(--muted);
+    }
+    .sub-price-suffix {
+      display: block;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .sub-body {
+      padding: 16px 18px 18px;
+    }
+
+    .sub-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+    .sub-features li {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: .82rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .sub-features li i {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(22,163,74,.12);
+      color: var(--green);
+      font-size: .65rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sub-btn {
+      display: block;
+      width: 100%;
+      padding: 13px 0;
+      background: var(--primary);
+      color: #fff;
+      font-size: .88rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: all .2s;
+      box-shadow: 0 5px 16px rgba(232,64,0,.28);
+    }
+    .sub-btn:hover {
+      background: var(--primary-d);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(232,64,0,.38);
+    }
+
+    /* Info banner */
+    .info-banner {
+      margin: 0 16px 16px;
+      background: linear-gradient(135deg, #fff7ed, #ffedd5);
+      border: 1px solid rgba(232,64,0,.2);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .info-banner-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .info-banner-text {
+      font-size: .8rem;
+      color: var(--text);
+      line-height: 1.5;
+      font-weight: 600;
+    }
+    .info-banner-text strong { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+  <!-- DRAWER -->
+  <div class="drawer" id="drawer">
+    <button class="close-btn" onclick="closeDrawer()"><i class="fa fa-times"></i></button>
+
+    <div class="drawer-header">
+      <img src="images/logo.png" alt="ePay" class="drawer-logo" onerror="this.style.display='none'" />
+      <div class="drawer-brand">
+        <h2>ePay India</h2>
+        <p>Smart Digital &amp; eCommerce Platform</p>
+      </div>
+    </div>
+
+    <div class="drawer-user">
+      <div class="d-avatar">R</div>
+      <div>
+        <div class="d-name">Rohit Kumar Sahu</div>
+        <div class="d-id">ID: EPAY123456</div>
+      </div>
+    </div>
+
+    <nav class="drawer-nav">
+      <ul>
+        <li><a href="webapp.html" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-home"></i></span> Home</a></li>
+        <li><a href="https://store.epayindia.in/" target="_blank" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-store"></i></span> Store Shopping</a></li>
+        <li><a href="https://shop.epayindia.in/" target="_blank" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-shopping-cart"></i></span> E-Commerce Solutions</a></li>
+        <li><a href="https://utility.epayindia.in/" target="_blank" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-bolt"></i></span> ePay Digital Services</a></li>
+        <li><a href="https://gv.epayindia.in/" target="_blank" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-gift"></i></span> Gift Vouchers</a></li>
+        <li><a href="https://food.epayindia.in/" target="_blank" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-utensils"></i></span> Food Order</a></li>
+        <li><a href="https://movie.epayindia.in/" target="_blank" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-film"></i></span> Movie Booking</a></li>
+        <div class="d-hr"></div>
+        <li><a href="purchase-coupon.asp" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-ticket-alt"></i></span> Purchase Coupon</a></li>
+        <li><a href="subscription-now.asp" class="d-active" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-crown"></i></span> Subscription Now</a></li>
+        <li><a href="monthly-activation-points.asp" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-chart-bar"></i></span> Activation Points</a></li>
+        <div class="d-hr"></div>
+        <li><a href="index.asp" onclick="closeDrawer()">
+          <span class="d-icon"><i class="fa fa-globe"></i></span> View Website</a></li>
+        <li><a href="#" onclick="showToast('Logged out!'); closeDrawer()">
+          <span class="d-icon"><i class="fa fa-power-off"></i></span> Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="drawer-footer-note">© 2025 ePay India. All rights reserved.</div>
+  </div>
+
+  <!-- HEADER WITH BACK -->
+  <header class="page-header">
+    <a href="webapp.html" class="back-btn"><i class="fa fa-arrow-left"></i></a>
+    <div class="page-title">Subscription Plans</div>
+    <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- SCROLL BODY -->
+  <div class="scroll-body">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Subscription Plans
+      </div>
+      <div class="hero-title">Choose Your <span>ePay Plan</span></div>
+      <div class="hero-sub">Subscribe once. Unlock unlimited income, wallet points &amp; rewards forever.</div>
+    </div>
+
+    <!-- INFO BANNER -->
+    <div class="info-banner" style="margin-top:16px;">
+      <div class="info-banner-icon"><i class="fa fa-bolt"></i></div>
+      <div class="info-banner-text">
+        Get <strong>instant wallet points</strong> &amp; daily earning capping with every subscription!
+      </div>
+    </div>
+
+    <!-- SECTION LABEL -->
+    <div class="sec-label">Pick the Right Plan for You</div>
+
+    <!-- SUBSCRIPTION CARDS -->
+    <div class="sub-list">
+
+      <!-- PRIME -->
+      <div class="sub-card">
+        <div class="sub-header">
+          <div class="sub-icon">🥈</div>
+          <div class="sub-name">Prime Package</div>
+          <div class="sub-price"><sup>₹</sup>999</div>
+          <div class="sub-price-suffix">One-time activation</div>
+        </div>
+        <div class="sub-body">
+          <ul class="sub-features">
+            <li><i class="fa fa-check"></i> 1,200 Wallet Points on Activation</li>
+            <li><i class="fa fa-check"></i> Daily Earning Capping Access</li>
+            <li><i class="fa fa-check"></i> Access to all ePay services</li>
+            <li><i class="fa fa-check"></i> Standard support</li>
+          </ul>
+          <a href="#" class="sub-btn" onclick="showToast('Subscribing to Prime...')">Subscribe Now →</a>
+        </div>
+      </div>
+
+      <!-- PRO (POPULAR) -->
+      <div class="sub-card popular">
+        <div class="sub-popular-badge">⭐ Most Popular</div>
+        <div class="sub-header">
+          <div class="sub-icon">🥇</div>
+          <div class="sub-name">Pro Package</div>
+          <div class="sub-price"><sup>₹</sup>4,999</div>
+          <div class="sub-price-suffix">One-time activation</div>
+        </div>
+        <div class="sub-body">
+          <ul class="sub-features">
+            <li><i class="fa fa-check"></i> 6,000 Wallet Points on Activation</li>
+            <li><i class="fa fa-check"></i> Higher Daily Earning Capping</li>
+            <li><i class="fa fa-check"></i> Priority access to all services</li>
+            <li><i class="fa fa-check"></i> Exclusive cashback offers</li>
+            <li><i class="fa fa-check"></i> Premium support</li>
+          </ul>
+          <a href="#" class="sub-btn" onclick="showToast('Subscribing to Pro...')">Subscribe Now →</a>
+        </div>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="sub-card">
+        <div class="sub-header">
+          <div class="sub-icon">👑</div>
+          <div class="sub-name">Premium Package</div>
+          <div class="sub-price"><sup>₹</sup>9,999</div>
+          <div class="sub-price-suffix">One-time activation</div>
+        </div>
+        <div class="sub-body">
+          <ul class="sub-features">
+            <li><i class="fa fa-check"></i> 12,000 Wallet Points on Activation</li>
+            <li><i class="fa fa-check"></i> Maximum Daily Earning Capping</li>
+            <li><i class="fa fa-check"></i> VIP access to all services</li>
+            <li><i class="fa fa-check"></i> Highest cashback &amp; rewards</li>
+            <li><i class="fa fa-check"></i> Early access to new features</li>
+            <li><i class="fa fa-check"></i> Dedicated VIP support</li>
+          </ul>
+          <a href="#" class="sub-btn" onclick="showToast('Subscribing to Premium...')">Subscribe Now →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INFO CARD -->
+    <div class="info-banner" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: rgba(22,163,74,.2);">
+      <div class="info-banner-icon" style="background: var(--green);"><i class="fa fa-shield-alt"></i></div>
+      <div class="info-banner-text">
+        <strong style="color:var(--green);">100% Secure</strong> — Lifetime access, no recurring charges
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+
+  </div><!-- /scroll-body -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-tab" href="webapp.html">
+      <span class="n-bar"></span>
+      <i class="fa fa-home n-icon"></i>
+      <span>Home</span>
+    </a>
+    <button class="nav-tab" onclick="showToast('Registration coming soon')">
+      <span class="n-bar"></span>
+      <i class="fa fa-user-plus n-icon"></i>
+      <span>Registration</span>
+    </button>
+    <button class="nav-tab active">
+      <span class="n-bar"></span>
+      <i class="fa fa-crown n-icon"></i>
+      <span>Subscribe</span>
+    </button>
+    <a class="nav-tab" href="login.html">
+      <span class="n-bar"></span>
+      <i class="fa fa-sign-in-alt n-icon"></i>
+      <span>Login</span>
+    </a>
+  </nav>
+
+</div><!-- /app-shell -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  function openDrawer() {
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  var toastTimer;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2500);
+  }
+</script>
+</body>
+</html>

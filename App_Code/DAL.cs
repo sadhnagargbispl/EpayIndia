@@ -24,7 +24,7 @@ public class DAL
     public string AppUrl = "";
     public SqlConnectionStringBuilder Connection = new SqlConnectionStringBuilder();
     public SqlConnectionStringBuilder Connection1 = new SqlConnectionStringBuilder();
-    private SqlCommand sqlCmd = new SqlCommand();
+    public SqlCommand sqlCmd = new SqlCommand();
     public string activeCondition = "RowStatus='Y'";
     public string tblUserGrpMaster = "M_UserGroupMaster";
     public string tblUserMaster = "M_UserMaster";
@@ -36,7 +36,6 @@ public class DAL
     public string tblNewsTypeMaster = "M_NewsTypeMaster";
     public string tblCountryMaster = "M_CountryMaster";
     public string tblKitMaster = "M_KitMaster";
-    public string tblKitMaster2 = "M_KitMaster2";
     public string tblAchieverMaster = "M_AchieverMaster";
     public string tblMeetingMaster = "M_MeetingMaster";
     public string tblUserPermision = "M_UserPermissionMaster";
@@ -45,10 +44,10 @@ public class DAL
     public string tblMemberMaster = "M_MemberMaster";
     public string tblKitProductMaster = "M_KitProductMaster";
     public string tblCTypeMaster = "M_ComplaintTypeMaster";
-    private string _ConnectionString;
-    public string IsoStart = " Alter Database epayindSelect Set Allow_SnapShot_isolation on; Set Transaction Isolation level read uncommitted;Set nocount on; Begin Tran  ";
+    public string Isostart = " Alter Database epayindselect Set Allow_SnapShot_isolation on; Set Transaction Isolation level read uncommitted;Set nocount on; Begin Tran  ";
     public string IsoEnd = " Commit Tran ";
-    public string DBName = "epayind";
+    public string dBName = "epayind";
+    
     public DAL()
     {
         // Setting Connection String
@@ -145,10 +144,11 @@ public class DAL
             if (objSQlConnection1.State == ConnectionState.Closed)
                 objSQlConnection1.Open();
 
-            qry = IsoStart + qry + IsoEnd;
+            qry = Isostart + qry + IsoEnd;
 
             sda = new SqlDataAdapter(qry, objSQlConnection1);
             dt = new DataTable();
+            sda.Fill(dt);
             sda.Fill(dt);
             tempDt = dt;
         }
@@ -175,16 +175,21 @@ public class DAL
             string[] strParaName, strParaValue;
             int i = 0;
 
-            if (string.IsNullOrEmpty(ParaName) == true & string.IsNullOrEmpty(ParaValue) == true)
+            if (string.IsNullOrEmpty(ParaName) && string.IsNullOrEmpty(ParaValue))
+            {
                 sqlCmd = new SqlCommand(qry, objSQlConnection);
+            }
             else
             {
                 strParaName = ParaName.Split(';');
                 strParaValue = ParaValue.Split(';');
                 sqlCmd = new SqlCommand(qry, objSQlConnection);
-                for (i = 0; i <= strParaName.Count() - 1; i++)
+                for (i = 0; i < strParaName.Length; i++)
+                {
                     sqlCmd.Parameters.AddWithValue(strParaName[i], strParaValue[i]);
+                }
             }
+
             int a = sqlCmd.ExecuteNonQuery();
             // objSQlConnection.Close()
             if (objSQlConnection.State == ConnectionState.Open)
@@ -201,7 +206,6 @@ public class DAL
         }
         return j;
     }
-
     public int ExecuteProcedure(string procname, string ParaName = "", string ParaValue = "")
     {
         int j = 0;
@@ -213,13 +217,14 @@ public class DAL
                 objSQlConnection.Open();
             // objSQlConnection.Open()
             cmd.CommandType = CommandType.StoredProcedure;
-            if (string.IsNullOrEmpty(ParaName) == false & string.IsNullOrEmpty(ParaValue) == false)
+            if (!string.IsNullOrEmpty(ParaName) && !string.IsNullOrEmpty(ParaValue))
             {
-
                 strParaName = ParaName.Split(';');
                 strParaValue = ParaValue.Split(';');
-                for (var i = 0; i <= strParaName.Count() - 1; i++)
+                for (int i = 0; i < strParaName.Length; i++)
+                {
                     cmd.Parameters.AddWithValue(strParaName[i], strParaValue[i]);
+                }
             }
             cmd.CommandText = procname;
             int a = cmd.ExecuteNonQuery();
@@ -272,23 +277,23 @@ public class DAL
         DataSet dsGetData = new DataSet();
         try
         {
-            if (objSQlConnection.State == ConnectionState.Closed)
+            if (objSQlConnection .State == ConnectionState.Closed)
                 objSQlConnection.Open();
-            SqlCommand comm = new SqlCommand(strqry, objSQlConnection);
+
+            var comm = new SqlCommand(strqry, objSQlConnection);
             comm.CommandTimeout = 100000000;
-            SqlDataAdapter sda = new SqlDataAdapter(comm);
-            // dt = New DataTable
+            var sda = new SqlDataAdapter(comm);
             sda.Fill(dsGetData);
+
             if (objSQlConnection.State == ConnectionState.Open)
                 objSQlConnection.Close();
         }
         catch (Exception ex)
         {
-            if (!(objSQlConnection == null))
-            {
-                if (objSQlConnection.State == ConnectionState.Open)
-                    objSQlConnection.Close();
-            }
+            if (objSQlConnection != null && objSQlConnection.State == ConnectionState.Open)
+                objSQlConnection.Close();
+
+            throw;
         }
         return dsGetData;
     }
@@ -303,19 +308,17 @@ public class DAL
             if (objSQlConnection.State == ConnectionState.Closed)
                 objSQlConnection.Open();
             string[] strParaName, strParaValue;
-            int i = 0;
-
-            if (string.IsNullOrEmpty(ParaName) == true & string.IsNullOrEmpty(ParaValue) == true)
-            {
-            }
-            else
+            if (!string.IsNullOrEmpty(ParaName) && !string.IsNullOrEmpty(ParaValue))
             {
                 strParaName = ParaName.Split(';');
                 strParaValue = ParaValue.Split(';');
-                for (i = 0; i <= strParaName.Count() - 1; i++)
+                for (int i = 0; i < strParaName.Length; i++)
+                {
                     SubPart = SubPart + strParaName[i] + "='" + strParaValue[i] + "',";
+                }
             }
-            SubPart = SubPart.Remove(SubPart.Length - 1, 1);
+            if (!string.IsNullOrEmpty(SubPart))
+                SubPart = SubPart.Remove(SubPart.Length - 1, 1);
 
             string qry = " update " + tblName + " set " + SubPart + whereCond;
             sqlCmd = new SqlCommand(qry, objSQlConnection);

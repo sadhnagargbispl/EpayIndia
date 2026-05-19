@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ePay - India's Smart Digital & Ecommerce Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #E84000;
+  --orange-light: #FF5722;
+  --orange-glow: rgba(232,64,0,0.13);
+  --dark: #0D1117;
+  --dark2: #161B22;
+  --navy: #0F1923;
+  --white: #FFFFFF;
+  --gray: #F5F6FA;
+  --gray2: #E8ECF0;
+  --text: #1A1A2E;
+  --muted: #6B7280;
+  --border: #E2E8F0;
+  --green: #16A34A;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { font-family: 'Nunito', sans-serif; color: var(--text); background: #fff; overflow-x: hidden; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+
+/* ═══ TOP BAR ═══ */
+.topbar { background: var(--orange); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 7px 0; }
+.topbar-inner { max-width: 1200px; margin: auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+.topbar-left { display: flex; align-items: center; gap: 7px; }
+.topbar-left span { opacity: .9; letter-spacing: .3px; }
+.topbar-right { display: flex; gap: 18px; }
+.topbar-right a { color: #fff; text-decoration: none; display: flex; align-items: center; gap: 5px; opacity: .92; transition: opacity .2s; }
+.topbar-right a:hover { opacity: 1; }
+
+/* ═══ NAVBAR ═══ */
+.navbar { background: #fff; box-shadow: 0 2px 20px rgba(0,0,0,.08); position: sticky; top: 0; z-index: 1000; }
+.nav-inner { max-width: 1200px; margin: auto; padding: 0 20px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+.logo-text { font-family: 'Sora', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.logo-text span { color: var(--orange); }
+.logoheader { height: 44px; width: auto; object-fit: contain; }
+
+.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
+.nav-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: .91rem; padding: 8px 13px; border-radius: 8px; display: flex; align-items: center; gap: 4px; transition: background .2s, color .2s; white-space: nowrap; }
+.nav-links a:hover { background: var(--orange-glow); color: var(--orange); }
+
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.bell-btn { width: 40px; height: 40px; border: 1.5px solid var(--border); border-radius: 10px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: border-color .2s, background .2s; flex-shrink: 0; }
+.bell-btn:hover { border-color: var(--orange); background: var(--orange-glow); }
+
+/* ─── Login Button (logged out state) ─── */
+.login-btn { background: var(--orange); color: #fff; border: none; padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: .9rem; cursor: pointer; transition: background .2s, transform .15s; white-space: nowrap; font-family: 'Nunito', sans-serif; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.login-btn:hover { background: #c93500; transform: translateY(-1px); }
+
+/* ─── User Menu (logged in state) ─── */
+.user-menu-wrap { position: relative; }
+.user-menu-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--dark); color: #fff;
+  border: none; border-radius: 10px;
+  padding: 8px 14px 8px 8px;
+  cursor: pointer; font-family: 'Nunito', sans-serif;
+  font-weight: 700; font-size: .88rem;
+  transition: background .2s; white-space: nowrap;
+}
+.user-menu-btn:hover { background: #1a2744; }
+.user-avatar-circle {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--orange); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; font-weight: 800; flex-shrink: 0;
+  font-family: 'Sora', sans-serif;
+}
+.user-id-text { font-size: .83rem; font-weight: 700; }
+.user-chevron {
+  font-size: .65rem; opacity: .7; margin-left: 2px;
+  transition: transform .25s;
+}
+.user-menu-wrap.open .user-chevron { transform: rotate(180deg); }
+
+/* ─── Dropdown Menu ─── */
+.user-dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 14px; min-width: 200px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.14);
+  overflow: hidden; z-index: 200;
+  opacity: 0; transform: translateY(-8px) scale(.97);
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+.user-menu-wrap.open .user-dropdown {
+  opacity: 1; transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* Dropdown header */
+.dd-header {
+  background: linear-gradient(135deg, #0D1117, #1a2744);
+  padding: 14px 16px;
+  position: relative; overflow: hidden;
+}
+.dd-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--orange), #FF8C42);
+}
+.dd-header .dd-name { font-family: 'Sora', sans-serif; color: #fff; font-size: .9rem; font-weight: 700; margin-bottom: 2px; }
+.dd-header .dd-uid { color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 600; }
+
+/* Dropdown links */
+.dd-links { padding: 6px 0; }
+.dd-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px; font-weight: 700; font-size: .87rem;
+  color: var(--text); text-decoration: none; cursor: pointer;
+  transition: background .15s, color .15s; border: none; background: none;
+  width: 100%; text-align: left; font-family: 'Nunito', sans-serif;
+}
+.dd-link:hover { background: var(--orange-glow); color: var(--orange); }
+.dd-link .dd-link-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--gray); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem; flex-shrink: 0; transition: background .15s;
+}
+.dd-link:hover .dd-link-icon { background: var(--orange-glow); border-color: rgba(232,64,0,.3); }
+.dd-divider { height: 1px; background: var(--border); margin: 4px 0; }
+.dd-link.logout { color: #DC2626; }
+.dd-link.logout:hover { background: rgba(220,38,38,.07); color: #DC2626; }
+.dd-link.logout .dd-link-icon { background: rgba(220,38,38,.08); border-color: rgba(220,38,38,.2); }
+
+/* ─── Hamburger ─── */
+.hamburger-btn { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 5px; width: 40px; height: 40px; background: transparent; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; padding: 8px; flex-shrink: 0; transition: border-color .2s, background .2s; }
+.hamburger-btn:hover { border-color: var(--orange); background: var(--orange-glow); }
+.hamburger-btn span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; transition: transform .3s ease, opacity .3s ease; }
+.hamburger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); background: var(--orange); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; }
+.hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); background: var(--orange); }
+
+/* ─── Mobile Nav ─── */
+.mobile-nav { display: none; background: #fff; border-top: 1px solid var(--border); box-shadow: 0 12px 32px rgba(0,0,0,.1); padding: 8px 14px 14px; }
+.mobile-nav.open { display: block; animation: slideDown .25s ease forwards; }
+.mobile-nav ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.mobile-nav ul li a { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 9px; font-weight: 600; font-size: .93rem; color: var(--text); text-decoration: none; transition: background .2s, color .2s; }
+.mobile-nav ul li a:hover { background: var(--orange-glow); color: var(--orange); }
+
+/* Mobile user section */
+.mobile-user-section { display: none; }
+.mobile-user-section.show { display: block; }
+.mobile-user-header {
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #0D1117, #1a2744);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 8px;
+  position: relative; overflow: hidden;
+}
+.mobile-user-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--orange), #FF8C42);
+}
+.mobile-user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 800; font-size: .9rem; flex-shrink: 0; }
+.mobile-user-info .mu-name { font-family: 'Sora', sans-serif; color: #fff; font-size: .92rem; font-weight: 700; }
+.mobile-user-info .mu-id { color: rgba(255,255,255,.5); font-size: .76rem; font-weight: 600; }
+.mobile-dd-links { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+.mobile-dd-link { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 9px; font-weight: 700; font-size: .9rem; color: var(--text); text-decoration: none; cursor: pointer; background: none; border: none; font-family: 'Nunito', sans-serif; transition: background .15s; width: 100%; text-align: left; }
+.mobile-dd-link:hover { background: var(--orange-glow); color: var(--orange); }
+.mobile-dd-link.logout { color: #DC2626; }
+.mobile-dd-link.logout:hover { background: rgba(220,38,38,.07); }
+
+/* Login link in mobile nav */
+.mobile-login-link { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 14px; border-radius: 11px; font-weight: 800; font-size: .92rem; color: #fff; text-decoration: none; background: var(--orange); margin-top: 6px; transition: background .2s; }
+.mobile-login-link:hover { background: #c93500; }
+
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══ SEARCH BAR ═══ */
+.search-bar-wrap { background: #fff; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+.search-inner { max-width: 1200px; margin: auto; }
+.search-box { display: flex; align-items: center; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .2s, box-shadow .2s; background: #fff; }
+.search-box:focus-within { border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-glow); }
+.search-cat { padding: 0 14px; border-right: 1.5px solid var(--border); height: 48px; display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: .87rem; cursor: pointer; background: var(--gray); flex-shrink: 0; color: var(--text); }
+.search-cat select { border: none; background: transparent; font-family: inherit; font-weight: 700; font-size: .87rem; cursor: pointer; outline: none; max-width: 100px; }
+.search-input-wrap { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
+.search-input-wrap input { flex: 1; border: none; outline: none; font-family: inherit; font-size: .95rem; color: var(--text); background: transparent; }
+.search-input-wrap input::placeholder { color: #9CA3AF; }
+.search-icon { color: var(--muted); font-size: 1.1rem; flex-shrink: 0; }
+
+/* ═══ HERO SLIDER ═══ */
+.hero-slider { position: relative; overflow: hidden; }
+.hero-slides { display: flex; transition: transform .6s cubic-bezier(.4,0,.2,1); will-change: transform; }
+.hero-slide { min-width: 100%; position: relative; overflow: hidden; background-size: cover; background-position: center; }
+.hero-slide-1 { background: linear-gradient(135deg, #0D1117 0%, #1a2033 60%, #0f1923 100%); }
+.hero-slide-2 { background: linear-gradient(135deg, #0f1923 0%, #1a2744 60%, #0f2d1f 100%); }
+.hero-slide-3 { background: linear-gradient(135deg, #1a0a00 0%, #2d1000 50%, #0D1117 100%); }
+.hero-slide::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 800 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,200 C200,100 400,300 800,100 L800,400 L0,400Z' fill='rgba(22,163,74,0.08)'/%3E%3Cpath d='M0,300 C300,150 600,350 800,200 L800,400 L0,400Z' fill='rgba(232,64,0,0.07)'/%3E%3C/svg%3E") no-repeat center/cover; pointer-events: none; z-index: 1; }
+.hero-inner { max-width: 1200px; margin: auto; padding: 64px 20px 54px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; position: relative; z-index: 2; }
+.hero-content { max-width: 580px; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 50px; padding: 6px 14px; color: #fff; font-size: .78rem; font-weight: 600; margin-bottom: 20px; letter-spacing: .3px; }
+.hero-badge-dot { width: 8px; height: 8px; background: var(--orange); border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: .7; } }
+.hero-slide h1 { font-family: 'Sora', sans-serif; font-size: clamp(1.9rem, 4vw, 3.1rem); font-weight: 800; color: #fff; line-height: 1.15; letter-spacing: -1px; margin-bottom: 14px; }
+.hero-slide h1 .accent { color: var(--orange); }
+.hero-slide p { color: rgba(255,255,255,.75); font-size: 1rem; line-height: 1.7; margin-bottom: 30px; max-width: 460px; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-phone { flex-shrink: 0; margin-bottom: -60px; display: flex; align-items: center; justify-content: center; }
+.hero-phone img { width: 220px; height: auto; object-fit: contain; filter: drop-shadow(0 20px 40px rgba(0,0,0,.5)); }
+.hero-phone-emoji { font-size: 8rem; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 44px; height: 44px; background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.3); border-radius: 50%; color: #fff; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); transition: background .2s, transform .2s; }
+.slider-btn:hover { background: var(--orange); border-color: var(--orange); transform: translateY(-50%) scale(1.08); }
+.slider-btn.prev { left: 16px; }
+.slider-btn.next { right: 16px; }
+.slider-dots { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+.slider-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.4); border: none; cursor: pointer; transition: background .3s, width .3s; padding: 0; }
+.slider-dot.active { background: var(--orange); width: 24px; border-radius: 4px; }
+.btn-primary { background: var(--orange); color: #fff; padding: 13px 26px; border-radius: 11px; font-weight: 700; font-size: .93rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; transition: background .2s, transform .15s, box-shadow .2s; font-family: 'Nunito', sans-serif; }
+.btn-primary:hover { background: #c93500; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,64,0,.4); }
+.btn-outline { background: rgba(255,255,255,.1); color: #fff; padding: 13px 26px; border-radius: 11px; font-weight: 700; font-size: .93rem; border: 1.5px solid rgba(255,255,255,.3); cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; transition: background .2s, transform .15s; backdrop-filter: blur(4px); font-family: 'Nunito', sans-serif; }
+.btn-outline:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+
+/* ═══ SECTION HEADERS ═══ */
+.section { padding: 50px 20px; }
+.section-header { text-align: center; margin-bottom: 44px; }
+.section-header h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.55rem, 3vw, 2.1rem); font-weight: 800; color: var(--text); letter-spacing: -.5px; }
+.section-header h2 .accent { color: var(--orange); }
+.section-divider { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 10px 0 6px; }
+.divider-line { height: 2px; width: 55px; background: linear-gradient(to right, transparent, var(--orange)); border-radius: 2px; }
+.divider-line.rev { background: linear-gradient(to left, transparent, var(--orange)); }
+.divider-icon { color: var(--orange); font-size: 1rem; }
+.section-header p { color: var(--muted); font-size: .93rem; margin-top: 4px; }
+
+/* ═══ SERVICES ═══ */
+.services-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.our-services-section { background: #fff; }
+.service-card-live { background: linear-gradient(145deg, #0f1923 0%, #1a2744 100%); border-radius: 18px; padding: 28px 22px; border: 1.5px solid rgba(255,255,255,.07); position: relative; overflow: hidden; transition: transform .25s, box-shadow .25s; }
+.service-card-live::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--orange), #FF8C42); }
+.service-card-live::after { content: ''; position: absolute; bottom: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(232,64,0,.15), transparent 70%); border-radius: 50%; pointer-events: none; }
+.service-card-live:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,.3); }
+.service-card-live h3 { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 7px; }
+.service-card-live p { color: rgba(255,255,255,.55); font-size: .86rem; line-height: 1.6; margin-bottom: 16px; }
+.service-card-live .service-link { color: #FF8C42; }
+.live-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(22,163,74,.18); border: 1px solid rgba(22,163,74,.35); color: #4ade80; font-size: .66rem; font-weight: 700; letter-spacing: .4px; padding: 3px 9px; border-radius: 50px; margin-bottom: 13px; }
+.live-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
+.services-section { background: var(--gray); }
+.service-card-upcoming { background: #fff; border-radius: 18px; padding: 28px 22px; position: relative; overflow: hidden; transition: transform .25s, box-shadow .25s; }
+.service-card-upcoming:hover { transform: translateY(-5px); box-shadow: 0 18px 44px rgba(0,0,0,.1); }
+.service-card-upcoming h3 { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 7px; color: var(--text); }
+.service-card-upcoming p { font-size: .86rem; line-height: 1.6; margin-bottom: 16px; color: var(--muted); }
+.coming-badge { display: inline-flex; align-items: center; gap: 5px; font-size: .66rem; font-weight: 700; letter-spacing: .4px; padding: 3px 9px; border-radius: 50px; margin-bottom: 13px; background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; }
+.upc-blue { border: 2px solid #3B82F6; border-left: 5px solid #3B82F6; } .upc-blue .service-link { color: #2563EB; }
+.upc-purple { border: 2px solid #8B5CF6; border-left: 5px solid #8B5CF6; } .upc-purple .service-link { color: #7C3AED; }
+.upc-amber { border: 2px solid #F97316; border-left: 5px solid #F97316; } .upc-amber .service-link { color: #EA580C; }
+.upc-rose { border: 2px solid #F43F5E; border-left: 5px solid #F43F5E; } .upc-rose .service-link { color: #E11D48; }
+.service-icon { width: 52px; height: 52px; background: var(--orange-glow); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.45rem; margin-bottom: 16px; border: 1.5px solid rgba(232,64,0,.2); }
+.service-card-live .service-icon { background: rgba(232,64,0,.2); border-color: rgba(232,64,0,.35); }
+.service-link { color: var(--orange); font-weight: 700; font-size: .86rem; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: gap .2s; }
+.service-link:hover { gap: 9px; }
+
+/* ═══ PREMIUM BANNER ═══ */
+.upcoming-section { padding: 8px 20px 50px; }
+.upcoming-banner { max-width: 1200px; margin: auto; background: linear-gradient(135deg, #1a2744 0%, #0D1117 60%); border-radius: 22px; padding: 40px 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; position: relative; overflow: hidden; }
+.upcoming-banner::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40%; background: radial-gradient(ellipse at right, rgba(232,64,0,.18), transparent); pointer-events: none; }
+.upcoming-content h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.2rem, 2.5vw, 1.7rem); font-weight: 800; color: #fff; line-height: 1.3; margin-bottom: 10px; }
+.upcoming-content p { color: rgba(255,255,255,.65); font-size: .88rem; line-height: 1.65; }
+.upcoming-features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; z-index: 2; }
+.upcoming-feat { text-align: center; color: rgba(255,255,255,.9); }
+.upcoming-feat-icon { width: 50px; height: 50px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin: 0 auto 9px; transition: background .2s; }
+.upcoming-feat:hover .upcoming-feat-icon { background: rgba(232,64,0,.3); }
+.upcoming-feat span { font-size: .78rem; font-weight: 600; }
+.premium-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(232,64,0,.2); border: 1px solid rgba(232,64,0,.4); border-radius: 50px; padding: 5px 13px; margin-bottom: 13px; color: #FF8C42; font-size: .73rem; font-weight: 700; letter-spacing: .5px; }
+.premium-dot { width: 7px; height: 7px; background: #FF8C42; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+.premium-accent { color: var(--orange); }
+.premium-btns { display: flex; gap: 11px; flex-wrap: wrap; margin-top: 18px; }
+.premium-btns .btn-primary, .premium-btns .btn-outline { font-size: .87rem; padding: 11px 20px; }
+
+/* ═══ OFFERS ═══ */
+.offers-section { padding: 60px 20px; background: #fff; }
+.categories-row { max-width: 1200px; margin: auto; position: relative; }
+.categories-scroll { display: flex; flex-wrap: nowrap; gap: 16px; overflow-x: auto; padding: 4px 4px 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--orange) #f1f1f1; }
+.categories-scroll::-webkit-scrollbar { height: 4px; }
+.categories-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 2px; }
+.categories-scroll::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+.product-card { background: #fff; border-radius: 14px; border: 1.5px solid var(--border); overflow: hidden; min-width: 204px; max-width: 210px; flex-shrink: 0; scroll-snap-align: start; transition: transform .25s, box-shadow .25s, border-color .25s; display: flex; flex-direction: column; }
+.product-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,.1); border-color: var(--orange); }
+.product-img { position: relative; width: 100%; height: 165px; overflow: hidden; background: #f8f8f8; display: flex; align-items: center; justify-content: center; }
+.product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+.product-card:hover .product-img img { transform: scale(1.05); }
+.badge { position: absolute; top: 9px; left: 9px; background: var(--orange); color: #fff; font-size: .66rem; font-weight: 700; padding: 3px 9px; border-radius: 50px; letter-spacing: .3px; }
+.product-info { padding: 13px 13px 14px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.product-title { font-size: .8rem; font-weight: 600; line-height: 1.4; color: var(--text); text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.product-title a { text-decoration: none; color: inherit; }
+.price { font-size: .97rem; font-weight: 800; color: var(--orange); font-family: 'Sora', sans-serif; }
+.rating { font-size: .72rem; color: var(--muted); }
+.btn-cart { margin-top: 7px; width: 100%; background: var(--orange); color: #fff; border: none; padding: 9px 0; border-radius: 8px; font-weight: 700; font-size: .8rem; cursor: pointer; font-family: 'Nunito', sans-serif; transition: background .2s, transform .15s; }
+.btn-cart:hover { background: #c93500; transform: translateY(-1px); }
+.scroll-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: #fff; border: 1.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: .9rem; box-shadow: 0 4px 12px rgba(0,0,0,.1); z-index: 5; transition: all .2s; }
+.scroll-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+.scroll-btn.left { left: -18px; }
+.scroll-btn.right { right: -18px; }
+
+/* ═══ WHY CHOOSE ═══ */
+.why-section { background: var(--gray); padding: 60px 20px; }
+.why-inner { max-width: 1200px; margin: auto; }
+.why-features-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; margin-bottom: 44px; }
+.why-feat { display: flex; align-items: center; gap: 15px; }
+.why-feat-icon { width: 56px; height: 56px; background: var(--orange-glow); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.45rem; border: 1.5px solid rgba(232,64,0,.22); flex-shrink: 0; }
+.why-feat-text h4 { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .97rem; margin-bottom: 2px; }
+.why-feat-text p { color: var(--muted); font-size: .83rem; }
+.stats-band { background: linear-gradient(135deg, var(--orange) 0%, #c93500 100%); border-radius: 18px; padding: 34px 40px; display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; gap: 20px; }
+.stat-item { color: #fff; }
+.stat-num { font-family: 'Sora', sans-serif; font-size: clamp(1.45rem, 3vw, 2.1rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 3px; }
+.stat-label { font-size: .86rem; opacity: .88; font-weight: 600; }
+.stat-icon { font-size: 1.35rem; margin-bottom: 7px; opacity: .9; }
+.stat-divider { width: 1px; background: rgba(255,255,255,.22); margin: 0 auto; }
+
+/* ═══ ABOUT ═══ */
+.about-section { padding: 70px 20px; }
+.about-inner { max-width: 1200px; margin: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+.about-content h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.45rem, 2.5vw, 1.95rem); font-weight: 800; letter-spacing: -.5px; margin-bottom: 16px; line-height: 1.3; }
+.about-content h2 .accent { color: var(--orange); }
+.about-content p { color: var(--muted); line-height: 1.8; font-size: .93rem; }
+.about-features { display: flex; flex-direction: column; gap: 13px; }
+.about-feat { display: flex; align-items: flex-start; gap: 13px; padding: 15px 18px; background: var(--gray); border-radius: 13px; border: 1px solid var(--border); transition: border-color .2s; }
+.about-feat:hover { border-color: var(--orange); }
+.about-feat-icon { width: 40px; height: 40px; background: var(--orange-glow); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; border: 1px solid rgba(232,64,0,.2); }
+.about-feat-text h5 { font-weight: 700; font-size: .9rem; margin-bottom: 3px; }
+.about-feat-text p { color: var(--muted); font-size: .8rem; margin: 0; line-height: 1.5; }
+
+/* ═══ FOOTER ═══ */
+footer { background: var(--dark); color: rgba(255,255,255,.8); padding: 56px 20px 0; }
+.footer-inner { max-width: 1200px; margin: auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr; gap: 36px; padding-bottom: 46px; border-bottom: 1px solid rgba(255,255,255,.07); }
+.footer-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 13px; }
+.footer-logo img { height: 36px; width: auto; object-fit: contain; }
+.footer-logo-text { font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; }
+.footer-brand p { font-size: .83rem; line-height: 1.7; color: rgba(255,255,255,.48); margin-bottom: 18px; }
+.footer-socials { display: flex; gap: 8px; flex-wrap: wrap; }
+.social-btn { width: 34px; height: 34px; background: rgba(255,255,255,.08); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .88rem; text-decoration: none; color: rgba(255,255,255,.7); transition: background .2s, color .2s; }
+.social-btn:hover { background: var(--orange); color: #fff; }
+.footer-col h4 { color: #fff; font-family: 'Sora', sans-serif; font-weight: 700; font-size: .93rem; margin-bottom: 16px; letter-spacing: .2px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.footer-col ul a { color: rgba(255,255,255,.48); text-decoration: none; font-size: .84rem; transition: color .2s; display: block; }
+.footer-col ul a:hover { color: var(--orange); }
+.app-badges { display: flex; flex-direction: column; gap: 9px; }
+.app-badge { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.11); border-radius: 10px; padding: 10px 13px; text-decoration: none; color: #fff; transition: background .2s; }
+.app-badge:hover { background: rgba(255,255,255,.14); }
+.app-badge-icon { font-size: 1.35rem; }
+.app-badge-text { line-height: 1.3; }
+.app-badge-text small { display: block; font-size: .63rem; color: rgba(255,255,255,.48); }
+.app-badge-text strong { font-size: .86rem; font-weight: 700; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; padding: 18px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: .81rem; color: rgba(255,255,255,.33); }
+.footer-certs { display: flex; gap: 16px; align-items: center; }
+.cert-badge { display: flex; align-items: center; gap: 5px; color: rgba(255,255,255,.44); font-size: .77rem; font-weight: 600; }
+.cert-icon { color: var(--green); font-size: .88rem; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 992px) {
+  .hero-inner { grid-template-columns: 1fr; text-align: center; padding: 44px 20px 38px; }
+  .hero-phone { display: none; }
+  .hero-btns { justify-content: center; }
+  .hero-slide p { margin-left: auto; margin-right: auto; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .upcoming-banner { grid-template-columns: 1fr; padding: 32px 28px; gap: 28px; }
+  .upcoming-features { grid-template-columns: repeat(4, 1fr); }
+  .about-inner { grid-template-columns: 1fr; gap: 28px; }
+  .stats-band { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .stat-divider { display: none; }
+  .footer-inner { grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
+  .footer-brand { grid-column: 1 / -1; max-width: 440px; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger-btn { display: flex; }
+  .nav-inner { height: 60px; padding: 0 14px; }
+  .logoheader { height: 36px; }
+  .login-btn { padding: 9px 15px; font-size: .82rem; }
+  .bell-btn { width: 36px; height: 36px; }
+  .topbar-right { gap: 12px; }
+  .topbar-right .hide-sm { display: none; }
+  .search-cat select { max-width: 80px; }
+  .scroll-btn { display: none; }
+  .categories-scroll { gap: 12px; }
+  .product-card { min-width: 172px; max-width: 180px; }
+  .product-img { height: 145px; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-inner > .footer-col:last-child { grid-column: 1 / -1; }
+  .app-badges { flex-direction: row; }
+  .why-features-row { justify-content: flex-start; gap: 20px; }
+  /* Hide desktop user menu on mobile */
+  .user-menu-wrap { display: none; }
+}
+@media (max-width: 576px) {
+  .topbar-inner { flex-direction: column; gap: 4px; text-align: center; padding: 0 12px; }
+  .topbar-right { justify-content: center; gap: 14px; }
+  .nav-inner { padding: 0 12px; height: 56px; }
+  .logoheader { height: 32px; }
+  .login-btn { padding: 8px 13px; font-size: .79rem; }
+  .nav-actions { gap: 7px; }
+  .search-bar-wrap { padding: 10px 12px; }
+  .search-cat { padding: 0 8px; }
+  .search-cat select { max-width: 72px; font-size: .78rem; }
+  .search-input-wrap { padding: 0 10px; }
+  .search-input-wrap input { font-size: .87rem; }
+  .hero-inner { padding: 30px 14px 26px; }
+  .hero-badge { font-size: .72rem; padding: 5px 11px; margin-bottom: 12px; }
+  .hero-slide h1 { font-size: clamp(1.55rem, 7vw, 2rem); letter-spacing: -.4px; margin-bottom: 11px; }
+  .hero-slide p { font-size: .88rem; margin-bottom: 20px; }
+  .btn-primary, .btn-outline { padding: 11px 18px; font-size: .86rem; border-radius: 10px; }
+  .hero-btns { gap: 9px; }
+  .slider-btn { width: 32px; height: 32px; font-size: .95rem; }
+  .slider-btn.prev { left: 8px; }
+  .slider-btn.next { right: 8px; }
+  .slider-dots { bottom: 10px; }
+  .section { padding: 32px 14px; }
+  .section-header { margin-bottom: 26px; }
+  .section-header h2 { font-size: clamp(1.3rem, 5.5vw, 1.65rem); }
+  .section-header p { font-size: .86rem; padding: 0 4px; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); gap: 11px; }
+  .service-card-live, .service-card-upcoming { padding: 18px 15px; border-radius: 14px; }
+  .service-card-live h3, .service-card-upcoming h3 { font-size: .9rem; }
+  .service-card-live p, .service-card-upcoming p { font-size: .78rem; margin-bottom: 11px; }
+  .service-icon { width: 44px; height: 44px; font-size: 1.25rem; margin-bottom: 12px; border-radius: 11px; }
+  .live-badge, .coming-badge { font-size: .6rem; padding: 2px 7px; margin-bottom: 9px; }
+  .service-link { font-size: .78rem; }
+  .upcoming-section { padding: 0 12px 36px; }
+  .upcoming-banner { padding: 22px 16px; border-radius: 16px; gap: 20px; }
+  .upcoming-content h2 { font-size: 1.15rem; }
+  .upcoming-content p { font-size: .82rem; }
+  .upcoming-features { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .upcoming-feat-icon { width: 42px; height: 42px; font-size: 1.1rem; border-radius: 11px; margin-bottom: 7px; }
+  .upcoming-feat span { font-size: .73rem; }
+  .premium-btns { gap: 9px; margin-top: 14px; }
+  .premium-btns .btn-primary, .premium-btns .btn-outline { padding: 10px 16px; font-size: .82rem; flex: 1; justify-content: center; }
+  .premium-badge { font-size: .68rem; padding: 4px 10px; margin-bottom: 9px; }
+  .offers-section { padding: 36px 12px; }
+  .product-card { min-width: 152px; max-width: 162px; }
+  .product-img { height: 122px; }
+  .product-info { padding: 10px 10px 11px; gap: 4px; }
+  .product-title { font-size: .75rem; }
+  .price { font-size: .87rem; }
+  .rating { font-size: .68rem; }
+  .btn-cart { padding: 8px 0; font-size: .76rem; border-radius: 7px; }
+  .why-section { padding: 36px 14px; }
+  .why-features-row { flex-direction: column; gap: 14px; padding: 0 2px; }
+  .why-feat { min-width: unset; }
+  .why-feat-icon { width: 46px; height: 46px; font-size: 1.25rem; border-radius: 12px; }
+  .why-feat-text h4 { font-size: .9rem; }
+  .why-feat-text p { font-size: .79rem; }
+  .stats-band { padding: 22px 14px; gap: 14px; border-radius: 14px; }
+  .stat-num { font-size: 1.4rem; }
+  .stat-label { font-size: .76rem; }
+  .stat-icon { font-size: 1.15rem; margin-bottom: 5px; }
+  .about-section { padding: 40px 14px; }
+  .about-content h2 { font-size: clamp(1.25rem, 5vw, 1.55rem); margin-bottom: 11px; }
+  .about-content p { font-size: .86rem; margin-bottom: 18px; }
+  .about-feat { padding: 13px 14px; border-radius: 11px; gap: 11px; }
+  .about-feat-icon { width: 36px; height: 36px; font-size: 1rem; border-radius: 9px; }
+  .about-feat-text h5 { font-size: .86rem; }
+  .about-feat-text p { font-size: .76rem; }
+  footer { padding: 38px 14px 0; }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 18px; padding-bottom: 30px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-inner > .footer-col:last-child { grid-column: 1 / -1; }
+  .footer-col h4 { font-size: .86rem; margin-bottom: 11px; }
+  .footer-col ul a { font-size: .79rem; }
+  .footer-col ul { gap: 7px; }
+  .app-badges { flex-direction: row; gap: 8px; }
+  .app-badge { padding: 8px 11px; flex: 1; }
+  .app-badge-icon { font-size: 1.2rem; }
+  .app-badge-text strong { font-size: .78rem; }
+  .footer-bottom { flex-direction: column; text-align: center; gap: 7px; padding: 14px 0; font-size: .77rem; }
+  .footer-certs { justify-content: center; gap: 12px; }
+}
+@media (max-width: 380px) {
+  .services-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .footer-inner > .footer-col:last-child { grid-column: 1; }
+  .search-cat { display: none; }
+  .upcoming-features { grid-template-columns: repeat(2, 1fr); }
+  .stats-band { grid-template-columns: repeat(2, 1fr); }
+  .logoheader { height: 28px; }
+  .login-btn { padding: 7px 11px; font-size: .76rem; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .service-card-live:hover, .service-card-upcoming:hover, .product-card:hover, .about-feat:hover, .why-feat-icon { transform: none !important; }
+  .btn-primary:hover, .btn-outline:hover, .btn-cart:hover, .login-btn:hover { transform: none; }
+  .btn-primary:active, .btn-cart:active { background: #c93500; }
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)) { footer { padding-bottom: env(safe-area-inset-bottom); } }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; border-radius: 4px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- ─── TOP BAR ─── -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left">
+      <span>✦</span>
+      <span>India's Leading ePay Digital &amp; E-commerce Platform</span>
+    </div>
+    <div class="topbar-right">
+      <a href="#"><span>📱</span> <span class="hide-sm">Download App</span></a>
+      <a href="#"><span>📦</span> <span class="hide-sm">Track Order</span></a>
+      <a href="#"><span>🎧</span> <span class="hide-sm">Help Center</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NAVBAR ─── -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <img src="images/logo.png" alt="ePay Logo" class="logoheader"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <span class="logo-text" style="display:none">e<span>Pay</span></span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#">Store Shopping</a></li>
+      <li><a href="#">ePay Digital</a></li>
+      <li><a href="#">Gift Vouchers</a></li>
+      <li><a href="#">e-Commerce</a></li>
+      <li><a href="#">Brand Shopping</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="bell-btn" aria-label="Notifications">🔔</button>
+
+      <!-- ── LOGGED OUT: Login button ── -->
+      <a href="Login.aspx" class="login-btn" id="navLoginBtn">Login / Sign Up</a>
+
+      <!-- ── LOGGED IN: User dropdown menu ── -->
+      <div class="user-menu-wrap" id="userMenuWrap" style="display:none;">
+        <button class="user-menu-btn" id="userMenuBtn" onclick="toggleUserMenu()" aria-haspopup="true" aria-expanded="false">
+          <div class="user-avatar-circle" id="navAvatarCircle">EP</div>
+          <span class="user-id-text" id="navUserId">(EP1123456)</span>
+          <span class="user-chevron">▼</span>
+        </button>
+
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <!-- Dropdown header -->
+          <div class="dd-header">
+            <div class="dd-name" id="ddUserName">ePay Member</div>
+            <div class="dd-uid" id="ddUserId">ID: EP1123456</div>
+          </div>
+          <!-- Dropdown links -->
+          <div class="dd-links">
+            <a href="EpayIndia.aspx" class="dd-link" role="menuitem">
+              <span class="dd-link-icon">🏠</span>
+              ePay India
+            </a>
+            <a href="Dashboard.aspx" class="dd-link" role="menuitem">
+              <span class="dd-link-icon">👤</span>
+              Main Account
+            </a>
+            <div class="dd-divider"></div>
+            <button class="dd-link logout" role="menuitem" onclick="doLogout()">
+              <span class="dd-link-icon">🚪</span>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hamburger (mobile) -->
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── MOBILE NAV ─── -->
+  <div class="mobile-nav" id="mobileNav">
+
+    <!-- Mobile: Logged in user section -->
+    <div class="mobile-user-section" id="mobileUserSection">
+      <div class="mobile-user-header">
+        <div class="mobile-user-avatar" id="mobileAvatarCircle">EP</div>
+        <div class="mobile-user-info">
+          <div class="mu-name" id="mobileUserName">ePay Member</div>
+          <div class="mu-id" id="mobileUserId">ID: EP1123456</div>
+        </div>
+      </div>
+      <div class="mobile-dd-links">
+        <a href="EpayIndia.aspx" class="mobile-dd-link">🏠 &nbsp;ePay India</a>
+        <a href="Dashboard.aspx" class="mobile-dd-link">👤 &nbsp;Main Account</a>
+        <button class="mobile-dd-link logout" onclick="doLogout()">🚪 &nbsp;Logout</button>
+      </div>
+    </div>
+
+    <!-- Nav links -->
+    <ul>
+      <li><a href="#">🏪 Store Shopping</a></li>
+      <li><a href="#">⚙️ ePay Digital</a></li>
+      <li><a href="#">🎁 Gift Vouchers</a></li>
+      <li><a href="#">🛒 e-Commerce</a></li>
+      <li><a href="#">🌍 Brand Shopping</a></li>
+    </ul>
+
+    <!-- Mobile: Logged out login button -->
+    <div id="mobileLoginWrap">
+      <a href="Login.aspx" class="mobile-login-link">🔐 &nbsp;Login / Sign Up</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── SEARCH BAR ─── -->
+<div class="search-bar-wrap">
+  <div class="search-inner">
+    <div class="search-box">
+      <div class="search-cat">
+        <select aria-label="Category">
+          <option>All Categories</option>
+          <option>Mobiles</option>
+          <option>Fashion</option>
+          <option>Electronics</option>
+          <option>Home &amp; Kitchen</option>
+          <option>Beauty</option>
+          <option>Books</option>
+          <option>Baby &amp; Kids</option>
+          <option>Sports</option>
+        </select>
+        <span>▾</span>
+      </div>
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search for products, services and more..." aria-label="Search">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HERO SLIDER ─── -->
+<section class="hero-slider" id="heroSlider">
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide hero-slide-1">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge"><div class="hero-badge-dot"></div>Smart Digital Platform — India's #1 Choice</div>
+          <h1>India's Smart<br><span class="accent">ePay</span> Digital &amp;<br>Ecommerce Platform</h1>
+          <p>One app for all your shopping, gift vouchers, digital services &amp; more. Simplify your financial life today.</p>
+          <div class="hero-btns">
+            <a href="#" class="btn-primary">Explore Services →</a>
+            <a href="#" class="btn-outline">⬇ Download App</a>
+          </div>
+        </div>
+        <div class="hero-phone">
+          <img src="images/slider_img.png" alt="ePay App" onerror="this.parentElement.innerHTML='<div class=\'hero-phone-emoji\'>📱</div>'">
+        </div>
+      </div>
+    </div>
+    <div class="hero-slide hero-slide-2">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge"><div class="hero-badge-dot"></div>ePay Store — Shop Everything Online</div>
+          <h1>Shop Smarter,<br>Save <span class="accent">Bigger</span> Every<br>Single Day</h1>
+          <p>Thousands of products at your fingertips. Exclusive offers, fast delivery &amp; easy returns — all in one place.</p>
+          <div class="hero-btns">
+            <a href="https://store.epayindia.in/" target="_blank" class="btn-primary">Visit Store →</a>
+            <a href="#" class="btn-outline">🏷️ View Offers</a>
+          </div>
+        </div>
+        <div class="hero-phone">
+          <img src="images/slider_img_2.png" alt="ePay Store" onerror="this.parentElement.innerHTML='<div class=\'hero-phone-emoji\'>🛒</div>'">
+        </div>
+      </div>
+    </div>
+    <div class="hero-slide hero-slide-3">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge"><div class="hero-badge-dot"></div>Gift Vouchers &amp; Digital Services</div>
+          <h1>Send <span class="accent">Gift Vouchers</span><br>&amp; Access Digital<br>Services Instantly</h1>
+          <p>Instant e-gift cards for every occasion &amp; powerful digital utility tools — all under one ePay membership.</p>
+          <div class="hero-btns">
+            <a href="https://gv.epayindia.in/" target="_blank" class="btn-primary">Buy Vouchers →</a>
+            <a href="https://utility.epayindia.in/" target="_blank" class="btn-outline">⚙️ Digital Services</a>
+          </div>
+        </div>
+        <div class="hero-phone"><div class="hero-phone-emoji">🎁</div></div>
+      </div>
+    </div>
+  </div>
+  <button class="slider-btn prev" id="heroPrev" aria-label="Previous slide">&#8249;</button>
+  <button class="slider-btn next" id="heroNext" aria-label="Next slide">&#8250;</button>
+  <div class="slider-dots" id="sliderDots">
+    <button class="slider-dot active" data-index="0" aria-label="Slide 1"></button>
+    <button class="slider-dot" data-index="1" aria-label="Slide 2"></button>
+    <button class="slider-dot" data-index="2" aria-label="Slide 3"></button>
+  </div>
+</section>
+
+<!-- ─── OUR SERVICES ─── -->
+<section class="section our-services-section">
+  <div class="section-header">
+    <h2>Our <span class="accent">Services</span></h2>
+    <div class="section-divider"><div class="divider-line rev"></div><span class="divider-icon">⚡</span><div class="divider-line"></div></div>
+    <p>Fast &amp; Reliable Solutions for You</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card-live"><div class="live-badge"><span class="live-dot"></span> LIVE</div><div class="service-icon">🏪</div><h3>Store Shopping</h3><p>Your one-stop shop for everything you need.</p><a href="https://store.epayindia.in/" target="_blank" class="service-link">Shop Now →</a></div>
+    <div class="service-card-live"><div class="live-badge"><span class="live-dot"></span> LIVE</div><div class="service-icon">🛒</div><h3>E-Commerce Solutions</h3><p>Secure online selling with easy checkout.</p><a href="https://shop.epayindia.in/" target="_blank" class="service-link">Shop Now →</a></div>
+    <div class="service-card-live"><div class="live-badge"><span class="live-dot"></span> LIVE</div><div class="service-icon">⚙️</div><h3>ePay Digital Services</h3><p>Digital tools to simplify business operations.</p><a href="https://utility.epayindia.in/" target="_blank" class="service-link">Explore Now →</a></div>
+    <div class="service-card-live"><div class="live-badge"><span class="live-dot"></span> LIVE</div><div class="service-icon">🎁</div><h3>Gift Vouchers</h3><p>Instant digital vouchers for easy gifting.</p><a href="https://gv.epayindia.in/" target="_blank" class="service-link">Buy Vouchers →</a></div>
+  </div>
+</section>
+
+<!-- ─── UPCOMING SERVICES ─── -->
+<section class="section services-section">
+  <div class="section-header">
+    <h2>ePay <span class="accent">Upcoming Services</span></h2>
+    <div class="section-divider"><div class="divider-line rev"></div><span class="divider-icon">⚡</span><div class="divider-line"></div></div>
+    <p>Exciting new features &amp; services coming soon</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card-upcoming upc-blue"><div class="coming-badge">⏳ Coming Soon</div><div class="service-icon">💳</div><h3>Fintech Services</h3><p>Secure digital payment and fintech solutions.</p><a href="#" class="service-link">Explore Now →</a></div>
+    <div class="service-card-upcoming upc-purple"><div class="coming-badge">⏳ Coming Soon</div><div class="service-icon">📅</div><h3>Booking Solutions</h3><p>Fast and easy booking for travel, events &amp; more.</p><a href="#" class="service-link">Explore Now →</a></div>
+    <div class="service-card-upcoming upc-amber"><div class="coming-badge">⏳ Coming Soon</div><div class="service-icon">🍔</div><h3>Food Order</h3><p>Order your favourite food with fast delivery.</p><a href="#" class="service-link">Order Food →</a></div>
+    <div class="service-card-upcoming upc-rose"><div class="coming-badge">⏳ Coming Soon</div><div class="service-icon">🎬</div><h3>Movie Booking</h3><p>Book your favourite movies with exclusive deals.</p><a href="#" class="service-link">Book Ticket →</a></div>
+  </div>
+</section>
+
+<!-- ─── PREMIUM BANNER ─── -->
+<div class="upcoming-section">
+  <div class="upcoming-banner">
+    <div class="upcoming-content">
+      <div class="premium-badge"><span class="premium-dot"></span> ePay India</div>
+      <h2>Join <span class="premium-accent">ePay Premium</span> —<br>Shop, Save &amp; Earn Every Day</h2>
+      <p>One-time subscription. Unlimited rewards, exclusive deals, priority support &amp; cashback on every order — forever.</p>
+      <div class="premium-btns">
+        <a href="#" class="btn-primary">Subscription →</a>
+        <a href="#" class="btn-outline">Learn More</a>
+      </div>
+    </div>
+    <div class="upcoming-features">
+      <div class="upcoming-feat"><div class="upcoming-feat-icon">🎯</div><span>Exclusive Deals</span></div>
+      <div class="upcoming-feat"><div class="upcoming-feat-icon">💰</div><span>Cashback Rewards</span></div>
+      <div class="upcoming-feat"><div class="upcoming-feat-icon">🚀</div><span>Priority Support</span></div>
+      <div class="upcoming-feat"><div class="upcoming-feat-icon">♾️</div><span>Lifetime Access</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── OFFERS ─── -->
+<section class="offers-section">
+  <div class="section-header">
+    <h2><span class="accent">Offers</span> for All Shopping Products</h2>
+    <p>Exclusive deals across every category — Shop more, save more!</p>
+  </div>
+  <div class="categories-row">
+    <button class="scroll-btn left" onclick="scrollCats(-1)" aria-label="Scroll left">‹</button>
+    <div class="categories-scroll" id="catsScroll">
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/1679183" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/31J2O2gd14L.jpg" alt="AKAI Speaker" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/1679183" target="_blank">AKAI 100 Watts Bluetooth Speaker with 2 Wireless Mic Karaoke System</a><div class="price">₹8,264</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/1679183" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/2407665" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/41NEoxfZEtL.jpg" alt="Women Dress" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/2407665" target="_blank">Bollyclues Women's Floral Tiered Mini Dress | Puff Sleeve Button-Down</a><div class="price">₹589</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/2407665" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/2480474" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/41AYbhe-nCL.jpg" alt="Mens Shirt" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/2480474" target="_blank">Generic Fine Fashion Mart Mens Formal Shirt Business</a><div class="price">₹1,399</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/2480474" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/2378594" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/413PmklYq+L.jpg" alt="HP Laptop" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/2378594" target="_blank">HP 15 255R G10 AMD Ryzen 5 7535U Hexa Core 2.9 to Max 4.3 GHz</a><div class="price">₹47,950</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/2378594" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/1942375" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/51Tw5W9fg9L.jpg" alt="Sony TV" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/1942375" target="_blank">Sony 108 cm BRAVIA 2M2 Series 4K Ultra HD Smart LED Google TV</a><div class="price">₹47,990</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/1942375" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/2288277" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/41U-CWp5PkL.jpg" alt="Oppo Phone" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/2288277" target="_blank">Oppo A6 Pro 5G (Brown, 8GB RAM, 128GB Storage) with No Cost EMI</a><div class="price">₹26,999</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/2288277" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+      <div class="product-card"><a href="https://store.epayindia.in/Home/ProductInfoContainer/2465388" target="_blank"><div class="product-img"><img src="https://m.media-amazon.com/images/I/41gggAvZQ1L.jpg" alt="Redmi Phone" loading="lazy"><span class="badge">Offer</span></div></a><div class="product-info"><a class="product-title" href="https://store.epayindia.in/Home/ProductInfoContainer/2465388" target="_blank">REDMI Note 15 5G Glacier Blue 8GB RAM 128GB Storage 108MP OIS Camera</a><div class="price">₹24,999</div><div class="rating">⭐⭐⭐⭐☆ (4.2)</div><a href="https://store.epayindia.in/Home/ProductInfoContainer/2465388" target="_blank"><button class="btn-cart">Add to Cart</button></a></div></div>
+    </div>
+    <button class="scroll-btn right" onclick="scrollCats(1)" aria-label="Scroll right">›</button>
+  </div>
+</section>
+
+<!-- ─── WHY CHOOSE ─── -->
+<section class="why-section">
+  <div class="why-inner">
+    <div class="section-header"><h2>Why Choose <span class="accent">ePay?</span></h2></div>
+    <div class="why-features-row">
+      <div class="why-feat"><div class="why-feat-icon">🎧</div><div class="why-feat-text"><h4>24/7 Support</h4><p>We are here for you always.</p></div></div>
+      <div class="why-feat"><div class="why-feat-icon">🏷️</div><div class="why-feat-text"><h4>Best Offers</h4><p>Enjoy exclusive deals and discounts.</p></div></div>
+      <div class="why-feat"><div class="why-feat-icon">🔒</div><div class="why-feat-text"><h4>Secure Payments</h4><p>PCI DSS certified transactions.</p></div></div>
+      <div class="why-feat"><div class="why-feat-icon">⚡</div><div class="why-feat-text"><h4>Fast Delivery</h4><p>Express shipping nationwide.</p></div></div>
+    </div>
+    <div class="stats-band">
+      <div class="stat-item"><div class="stat-icon">👥</div><div class="stat-num">10M+</div><div class="stat-label">Happy Users</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><div class="stat-icon">🔧</div><div class="stat-num">50+</div><div class="stat-label">Services</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><div class="stat-icon">🤝</div><div class="stat-num">100+</div><div class="stat-label">Partners</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><div class="stat-icon">⏰</div><div class="stat-num">99.9%</div><div class="stat-label">Uptime</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section class="about-section">
+  <div class="about-inner">
+    <div class="about-content">
+      <h2>India's Smart <span class="accent">ePay</span> Digital &amp; Ecommerce Platform</h2>
+      <p>Welcome to ePay Digital India Pvt. Ltd. — a technology-driven platform offering eCommerce through a unified ecosystem. Our platform is designed to provide users with seamless access to online shopping, digital services &amp; Business Solutions. ePay focuses on delivering a secure, user-friendly, and scalable digital experience while enabling merchants and users to benefit from value-added services, rewards programs, and business growth opportunities.</p>
+    </div>
+    <div class="about-features">
+      <div class="about-feat"><div class="about-feat-icon">♾️</div><div class="about-feat-text"><h5>ePay India</h5><p>One time Subscription, unlimited benefits and access forever.</p></div></div>
+      <div class="about-feat"><div class="about-feat-icon">💰</div><div class="about-feat-text"><h5>Shop More</h5><p>Shop and get rewards on every purchase.</p></div></div>
+      <div class="about-feat"><div class="about-feat-icon">✅</div><div class="about-feat-text"><h5>Secure &amp; Trusted</h5><p>Bank-grade encrypted and PCI DSS certified opportunity.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">
+        <img src="images/footer_logo.png" alt="ePay Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="footer-logo-text" style="display:none">ePay</span>
+      </a>
+      <p>India's leading ePay Digital &amp; ecommerce platform, empowering millions to shop, pay, and grow every day.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn" title="Facebook">f</a>
+        <a href="#" class="social-btn" title="X">𝕏</a>
+        <a href="#" class="social-btn" title="LinkedIn">in</a>
+        <a href="#" class="social-btn" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+        <a href="#" class="social-btn" title="YouTube">▶</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Services</h4><ul><li><a href="#">Online Store</a></li><li><a href="#">eCommerce / Brand Shopping</a></li><li><a href="#">Gift Voucher</a></li><li><a href="#">ePay Digital Services</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Legal</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms &amp; Conditions</a></li><li><a href="#">FAQs</a></li><li><a href="#">Contact Us</a></li></ul></div>
+    <div class="footer-col"><h4>Support</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Cancellation / Refund Policy</a></li><li><a href="#">Shipping / Delivery Policy</a></li><li><a href="#">Return &amp; Replacement Policy</a></li><li><a href="#">Track Order</a></li></ul></div>
+    <div class="footer-col"><h4>Download App</h4><div class="app-badges"><a href="#" class="app-badge"><span class="app-badge-icon">▶</span><div class="app-badge-text"><small>GET IT ON</small><strong>Google Play</strong></div></a><a href="#" class="app-badge"><span class="app-badge-icon">🍎</span><div class="app-badge-text"><small>Download on the</small><strong>App Store</strong></div></a></div></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 ePay Digital India Pvt. Ltd. All Rights Reserved.</span>
+    <div class="footer-certs">
+      <div class="cert-badge"><span class="cert-icon">🔒</span> SSL Secured</div>
+      <div class="cert-badge"><span class="cert-icon">✅</span> PCI DSS Certified</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════
+   USER SESSION — reads from Session/cookie
+   In ASP.NET, replace the demo block with:
+   var userId   = '<%= Session["UserID"] ?? "" %>';
+   var userName = '<%= Session["UserName"] ?? "" %>';
+══════════════════════════════════════ */
+(function () {
+  // ── DEMO: simulate logged-in state. In production use Session values ──
+  var userId   = localStorage.getItem('epay_uid')   || '';
+  var userName = localStorage.getItem('epay_uname') || '';
+
+  if (userId) {
+    activateLoggedIn(userId, userName);
+  }
+
+  function activateLoggedIn(uid, uname) {
+    // Desktop: hide login btn, show user menu
+    document.getElementById('navLoginBtn').style.display    = 'none';
+    document.getElementById('userMenuWrap').style.display   = 'flex';
+
+    // Set initials
+    var initials = uid.replace(/[^A-Z0-9]/gi, '').substring(0, 2).toUpperCase();
+    document.getElementById('navAvatarCircle').textContent  = initials;
+    document.getElementById('mobileAvatarCircle').textContent = initials;
+
+    // Set display text
+    document.getElementById('navUserId').textContent    = '(' + uid + ')';
+    document.getElementById('ddUserName').textContent   = uname || uid;
+    document.getElementById('ddUserId').textContent     = 'ID: ' + uid;
+    document.getElementById('mobileUserName').textContent = uname || uid;
+    document.getElementById('mobileUserId').textContent   = 'ID: ' + uid;
+
+    // Mobile: show user section, hide login link
+    document.getElementById('mobileUserSection').classList.add('show');
+    document.getElementById('mobileLoginWrap').style.display = 'none';
+  }
+
+  // ── DEMO login (remove in production — use your Login.aspx POST) ──
+  window.demoLogin = function () {
+    var uid = 'EP1123456';
+    localStorage.setItem('epay_uid',   uid);
+    localStorage.setItem('epay_uname', 'ePay Member');
+    location.reload();
+  };
+
+  window.doLogout = function () {
+    localStorage.removeItem('epay_uid');
+    localStorage.removeItem('epay_uname');
+    // In ASP.NET: Session.Abandon(); Response.Redirect("index.aspx");
+    location.href = 'Login.aspx';
+  };
+})();
+
+/* ── User dropdown toggle ── */
+function toggleUserMenu() {
+  var wrap = document.getElementById('userMenuWrap');
+  var btn  = document.getElementById('userMenuBtn');
+  var open = wrap.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function (e) {
+  var wrap = document.getElementById('userMenuWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    wrap.classList.remove('open');
+    document.getElementById('userMenuBtn').setAttribute('aria-expanded', 'false');
+  }
+});
+
+/* ── Hero Slider ── */
+(function () {
+  var slides  = document.getElementById('heroSlides');
+  var dots    = document.querySelectorAll('.slider-dot');
+  var total   = 3; var current = 0; var timer;
+  function goTo(i) { current = (i + total) % total; slides.style.transform = 'translateX(-' + current * 100 + '%)'; dots.forEach(function (d, j) { d.classList.toggle('active', j === current); }); }
+  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+  function startAuto() { timer = setInterval(next, 5000); } function stopAuto() { clearInterval(timer); }
+  document.getElementById('heroNext').addEventListener('click', function () { stopAuto(); next(); startAuto(); });
+  document.getElementById('heroPrev').addEventListener('click', function () { stopAuto(); prev(); startAuto(); });
+  dots.forEach(function (d) { d.addEventListener('click', function () { stopAuto(); goTo(parseInt(this.dataset.index)); startAuto(); }); });
+  var startX = 0; var slider = document.getElementById('heroSlider');
+  slider.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  slider.addEventListener('touchend', function (e) { var diff = startX - e.changedTouches[0].clientX; if (Math.abs(diff) > 40) { stopAuto(); diff > 0 ? next() : prev(); startAuto(); } }, { passive: true });
+  slider.addEventListener('mouseenter', stopAuto); slider.addEventListener('mouseleave', startAuto);
+  startAuto();
+})();
+
+/* ── Mobile nav toggle ── */
+var hamburgerBtn = document.getElementById('hamburgerBtn');
+var mobileNav    = document.getElementById('mobileNav');
+hamburgerBtn.addEventListener('click', function () {
+  var isOpen = mobileNav.classList.toggle('open');
+  hamburgerBtn.classList.toggle('open', isOpen);
+  hamburgerBtn.setAttribute('aria-expanded', isOpen);
+});
+mobileNav.querySelectorAll('a').forEach(function (link) {
+  link.addEventListener('click', function () { mobileNav.classList.remove('open'); hamburgerBtn.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded', 'false'); });
+});
+document.addEventListener('click', function (e) {
+  if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) { mobileNav.classList.remove('open'); hamburgerBtn.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded', 'false'); }
+});
+
+/* ── Category scroll ── */
+function scrollCats(dir) { document.getElementById('catsScroll').scrollBy({ left: dir * 240, behavior: 'smooth' }); }
+
+/* ── Scroll animations ── */
+var observer = new IntersectionObserver(function (entries) { entries.forEach(function (e) { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }); }, { threshold: 0.08 });
+document.querySelectorAll('.service-card-live, .service-card-upcoming, .about-feat, .why-feat').forEach(function (el, i) { el.style.opacity = '0'; el.style.transform = 'translateY(18px)'; el.style.transition = 'opacity .5s ease ' + (i * 0.07) + 's, transform .5s ease ' + (i * 0.07) + 's'; observer.observe(el); });
+</script>
+</body>
+</html>

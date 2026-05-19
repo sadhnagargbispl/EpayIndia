@@ -10,7 +10,6 @@ public class ModuleFunction
 {
     private DataTable dt;
     private DAL objDal;
-
     public string EncodeBase64(string data)
     {
         string s = data.Trim().Replace(" ", "+");

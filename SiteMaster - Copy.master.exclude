@@ -1,0 +1,406 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="SiteMaster - Copy.master.cs" Inherits="SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Booking | Utility Service | Gift Voucher </title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="https://thebrandtadka.com/websiteurl/epayindia/img/favicon.ico">
+    <!-- CSS here -->
+    <link rel="stylesheet" href="Megamart.css?v=1">
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+
+            <!-- ─── TOP BAR ─── -->
+            <div class="topbar">
+                <div class="topbar-inner">
+                    <div class="topbar-left">
+                        <span>✦</span>
+                        <span>India's Leading ePay Digital &amp; E-commerce Platform</span>
+                    </div>
+                    <div class="topbar-right">
+                        <a href="#"><span>📱</span> <span class="hide-sm">Download App</span></a>
+                        <a href="#"><span>📦</span> <span class="hide-sm">Track Order</span></a>
+                        <a href="#"><span>🎧</span> <span class="hide-sm">Help Center</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── NAVBAR ─── -->
+            <nav class="navbar">
+                <div class="nav-inner">
+                    <a href="#" class="logo">
+                        <img src="images/logo.png" alt="ePay Logo" class="logoheader"
+                            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                        <span class="logo-text" style="display: none">e<span>Pay</span></span>
+                    </a>
+
+                    <ul class="nav-links">
+                        <li><a class="text-uppercase" href="StoreRedirect.aspx" target="_blank">🏪 STORE SHOPPING</a></li>
+                        <li><a class="text-uppercase" href="UtilityServicesRedirect.aspx" target="_blank">⚙️ UTILITY </a></li>
+                        <li><a class="text-uppercase" href="GVRedirect.aspx" target="_blank">🎁 GIFT VOUCHERS</a></li>
+                        <li><a class="text-uppercase" href="BrandRedirect.aspx" target="_blank">🛒 E-COMMERCE </a></li>
+                        <%-- <li><a href="#">Store Shopping</a></li>
+                        <li><a href="#">ePay Digital</a></li>
+                        <li><a href="#">Gift Vouchers</a></li>
+                        <li><a href="#">e-Commerce</a></li>
+                        <li><a href="#">Brand Shopping</a></li>--%>
+                    </ul>
+
+                    <div class="nav-actions">
+                        <button class="bell-btn" aria-label="Notifications">🔔</button>
+
+                        <!-- ── LOGGED OUT: Login button ── -->
+
+                        <!-- ── LOGGED IN: User dropdown menu ── -->
+                        <% if (Session["Status"] != null && Session["Status"].ToString() == "OK")
+                            { %>
+                        <div class="user-menu-wrap" id="userMenuWrap">
+                            <button type="button" class="user-menu-btn" id="userMenuBtn" onclick="toggleUserMenu()" aria-haspopup="true" aria-expanded="false">
+                                <div class="user-avatar-circle" id="navAvatarCircle">EP</div>
+                                <span class="user-id-text" id="navUserId">
+                                    <asp:Label ID="LblIDD" runat="server" Text=""></asp:Label></span>
+                                <span class="user-chevron">▼</span>
+                            </button>
+
+                            <div class="user-dropdown" id="userDropdown" role="menu">
+                                <!-- Dropdown header -->
+                                <div class="dd-header">
+                                    <div class="dd-name" id="ddUserName" runat="server"></div>
+                                    <div class="dd-uid" id="ddUserId" runat="server">ID: </div>
+                                </div>
+                                <!-- Dropdown links -->
+                                <div class="dd-links">
+                                    <%-- <a href="EpayIndia.aspx" class="dd-link" role="menuitem">
+                                        <span class="dd-link-icon">🏠</span>
+                                        ePay India
+</a>--%>
+                                    <a href="MainAccountRedirect.aspx" class="dd-link" role="menuitem">
+                                        <span class="dd-link-icon">👤</span>
+                                        Main Account
+</a>
+                                    <div class="dd-divider"></div>
+                                    <a href="Logout.aspx" class="dd-link" role="menuitem">
+                                        <span class="dd-link-icon">👤</span>
+                                        Logout
+</a>
+                                    <%--   <button class="dd-link logout" role="menuitem" onclick="doLogout()">
+                                        <span class="dd-link-icon">🚪</span>
+                                        Logout
+           
+                                    </button>--%>
+                                </div>
+                            </div>
+                        </div>
+                        <% }
+                            else
+                            {  %>
+                        <a href="Login.aspx" class="login-btn" id="navLoginBtn">Login / Sign Up</a>
+
+                        <% } %>
+
+
+                        <!-- Hamburger (mobile) -->
+                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+                            <span></span><span></span><span></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ─── MOBILE NAV ─── -->
+                <div class="mobile-nav" id="mobileNav">
+
+                    <!-- Mobile: Logged in user section -->
+
+
+
+                    <% if (Session["Status"] != null && Session["Status"].ToString() == "OK")
+                        { %>
+                    <div id="mobileUserSection">
+                        <div class="mobile-user-header">
+                            <div class="mobile-user-avatar" id="mobileAvatarCircle">EP</div>
+                            <div class="mobile-user-info">
+                                <div class="mu-name" id="mobileUserName" runat="server"></div>
+                                <div class="mu-id" id="mobileUserId" runat="server">ID: </div>
+                            </div>
+                        </div>
+                        <div class="mobile-dd-links">
+                            <a href="MainAccountRedirect.aspx" class="mobile-dd-link">👤 &nbsp;Main Account</a>
+                            <a href="Logout.aspx" class="mobile-dd-link">🚪 &nbsp;Logout</a>
+                     
+                        </div>
+                    </div>
+                    <% }
+                    %>
+
+                    <!-- Nav links -->
+                    <ul>
+                        <li><a class="text-uppercase" href="StoreRedirect.aspx" target="_blank">🏪 STORE SHOPPING</a></li>
+                        <li><a class="text-uppercase" href="UtilityServicesRedirect.aspx" target="_blank">⚙️ UTILITY </a></li>
+                        <li><a class="text-uppercase" href="GVRedirect.aspx" target="_blank">🎁 GIFT VOUCHERS</a></li>
+                        <li><a class="text-uppercase" href="https://epayindia.in/index.php?mod=main&shoppingmain=Yes" target="_blank">🛒 E-COMMERCE </a></li>
+                        <%--<li><a href="#">🏪 Store Shopping</a></li>
+                        <li><a href="#">⚙️ ePay Digital</a></li>
+                        <li><a href="#">🎁 Gift Vouchers</a></li>
+                        <li><a href="#">🛒 e-Commerce</a></li>
+                        <li><a href="#">🌍 Brand Shopping</a></li>--%>
+                    </ul>
+
+                    <!-- Mobile: Logged out login button -->
+
+                    <% if (Session["Status"] != null && Session["Status"].ToString() != "OK")
+                        { %>
+                    <div id="mobileLoginWrap">
+                        <a href="Login.aspx" class="mobile-login-link">🔐 &nbsp;Login / Sign Up</a>
+                    </div>
+                    <% }
+                    %>
+                </div>
+            </nav>
+
+            <%--<header class="header-transparent p-2">
+                <div id="sticky-header" class="main-menu-area">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-xl-2 col-lg-2 col-md-4">
+                                <div class="logo">
+                                    <a href="index.aspx">
+                                        <img src="https://thebrandtadka.com/websiteurl/epayindia/img/logo.png" width="180" alt="" /></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10 col-md-8">
+
+                                <div class="main-menu text-right f-right">
+                                    <nav id="mobile-menu">
+                                        <ul>
+                                            <li><a class="text-uppercase" href="https://store.epayindia.in/" target="_blank">STORE SHOPPING</a></li>
+                                            <li><a class="text-uppercase" href="https://utility.epayindia.in/" target="_blank">UTILITY </a></li>
+                                            <li><a class="text-uppercase" href="https://gv.epayindia.in/" target="_blank">GIFT VOUCHERS</a></li>
+                                            <li><a class="text-uppercase" href="https://epayindia.in/index.php?mod=main&shoppingmain=Yes" target="_blank">E-COMMERCE </a></li>
+                                            <li><a class="text-uppercase" href="#">E-PAY INTERNATIONAL</a></li>
+                                            <% if (Session["Status"] != null && Session["Status"].ToString() == "OK")
+                                                { %>
+                                            <li>
+                                                <a href="#">
+                                                    <asp:Label ID="LblIDD" runat="server" Text=""></asp:Label></a>
+                                                <ul class="sub-menu text-left">
+                                                    <li><a href="#">
+                                                        <asp:Label ID="LblName" runat="server" Text=""></asp:Label></a></li>
+                                                    <li><a href="MainAccountRedirect.aspx" target="_blank">MAIN ACCOUNT </a></li>
+                                                    <li><a href="logout.aspx">LOGOUT</a></li>
+                                                </ul>
+                                            </li>
+                                            <% }
+                                                else
+                                                {  %>
+                                            <li><a href="login.aspx">LOGIN</a></li>
+                                            <% } %>
+                                        </ul>
+                                    </nav>
+
+                                </div>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <div class="mobile-menu"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>--%>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+
+        </div>
+        <!-- ─── FOOTER ─── -->
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">
+                        <img src="images/footer_logo.png" alt="ePay Logo"
+                            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                        <span class="footer-logo-text" style="display: none">ePay</span>
+                    </a>
+                    <p>India's leading ePay Digital &amp; ecommerce platform, empowering millions to shop, pay, and grow every day.</p>
+                    <div class="footer-socials">
+                        <a href="#" class="social-btn" title="Facebook">f</a>
+                        <a href="#" class="social-btn" title="X (Twitter)">𝕏</a>
+                        <a href="#" class="social-btn" title="LinkedIn">in</a>
+                        <a href="#" class="social-btn" title="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-btn" title="YouTube">▶</a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <%-- <li><a href="#">Online Store</a></li>
+                        <li><a href="#">eCommerce / Brand Shopping</a></li>
+                        <li><a href="#">Gift Voucher</a></li>
+                        <li><a href="#">ePay Digital Services</a></li>--%>
+                        <li><a class="text-uppercase" href="StoreRedirect.aspx" target="_blank">Online Store</a></li>
+                        <li><a class="text-uppercase" href="UtilityServicesRedirect.aspx" target="_blank">Utility</a></li>
+                        <li><a class="text-uppercase" href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
+                        <li><a class="text-uppercase" href="https://epayindia.in/index.php?mod=main&shoppingmain=Yes" target="_blank">E-Commerce</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Legal</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms &amp; Conditions</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Cancellation / Refund Policy</a></li>
+                        <li><a href="#">Shipping / Delivery Policy</a></li>
+                        <li><a href="#">Return &amp; Replacement Policy</a></li>
+                        <li><a href="#">Track Order</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Download App</h4>
+                    <div class="app-badges">
+                        <a href="#" class="app-badge">
+                            <span class="app-badge-icon">▶</span>
+                            <div class="app-badge-text">
+                                <small>GET IT ON</small>
+                                <strong>Google Play</strong>
+                            </div>
+                        </a>
+                        <a href="#" class="app-badge">
+                            <span class="app-badge-icon">🍎</span>
+                            <div class="app-badge-text">
+                                <small>Download on the</small>
+                                <strong>App Store</strong>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2025 ePay Digital India Pvt. Ltd. All Rights Reserved.</span>
+                <div class="footer-certs">
+                    <div class="cert-badge"><span class="cert-icon">🔒</span> SSL Secured</div>
+                    <div class="cert-badge"><span class="cert-icon">✅</span> PCI DSS Certified</div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+/* ══════════════════════════════════════
+   USER SESSION — reads from Session/cookie
+   In ASP.NET, replace the demo block with:
+   var userId   = '<%= Session["UserID"] ?? "" %>';
+            var userName = '<%= Session["UserName"] ?? "" %>';
+══════════════════════════════════════ * /
+                (function () {
+                    // ── DEMO: simulate logged-in state. In production use Session values ──
+                    var userId = localStorage.getItem('epay_uid') || '';
+                    var userName = localStorage.getItem('epay_uname') || '';
+
+                    if (userId) {
+                        activateLoggedIn(userId, userName);
+                    }
+
+
+                    // ── DEMO login (remove in production — use your Login.aspx POST) ──
+                    window.demoLogin = function () {
+                        var uid = 'EP1123456';
+                        localStorage.setItem('epay_uid', uid);
+                        localStorage.setItem('epay_uname', 'ePay Member');
+                        location.reload();
+                    };
+
+                    window.doLogout = function () {
+                        localStorage.removeItem('epay_uid');
+                        localStorage.removeItem('epay_uname');
+                        // In ASP.NET: Session.Abandon(); Response.Redirect("index.aspx");
+                        location.href = 'Login.aspx';
+                    };
+                })();
+
+            /* ── User dropdown toggle ── */
+            function toggleUserMenu() {
+                var wrap = document.getElementById('userMenuWrap');
+                var btn = document.getElementById('userMenuBtn');
+                var open = wrap.classList.toggle('open');
+                btn.setAttribute('aria-expanded', open);
+            }
+
+            //// Close dropdown when clicking outside
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                var wrap = document.getElementById('userMenuWrap');
+                if (wrap && !wrap.contains(e.target)) {
+                    wrap.classList.remove('open');
+                    document.getElementById('userMenuBtn').setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            /* ── Hero Slider ── */
+            (function () {
+                var slides = document.getElementById('heroSlides');
+                var dots = document.querySelectorAll('.slider-dot');
+                var total = 3; var current = 0; var timer;
+                function goTo(i) { current = (i + total) % total; slides.style.transform = 'translateX(-' + current * 100 + '%)'; dots.forEach(function (d, j) { d.classList.toggle('active', j === current); }); }
+                function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+                function startAuto() { timer = setInterval(next, 5000); } function stopAuto() { clearInterval(timer); }
+                document.getElementById('heroNext').addEventListener('click', function () { stopAuto(); next(); startAuto(); });
+                document.getElementById('heroPrev').addEventListener('click', function () { stopAuto(); prev(); startAuto(); });
+                dots.forEach(function (d) { d.addEventListener('click', function () { stopAuto(); goTo(parseInt(this.dataset.index)); startAuto(); }); });
+                var startX = 0; var slider = document.getElementById('heroSlider');
+                slider.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+                slider.addEventListener('touchend', function (e) { var diff = startX - e.changedTouches[0].clientX; if (Math.abs(diff) > 40) { stopAuto(); diff > 0 ? next() : prev(); startAuto(); } }, { passive: true });
+                slider.addEventListener('mouseenter', stopAuto); slider.addEventListener('mouseleave', startAuto);
+                startAuto();
+            })();
+
+            /* ── Mobile nav toggle ── */
+            var hamburgerBtn = document.getElementById('hamburgerBtn');
+            var mobileNav = document.getElementById('mobileNav');
+            hamburgerBtn.addEventListener('click', function () {
+                var isOpen = mobileNav.classList.toggle('open');
+                hamburgerBtn.classList.toggle('open', isOpen);
+                hamburgerBtn.setAttribute('aria-expanded', isOpen);
+            });
+            mobileNav.querySelectorAll('a').forEach(function (link) {
+                link.addEventListener('click', function () { mobileNav.classList.remove('open'); hamburgerBtn.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded', 'false'); });
+            });
+            document.addEventListener('click', function (e) {
+                if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) { mobileNav.classList.remove('open'); hamburgerBtn.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded', 'false'); }
+            });
+
+            /* ── Category scroll ── */
+            function scrollCats(dir) { document.getElementById('catsScroll').scrollBy({ left: dir * 240, behavior: 'smooth' }); }
+
+            /* ── Scroll animations ── */
+            var observer = new IntersectionObserver(function (entries) { entries.forEach(function (e) { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }); }, { threshold: 0.08 });
+            document.querySelectorAll('.service-card-live, .service-card-upcoming, .about-feat, .why-feat').forEach(function (el, i) { el.style.opacity = '0'; el.style.transform = 'translateY(18px)'; el.style.transition = 'opacity .5s ease ' + (i * 0.07) + 's, transform .5s ease ' + (i * 0.07) + 's'; observer.observe(el); });
+</script>
+    </form>
+</body>
+
+</html>

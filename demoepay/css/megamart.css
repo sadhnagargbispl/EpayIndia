@@ -1,0 +1,121 @@
+.buttoncss {
+color: #fff;
+display: inline-block;
+font-size: 14px;
+font-weight: 500;
+line-height: 1;
+padding: 15px 8px;
+position: relative;
+text-transform: capitalize;
+transform: perspective(1px) translateZ(0px);
+transition: .3s;
+vertical-align: middle;
+background: #8427e1;
+border-radius: 0;
+border: none;
+border-radius: 10px 10px 10px 10px;
+width: 85px;
+}
+
+.buttoncss::before {
+background-color: #470d6f !important;
+border-radius: 10px 10px 10px 10px !important;
+bottom: 0;
+content: "";
+left: 0;
+position: absolute;
+right: 0;
+top: 0;
+/* transform: scaleY(0); */
+transform-origin: 50% 0 0;
+transition-duration: 0.3s;
+transition-property: transform;
+transition-timing-function: ease-out;
+z-index: -1;
+border-radius: 0;
+}
+
+
+
+.packagebox{
+border-radius: 10px 10px 10px 10px !important;
+background-color: rgba(255, 255, 255, 0.637);
+}
+
+
+.btn {
+ background: #5c13b1 !important;
+}
+
+
+.btn::before {
+	background: #fc6039 !important;
+}
+
+label {
+  color: #000000 !important;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+
+.pricename .mrp{
+  font-size: 11px !important;
+  }
+  
+  .pricename .price{
+    font-size: 12px !important;
+  }
+
+  .pricename .packagename{
+    font-size: 13px !important;
+  }
+
+  
+  .themetextclr{
+  color:#ac23ef;
+}
+
+.tabmenu, ul, li, a:hover {
+  color: #000000;
+}
+
+
+
+
+
+  /* ------------------------------- */
+
+@media only screen and (max-width: 600px) {
+  .pricename .mrp{
+    font-size: 12px !important;
+    text-align: center;
+    }
+    
+    .pricename .price{
+      font-size: 13px !important;
+      text-align: center;
+    }
+
+    .pricename .packagename{
+      font-size: 13px !important;
+      text-align: center;
+    }
+  
+
+    .col-lg-5 .button .btn {
+      width: 100%;
+      margin-top: -40px;
+      padding: 9px;
+    }
+
+    .thankyou{
+      text-align: center !important;
+    }
+ 
+      
+
+
+    /* ------------------------------- */
+    
