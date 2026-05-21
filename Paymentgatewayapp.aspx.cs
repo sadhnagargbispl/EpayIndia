@@ -22,7 +22,7 @@ public partial class Paymentgatewayapp : System.Web.UI.Page
         {
             string folderPath = Server.MapPath("~/Logs");
 
-            // Folder create if not exists
+            // Create Logs folder if not exists
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -31,44 +31,76 @@ public partial class Paymentgatewayapp : System.Web.UI.Page
             // Current page name
             string pageName = Path.GetFileNameWithoutExtension(Request.PhysicalPath);
 
-            // Log file according to page name
-            string logPath = Path.Combine(folderPath, pageName + ".txt");
+            // Date wise log file
+            string fileName = pageName + "_" + DateTime.Now.ToString("yyyyMMdd") + ".txt";
+
+            string logPath = Path.Combine(folderPath, fileName);
 
             using (StreamWriter sw = new StreamWriter(logPath, true))
             {
                 sw.WriteLine("=================================================");
-                sw.WriteLine("DATE : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+                sw.WriteLine("DATE TIME : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
 
                 sw.WriteLine("PAGE NAME : " + pageName);
 
-                sw.WriteLine("URL : " + Request.Url.ToString());
+                sw.WriteLine("FULL URL : " + Request.Url.ToString());
 
                 sw.WriteLine("HTTP METHOD : " + Request.HttpMethod);
 
+                sw.WriteLine("USER IP : " + Request.UserHostAddress);
+
+                sw.WriteLine("USER AGENT : " + Request.UserAgent);
+
                 sw.WriteLine("requestedId : " + Convert.ToString(Request["requestedId"]));
 
-                sw.WriteLine("QUERY STRING");
+                sw.WriteLine("---------------- QUERY STRING ----------------");
 
                 foreach (string key in Request.QueryString.AllKeys)
                 {
-                    sw.WriteLine(key + " = " + Request.QueryString[key]);
+                    try
+                    {
+                        sw.WriteLine(key + " = " + Request.QueryString[key]);
+                    }
+                    catch
+                    {
+                    }
                 }
 
-                sw.WriteLine("FORM DATA");
+                sw.WriteLine("---------------- FORM DATA ----------------");
 
                 foreach (string key in Request.Form.AllKeys)
                 {
-                    sw.WriteLine(key + " = " + Request.Form[key]);
+                    try
+                    {
+                        sw.WriteLine(key + " = " + Request.Form[key]);
+                    }
+                    catch
+                    {
+                    }
                 }
 
-                sw.WriteLine("RAW BODY");
+                sw.WriteLine("---------------- RAW BODY ----------------");
 
-                Request.InputStream.Position = 0;
-
-                using (StreamReader reader = new StreamReader(Request.InputStream))
+                try
                 {
-                    string body = reader.ReadToEnd();
-                    sw.WriteLine(body);
+                    if (Request.InputStream != null)
+                    {
+                        Request.InputStream.Position = 0;
+
+                        using (StreamReader reader = new StreamReader(Request.InputStream))
+                        {
+                            string body = reader.ReadToEnd();
+
+                            if (!string.IsNullOrWhiteSpace(body))
+                            {
+                                sw.WriteLine(body);
+                            }
+                        }
+                    }
+                }
+                catch (Exception exBody)
+                {
+                    sw.WriteLine("RAW BODY ERROR : " + exBody.Message);
                 }
 
                 sw.WriteLine("=================================================");
@@ -77,9 +109,11 @@ public partial class Paymentgatewayapp : System.Web.UI.Page
 
             if (!IsPostBack)
             {
-                if (!string.IsNullOrWhiteSpace(Convert.ToString(Request["requestedId"])))
+                string requestedId = Convert.ToString(Request["requestedId"]);
+
+                if (!string.IsNullOrWhiteSpace(requestedId))
                 {
-                    GenerateQrCode(Request["requestedId"].ToString());
+                    GenerateQrCode(requestedId);
                 }
                 else
                 {
@@ -100,15 +134,23 @@ public partial class Paymentgatewayapp : System.Web.UI.Page
 
                 string pageName = Path.GetFileNameWithoutExtension(Request.PhysicalPath);
 
-                string errorPath = Path.Combine(folderPath, pageName + "_Error.txt");
+                string errorFileName =
+                    pageName + "_Error_" + DateTime.Now.ToString("yyyyMMdd") + ".txt";
+
+                string errorPath = Path.Combine(folderPath, errorFileName);
 
                 using (StreamWriter sw = new StreamWriter(errorPath, true))
                 {
                     sw.WriteLine("=================================================");
-                    sw.WriteLine("DATE : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+                    sw.WriteLine("DATE TIME : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+
                     sw.WriteLine("PAGE NAME : " + pageName);
-                    sw.WriteLine("ERROR : " + ex.Message);
-                    sw.WriteLine("STACK : " + ex.StackTrace);
+
+                    sw.WriteLine("ERROR MESSAGE : " + ex.Message);
+
+                    sw.WriteLine("STACK TRACE : ");
+                    sw.WriteLine(ex.StackTrace);
+
                     sw.WriteLine("=================================================");
                     sw.WriteLine();
                 }
