@@ -267,9 +267,9 @@ public partial class Appmonthly_activation_points : System.Web.UI.Page
             tRequest.ContentType = "application/json";
             string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
             string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                             "(ReqID, Formno, Request, postdata, Req_From, OrderID) VALUES " +
+                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                              "('" + sResult + "', '0', '" + URL + "', '" + postData +
-                             "', 'AppLoginClaimMonth', '" + Orderid + "')";
+                             "', 'AppLoginClaimMonth', '" + Orderid + "','Appmonthly_activation_points')";
 
             int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
 
@@ -359,12 +359,12 @@ public partial class Appmonthly_activation_points : System.Web.UI.Page
                 string postdata = "{\"requestedId\":\"" + orderid + "\",";
                 postdata += "\"amount\":" + amount + ",\"upiId\":\"82215511\",";
                 postdata += "\"serverHookURL\":\"https://epayindia.in/AppLogin.aspx\",";
-                postdata += "\"webHookURL\":\"https://epayindia.in/Paymentgatewayapp.aspx?requestedId=" + orderid + "\"\"}";
+                postdata += "\"webHookURL\":\"https://epayindia.in/Paymentgatewayapp.aspx\"}";
 
                 string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                                 "(ReqID, Formno, Request, postdata, Req_From, OrderID) VALUES " +
+                                 "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                                  "('" + sResult + "', '" + Session["formno"] + "', '" + url + "', '" +
-                                 postdata + "', 'AppInitiateTransactionAsyncClaimMonth', '" + orderid + "')";
+                                 postdata + "', 'AppInitiateTransactionAsyncClaimMonth', '" + orderid + "','Appmonthly_activation_points')";
 
                 int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
 

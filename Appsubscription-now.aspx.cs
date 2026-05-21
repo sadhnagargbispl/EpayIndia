@@ -295,9 +295,9 @@ public partial class Appsubscription_now : System.Web.UI.Page
             tRequest.ContentType = "application/json";
             string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
             string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                             "(ReqID, Formno, Request, postdata, Req_From, OrderID) VALUES " +
+                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                              "('" + sResult + "', '0', '" + URL + "', '" + postData +
-                             "', 'AppLoginClaim', '" + Orderid + "')";
+                             "', 'AppLoginClaim', '" + Orderid + "','Appsubscription_now')";
 
             int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
 
@@ -387,12 +387,12 @@ public partial class Appsubscription_now : System.Web.UI.Page
                 string postdata = "{\"requestedId\":\"" + orderid + "\",";
                 postdata += "\"amount\":" + amount + ",\"upiId\":\"82215511\",";
                 postdata += "\"serverHookURL\":\"https://epayindia.in/AppLogin.aspx\",";
-                postdata += "\"webHookURL\":\"https://epayindia.in/PaymentGatewayPurchase.aspx?requestedId=" + orderid + "\"\"}";
+                postdata += "\"webHookURL\":\"https://epayindia.in/PaymentGatewayPurchase.aspx\"}";
 
                 string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                                 "(ReqID, Formno, Request, postdata, Req_From, OrderID) VALUES " +
+                                 "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                                  "('" + sResult + "', '" + Session["formno"] + "', '" + url + "', '" +
-                                 postdata + "', 'AppInitiateTransactionAsyncClaim', '" + orderid + "')";
+                                 postdata + "', 'AppInitiateTransactionAsyncClaim', '" + orderid + "','Appsubscription_now')";
 
                 int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
 

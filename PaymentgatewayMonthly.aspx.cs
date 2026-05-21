@@ -51,7 +51,7 @@ public partial class PaymentgatewayMonthly : System.Web.UI.Page
 
                 sw.WriteLine("USER AGENT : " + Request.UserAgent);
 
-                sw.WriteLine("requestedId : " + Convert.ToString(Request["requestedId"]));
+                sw.WriteLine("RAW requestedId : " + Convert.ToString(Request["requestedId"]));
 
                 sw.WriteLine("---------------- QUERY STRING ----------------");
 
@@ -109,14 +109,64 @@ public partial class PaymentgatewayMonthly : System.Web.UI.Page
 
             if (!IsPostBack)
             {
-                string requestedId = Convert.ToString(Request["requestedId"]);
+                string requestedId = "";
 
+                // QueryString
+                if (!string.IsNullOrWhiteSpace(Convert.ToString(Request.QueryString["requestedId"])))
+                {
+                    requestedId = Convert.ToString(Request.QueryString["requestedId"]);
+                }
+
+                // Form Data
+                if (string.IsNullOrWhiteSpace(requestedId))
+                {
+                    requestedId = Convert.ToString(Request.Form["requestedId"]);
+                }
+
+                // Fallback
+                if (string.IsNullOrWhiteSpace(requestedId))
+                {
+                    requestedId = Convert.ToString(Request["requestedId"]);
+                }
+
+                // Clean malformed callback value
+                if (!string.IsNullOrWhiteSpace(requestedId))
+                {
+                    // remove extra query part
+                    if (requestedId.Contains("?"))
+                    {
+                        requestedId = requestedId.Split('?')[0];
+                    }
+
+                    // remove duplicate merged value
+                    if (requestedId.Contains(","))
+                    {
+                        requestedId = requestedId.Split(',')[0];
+                    }
+
+                    requestedId = requestedId.Trim();
+                }
+
+                // Final log after clean
+                using (StreamWriter sw = new StreamWriter(logPath, true))
+                {
+                    sw.WriteLine("FINAL requestedId : " + requestedId);
+                    sw.WriteLine();
+                }
+
+                // Validation
                 if (!string.IsNullOrWhiteSpace(requestedId))
                 {
                     GenerateQrCode(requestedId);
                 }
                 else
                 {
+                    using (StreamWriter sw = new StreamWriter(logPath, true))
+                    {
+                        sw.WriteLine("GenerateQrCode NOT called because requestedId missing");
+                        sw.WriteLine();
+                    }
+
                     Response.Write("requestedId missing");
                 }
             }
@@ -145,6 +195,8 @@ public partial class PaymentgatewayMonthly : System.Web.UI.Page
                     sw.WriteLine("DATE TIME : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
 
                     sw.WriteLine("PAGE NAME : " + pageName);
+
+                    sw.WriteLine("FULL URL : " + Request.Url.ToString());
 
                     sw.WriteLine("ERROR MESSAGE : " + ex.Message);
 
@@ -205,9 +257,9 @@ public partial class PaymentgatewayMonthly : System.Web.UI.Page
             tRequest.ContentLength = 0;
             string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
             string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                             "(ReqID, Formno, Request, postdata, Req_From, OrderID) VALUES " +
+                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                              "('" + sResult + "', '0', '" + URL + "', '" + postData +
-                             "', 'LoginClaimLoginMonth', '" + Orderid + "')";
+                             "', 'LoginClaimLoginMonth', '" + Orderid + "','PaymentgatewayMonthly')";
 
             int x_Req = SqlHelper.ExecuteNonQuery(
                 constr,
@@ -277,9 +329,9 @@ public partial class PaymentgatewayMonthly : System.Web.UI.Page
             string UrlR = "https://allupi.com/api/Status?RequestedId=" + orderid;
 
             string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                             "(ReqID, Formno, Request, postdata, Req_From, OrderID) VALUES " +
+                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                              "('" + sResult + "', '0', '" + UrlR + "', '" + UrlR +
-                             "', 'StatusCheckClaimMonth', '" + orderid + "')";
+                             "', 'StatusCheckClaimMonth', '" + orderid + "','PaymentgatewayMonthly')";
 
             SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
 

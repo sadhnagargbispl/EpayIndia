@@ -1,0 +1,17 @@
+=================================================
+DATE TIME : 21-05-2026 06:24:16 PM
+PAGE NAME : PaymentGateWayNew
+FULL URL : http://localhost:51220/PaymentGateWayNew.aspx
+HTTP METHOD : GET
+USER IP : ::1
+USER AGENT : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36
+RAW requestedId : 
+---------------- QUERY STRING ----------------
+---------------- FORM DATA ----------------
+---------------- RAW BODY ----------------
+=================================================
+
+FINAL requestedId : 
+
+GenerateQrCode NOT called because requestedId missing
+
