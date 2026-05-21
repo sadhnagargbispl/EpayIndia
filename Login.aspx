@@ -736,9 +736,9 @@
 
                     <hr class="login-divider">
 
-                    <%--<p class="signup-row">
-                        Not a Member? &nbsp;<a href="Register.aspx">Signup Now</a>
-                    </p>--%>
+                    <p class="signup-row">
+                        Not a Member? &nbsp;<a href="Registartion.aspx">Signup Now</a>
+                    </p>
 
                 </div>
             </div>
