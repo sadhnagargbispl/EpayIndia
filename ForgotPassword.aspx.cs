@@ -1,317 +1,594 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Net.Mail;
+using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
+using System.Security.Cryptography;
+using Newtonsoft.Json;
+using System.Xml;
 
 public partial class ForgotPassword : System.Web.UI.Page
 {
-    public SqlConnection objSqlConnection;
+    string uid;
+    string Pwd;
+    string Memberid;
+    string type;
+    string scrname;
+    DAL obj = new DAL();
+    ModuleFunction objModuleFun;
+    string constr = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
     string constr1 = ConfigurationManager.ConnectionStrings["constr1"].ConnectionString;
+    string IsoStart;
+    string IsoEnd;
 
     protected void Page_Load(object sender, EventArgs e)
     {
         try
         {
-            if (!Page.IsPostBack) { }
+            getData();
+            if (Application["WebStatus"] != null)
+            {
+                if (Application["WebStatus"].ToString() == "N")
+                {
+                    Session.Abandon();
+                    Response.Write("<big><b>" + Application["WebMessage"] + "</b></big>");
+                    Response.End();
+                    return;
+                }
+            }
+            //if (Session["Status"] != null && Session["Status"].ToString() == "OK")
+            //{
+            //    Response.Redirect("Index.aspx", false);
+            //    return;
+            //}
+
+            string strURL = HttpContext.Current.Request.Url.AbsoluteUri;
+            string url = "";
+            string Str;
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+            Response.Cache.SetNoStore();
+
+            if (!Page.IsPostBack)
+            {
+                HdnForgotStep.Value = "0";
+                HdnForgotResult.Value = "";
+
+                if (Request["lgnT"] != null)
+                {
+                    ModuleFunction objModuleFun = new ModuleFunction();
+
+                    Str = Crypto.Decrypt(Request["lgnT"].Replace(" ", "+"));
+
+                    Str = Str.Replace("uid=", "þ").Replace("&pwd=", "þ").Replace("&mobile=", "þ");
+                    string[] qrystr = Str.Split(new string[] { "þ" }, StringSplitOptions.None);
+
+                    if (Str.Contains("þ"))
+                    {
+                        int UIdIndx = Str.IndexOf("&pwd");
+                        uid = qrystr[1].ToString();
+                        Pwd = qrystr[2].ToString();
+                    }
+                    else
+                    {
+                        Response.Redirect("logout.aspx", false);
+                        return;
+                    }
+                }
+                else if (Request["uid"] != null)
+                {
+                    uid = Request["uid"];
+                    Pwd = Request["pwd"];
+                    type = Request["ref"];
+                    uid = uid.Trim().Replace("'", "").Replace("=", "").Replace(";", "");
+                    Pwd = Pwd.Trim().Replace("'", "").Replace("=", "").Replace(";", "");
+                }
+                if (!string.IsNullOrEmpty(uid) && !string.IsNullOrEmpty(Pwd))
+                {
+                  
+                }
+            }
         }
         catch (Exception ex)
         {
-            ShowAlert(ex.Message);
         }
-    }
 
-    protected void Submit_Click(object sender, EventArgs e)
+    }
+    protected void getData()
     {
+        cls_DataAccess dbConnect = new cls_DataAccess(constr1);
+        DAL objdal = new DAL();
         try
         {
-            if (string.IsNullOrWhiteSpace(txtIDNo.Text))
+            SqlDataReader dRead;
+            SqlCommand cmd;
+            DataTable dtCompany = new DataTable();
+            if (Application["dtCompany"] == null)
             {
-                ShowAlert("ID No. cannot be left blank."); return;
-            }
-            if (string.IsNullOrWhiteSpace(txtemail.Text))
-            {
-                ShowAlert("Please enter your Email ID."); return;
-            }
-
-            DAL objdal = new DAL();
-            string IDNo = txtIDNo.Text
-                .Replace("'", "").Replace(";", "").Replace("=", "").Replace("-", "");
-
-            string sql = objdal.Isostart + " Exec Sp_MemberForgotPassw '" + IDNo + "'" + objdal.IsoEnd;
-            DataTable Dt = SqlHelper.ExecuteDataset(constr1, CommandType.Text, sql).Tables[0];
-
-            if (Dt.Rows.Count == 0)
-            {
-                ShowAlert("Invalid User ID. Please check and try again."); return;
-            }
-
-            string dbEmail = Dt.Rows[0]["Email"].ToString();
-            string Username = Dt.Rows[0]["Idno"].ToString();
-            string Password = Dt.Rows[0]["Passw"].ToString();
-            string TranPassw = Dt.Rows[0]["EPassw"].ToString();
-            string MemName = Dt.Rows[0]["MemName"].ToString();
-            string CompName = Dt.Rows[0]["CompName"].ToString();
-            string WebSite = Dt.Rows[0]["WebSite"].ToString();
-
-            // Store mail credentials in session
-            Session["CompMail"] = Dt.Rows[0]["CompMail"];
-            Session["MailPass"] = Dt.Rows[0]["mailPass"];
-            Session["MailHost"] = Dt.Rows[0]["mailHost"];
-            Session["CompName"] = CompName;
-            Session["CompWeb"] = WebSite;
-
-            if (!txtemail.Text.Trim().Equals(dbEmail.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                ShowAlert("Email ID does not match our records."); return;
-            }
-
-            // ── Send password-recovery email ─────────────────
-            bool sent = SendForgotPasswordEmail(Username, dbEmail, MemName, Password, TranPassw, CompName, WebSite);
-
-            if (sent)
-            {
-                // ── Send password-reset confirmation email ────
-                SendResetConfirmationEmail(dbEmail, MemName, CompName, WebSite);
-
-                ScriptManager.RegisterStartupScript(this, GetType(), "Key",
-                    "alert('Your password has been sent to your registered Email ID!');", true);
-                txtIDNo.Text = "";
-                txtemail.Text = "";
+                if (dbConnect.cnnObject == null)
+                {
+                    dbConnect.OpenConnection();
+                }
+                DataSet ds = new DataSet();
+                SqlDataAdapter adp = new SqlDataAdapter();
+                string strQ = objdal.Isostart + " select * from " + objdal.dBName + " ..M_CompanyMaster" + objdal.IsoEnd;
+                adp = new SqlDataAdapter(strQ, dbConnect.cnnObject);
+                adp.Fill(ds);
+                dtCompany = ds.Tables[0];
+                Application["dtCompany"] = dtCompany;
             }
             else
             {
-                ShowAlert("Could not send email. Please try again later or contact support.");
+                if (dbConnect.cnnObject == null)
+                {
+                    dbConnect.OpenConnection();
+                }
+                DataSet ds = new DataSet();
+                SqlDataAdapter adp = new SqlDataAdapter();
+                string strQ = objdal.Isostart + " select * from " + objdal.dBName + " ..M_CompanyMaster" + objdal.IsoEnd;
+                adp = new SqlDataAdapter(strQ, dbConnect.cnnObject);
+                adp.Fill(ds);
+                dtCompany = ds.Tables[0];
+                Application["dtCompany"] = dtCompany;
+            }
+
+            if (dtCompany.Rows.Count > 0)
+            {
+                Session["CompName"] = dtCompany.Rows[0]["CompName"];
+                Session["CompAdd"] = dtCompany.Rows[0]["CompAdd"];
+                Session["CompWeb"] = string.IsNullOrEmpty(dtCompany.Rows[0]["WebSite"].ToString()) ? "index.asp" : dtCompany.Rows[0]["WebSite"];
+                Session["Title"] = dtCompany.Rows[0]["CompTitle"];
+                Session["CompMail"] = dtCompany.Rows[0]["CompMail"];
+                Session["CompMobile"] = dtCompany.Rows[0]["MobileNo"];
+                Session["ClientId"] = dtCompany.Rows[0]["smsSenderId"];
+                Session["SmsId"] = dtCompany.Rows[0]["smsUserNm"];
+                Session["SmsPass"] = dtCompany.Rows[0]["smPass"];
+                Session["MailPass"] = dtCompany.Rows[0]["mailPass"];
+                Session["MailHost"] = dtCompany.Rows[0]["mailHost"];
+                Session["AdminWeb"] = dtCompany.Rows[0]["AdminWeb"];
+                Session["CompCST"] = dtCompany.Rows[0]["CompCSTNo"];
+                Session["CompState"] = dtCompany.Rows[0]["CompState"];
+                Session["CompDate"] = Convert.ToDateTime(dtCompany.Rows[0]["RecTimeStamp"]).ToString("dd-MMM-yyyy");
+                Session["Spons"] = "KL223344";
+                Session["CompWeb1"] = dtCompany.Rows[0]["WebSite"];
+                Session["CompMovieWeb"] = "";
+                Session["SmsAPI"] = "";
+                Session["CompShortUrl"] = dtCompany.Rows[0]["UrlShort"];
+                Session["LogoUrl"] = dtCompany.Rows[0]["LogoUrl"];
+            }
+            else
+            {
+                Session["CompName"] = "";
+                Session["CompAdd"] = "";
+                Session["CompWeb"] = "";
+                Session["Title"] = "Welcome";
+            }
+
+            DataTable dtConfig = new DataTable();
+            if (Application["dtConfig"] == null)
+            {
+                if (dbConnect.cnnObject == null)
+                {
+                    dbConnect.OpenConnection();
+                }
+                string strQ = objdal.Isostart + " select * from " + objdal.dBName + "..M_ConfigMaster " + objdal.IsoEnd;
+                DataSet ds = new DataSet();
+                SqlDataAdapter adp = new SqlDataAdapter(strQ, dbConnect.cnnObject);
+                adp.Fill(ds);
+                dtConfig = ds.Tables[0];
+                Application["dtConfig"] = dtConfig;
+            }
+            else
+            {
+                dtConfig = (DataTable)Application["dtConfig"];
+            }
+
+            if (dtConfig.Rows.Count > 0)
+            {
+                Session["IsGetExtreme"] = dtConfig.Rows[0]["IsGetExtreme"];
+                Session["IsTopUp"] = dtConfig.Rows[0]["IsTopUp"];
+                Session["IsSendSMS"] = dtConfig.Rows[0]["IsSendSMS"];
+                Session["IdNoPrefix"] = dtConfig.Rows[0]["IdNoPrefix"];
+                Session["IsFreeJoin"] = dtConfig.Rows[0]["IsFreeJoin"];
+                Session["IsStartJoin"] = dtConfig.Rows[0]["IsStartJoin"];
+                Session["JoinStartFrm"] = dtConfig.Rows[0]["JoinStartFrm"];
+                Session["IsSubPlan"] = dtConfig.Rows[0]["IsSubPlan"];
+                Session["Logout"] = dtConfig.Rows[0]["LogoutPg"];
+            }
+            else
+            {
+                Session["IsGetExtreme"] = "N";
+                Session["IsTopUp"] = "N";
+                Session["IsSendSMS"] = "N";
+                Session["IdNoPrefix"] = "";
+                Session["IsFreeJoin"] = "N";
+                Session["IsStartJoin"] = "N";
+                Session["JoinStartFrm"] = "01-Sep-2011";
+                Session["IsSubPlan"] = "N";
+                Session["Logout"] = "https://djiomart.com/";
             }
         }
         catch (Exception ex)
         {
-            ShowAlert(ex.Message);
+            // handle exception
+        }
+        DataTable dtMsession = new DataTable();
+        if (Application["dtMsession"] == null)
+        {
+            if (dbConnect.cnnObject == null)
+            {
+                dbConnect.OpenConnection();
+            }
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter();
+            string strQ = objdal.Isostart + " select Max(SEssid) as SessID from " + objdal.dBName + "..D_Monthlypaydetail  " + objdal.IsoEnd;
+            adp = new SqlDataAdapter(strQ, dbConnect.cnnObject);
+            adp.Fill(ds);
+            dtMsession = ds.Tables[0];
+            Application["dtMsession"] = dtMsession;
+        }
+        else
+        {
+            dtMsession = (DataTable)Application["dtMsession"];
+        }
+
+        if (dtMsession.Rows.Count > 0)
+        {
+            Session["MaxSessn"] = dtMsession.Rows[0]["SessID"];
+        }
+        else
+        {
+            Session["MaxSessn"] = "";
+        }
+
+        DataTable dtsession = new DataTable();
+        if (Application["dtsession"] == null)
+        {
+            if (dbConnect.cnnObject == null)
+            {
+                dbConnect.OpenConnection();
+            }
+            DataSet ds = new DataSet();
+            SqlDataAdapter adp = new SqlDataAdapter();
+            string strQ = objdal.Isostart + " select Max(SEssid) as SessID from " + objdal.dBName + "..m_SessnMaster  " + objdal.IsoEnd;
+            adp = new SqlDataAdapter(strQ, dbConnect.cnnObject);
+            adp.Fill(ds);
+
+            dtsession = ds.Tables[0];
+            Application["dtsession"] = dtsession;
+        }
+        else
+        {
+            dtsession = (DataTable)Application["dtsession"];
+        }
+
+        if (dtsession.Rows.Count > 0)
+        {
+            Session["CurrentSessn"] = dtsession.Rows[0]["SessID"];
+        }
+        else
+        {
+            Session["CurrentSessn"] = "";
+        }
+        if (dbConnect.cnnObject != null)
+        {
+            if (dbConnect.cnnObject.State == ConnectionState.Open)
+            {
+                dbConnect.cnnObject.Close();
+            }
+        }
+
+    }
+    private string ClearInject(string StrObj)
+    {
+        if (string.IsNullOrEmpty(StrObj)) return "";
+        StrObj = StrObj.Replace(";", "").Replace("'", "").Replace("=", "");
+        return StrObj.Trim();
+    }
+
+  
+    // =============================================
+    // FORGOT - STEP 1: VALIDATE USER + SEND EMAIL
+    // =============================================
+    protected void BtnForgotSubmit_Click(object sender, EventArgs e)
+    {
+        string fid = ClearInject(txtForgotID.Text.Trim());
+        string femail = txtForgotEmail.Text.Trim();
+
+        if (string.IsNullOrEmpty(fid) || string.IsNullOrEmpty(femail))
+        {
+            HdnForgotResult.Value = "Please fill in all fields.";
+            HdnForgotStep.Value = "1";
+            return;
+        }
+
+        try
+        {
+            string sql = obj.Isostart + " Exec Sp_MemberForgotPassw '" + fid + "'" + obj.IsoEnd;
+            DataTable dt = SqlHelper.ExecuteDataset(constr1, CommandType.Text, sql).Tables[0];
+
+            if (dt.Rows.Count == 0)
+            {
+                HdnForgotResult.Value = "User ID not found. Please check.";
+                HdnForgotStep.Value = "1";
+                return;
+            }
+
+            string dbEmail = dt.Rows[0]["Email"].ToString();
+            if (!femail.Equals(dbEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                HdnForgotResult.Value = "Email ID does not match our records.";
+                HdnForgotStep.Value = "1";
+                return;
+            }
+
+            Session["ForgotUID"] = dt.Rows[0]["Idno"].ToString();
+            Session["ForgotPassw"] = dt.Rows[0]["Passw"].ToString();
+            Session["ForgotEPassw"] = dt.Rows[0]["EPassw"].ToString();
+            Session["ForgotMemName"] = dt.Rows[0]["MemName"].ToString();
+            Session["ForgotEmail"] = dbEmail;
+            Session["CompMail"] = dt.Rows[0]["CompMail"];
+            Session["MailPass"] = dt.Rows[0]["mailPass"];
+            Session["MailHost"] = dt.Rows[0]["mailHost"];
+            Session["CompName"] = dt.Rows[0]["CompName"];
+            Session["CompWeb"] = dt.Rows[0]["WebSite"];
+
+            string otp = GenerateOTP();
+            Session["ForgotOTP"] = otp;
+            Session["ForgotOTPExpiry"] = DateTime.Now.AddMinutes(10);
+
+            SendForgotOTPMail(dbEmail, dt.Rows[0]["MemName"].ToString(), otp);
+
+            HdnForgotResult.Value = "OK";
+            HdnForgotStep.Value = "1";
+        }
+        catch (Exception ex)
+        {
+            HdnForgotResult.Value = "Error: " + ex.Message;
+            HdnForgotStep.Value = "1";
         }
     }
 
-    // ──────────────────────────────────────────────────────────────────
-    // EMAIL 1 – Forgot Password OTP / Credentials Email
-    // ──────────────────────────────────────────────────────────────────
-    public bool SendForgotPasswordEmail(
-        string IdNo, string Email, string MemberName,
-        string Password, string EPassword, string CompName, string Website)
+    // =============================================
+    // FORGOT - STEP 2: VERIFY OTP + SEND PASSWORD
+    // =============================================
+    protected void BtnForgotVerifyOTP_Click(object sender, EventArgs e)
     {
+        string entered = HdnForgotOTP.Value.Trim();
+        string stored = Session["ForgotOTP"] != null ? Session["ForgotOTP"].ToString() : "";
+        DateTime expiry = Session["ForgotOTPExpiry"] != null ? Convert.ToDateTime(Session["ForgotOTPExpiry"]) : DateTime.MinValue;
+
+        if (string.IsNullOrEmpty(entered) || entered.Length != 6)
+        {
+            HdnForgotResult.Value = "Please enter the complete 6-digit OTP.";
+            HdnForgotStep.Value = "2";
+            return;
+        }
+
+        if (DateTime.Now > expiry)
+        {
+            HdnForgotResult.Value = "OTP has expired. Please request a new one.";
+            HdnForgotStep.Value = "2";
+            return;
+        }
+
+        if (entered != stored)
+        {
+            HdnForgotResult.Value = "Invalid OTP. Please check and try again.";
+            HdnForgotStep.Value = "2";
+            return;
+        }
+
         try
         {
-            string subject = "Password Reset – " + CompName;
+            string fuid = Session["ForgotUID"] != null ? Session["ForgotUID"].ToString() : "";
+            string fname = Session["ForgotMemName"] != null ? Session["ForgotMemName"].ToString() : "";
+            string femail = Session["ForgotEmail"] != null ? Session["ForgotEmail"].ToString() : "";
 
-            string body = @"
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-<meta charset='UTF-8'/>
-<meta name='viewport' content='width=device-width,initial-scale=1.0'/>
-<title>Forgot Password</title>
-<style>
-  body{margin:0;padding:0;background:#0f172a;font-family:'Segoe UI',Arial,sans-serif;}
-  .wrap{max-width:560px;margin:40px auto;background:#1e293b;border-radius:16px;overflow:hidden;border:1px solid rgba(99,179,237,0.15);}
-  .header{background:linear-gradient(135deg,#0ea5e9,#6366f1);padding:36px 32px;text-align:center;}
-  .logo{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
-  .logo span{opacity:0.7;}
-  .tagline{font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px;letter-spacing:2px;text-transform:uppercase;}
-  .body{padding:36px 32px;}
-  .greeting{font-size:18px;font-weight:700;color:#e2e8f0;margin-bottom:12px;}
-  .text{font-size:14px;color:#94a3b8;line-height:1.7;margin-bottom:24px;}
-  .cred-card{background:#0f172a;border:1px solid rgba(99,179,237,0.2);border-radius:12px;padding:20px 24px;margin-bottom:24px;}
-  .cred-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(99,179,237,0.08);}
-  .cred-row:last-child{border-bottom:none;}
-  .cred-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
-  .cred-value{font-size:14px;color:#38bdf8;font-family:'Courier New',monospace;font-weight:700;}
-  .alert-box{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:14px 18px;font-size:13px;color:#fbbf24;margin-bottom:24px;}
-  .btn{display:inline-block;background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:0.3px;}
-  .footer{background:#0f172a;padding:20px 32px;text-align:center;font-size:11px;color:#475569;border-top:1px solid rgba(99,179,237,0.1);}
-  .footer a{color:#38bdf8;text-decoration:none;}
-  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(99,179,237,0.15),transparent);margin:0 0 24px;}
-</style>
-</head>
-<body>
-<div class='wrap'>
-  <div class='header'>
-    <div class='logo'>⚡ " + CompName + @"</div>
-    <div class='tagline'>Secure Digital Payments</div>
-  </div>
-  <div class='body'>
-    <p class='greeting'>Dear " + MemberName + @",</p>
-    <p class='text'>We received a request to retrieve your account credentials. Your login details are provided below. Please keep this information confidential and do not share it with anyone.</p>
-    <div class='cred-card'>
-      <div class='cred-row'>
-        <span class='cred-label'>User ID</span>
-        <span class='cred-value'>" + IdNo + @"</span>
-      </div>
-      <div class='cred-row'>
-        <span class='cred-label'>Login Password</span>
-        <span class='cred-value'>" + Password + @"</span>
-      </div>
-      <div class='cred-row'>
-        <span class='cred-label'>Transaction Password</span>
-        <span class='cred-value'>" + EPassword + @"</span>
-      </div>
-    </div>
-    <div class='alert-box'>
-      ⚠ If you did not request this password reset, please contact our support team immediately and change your password.
-    </div>
-    <div class='divider'></div>
-    <div style='text-align:center;margin-bottom:24px;'>
-      <a href='" + Website + @"' class='btn'>Login to Portal →</a>
-    </div>
-    <p style='font-size:12px;color:#475569;text-align:center;'>Trouble clicking? Copy this link:<br/><a href='" + Website + @"' style='color:#38bdf8;'>" + Website + @"</a></p>
-  </div>
-  <div class='footer'>
-    © " + DateTime.Now.Year + " <a href='" + Website + @"'>" + CompName + @"</a> · All rights reserved.<br/>
-    This is an automated message. Please do not reply directly to this email.
-  </div>
-</div>
-</body>
-</html>";
+            string password = GenerateSecurePassword();
+            string strQry = "Update M_MemberMaster Set Passw = '" + password + "',E_MainPassw='" + password + "',epassw = '" + password + "' Where idno = '" + txtForgotID.Text.Trim() + "';";
+            int i = obj.SaveData(strQry);
 
-            return DispatchEmail(Email, subject, body);
+            SendResetConfirmationEmail(femail, fname, fuid, password, password);
+
+            foreach (string k in new[] { "ForgotUID", "ForgotPassw", "ForgotEPassw", "ForgotMemName", "ForgotEmail", "ForgotOTP", "ForgotOTPExpiry" })
+                Session.Remove(k);
+
+            HdnForgotResult.Value = "OK";
+            HdnForgotStep.Value = "2";
         }
-        catch { return false; }
+        catch (Exception ex)
+        {
+            HdnForgotResult.Value = "Error sending email: " + ex.Message;
+            HdnForgotStep.Value = "2";
+        }
     }
 
-    // ──────────────────────────────────────────────────────────────────
-    // EMAIL 2 – Password Reset Confirmation
-    // ──────────────────────────────────────────────────────────────────
-    public bool SendResetConfirmationEmail(string Email, string MemberName, string CompName, string Website)
+    // =============================================
+    // GENERATE SECURE RANDOM PASSWORD
+    // =============================================
+    public static string GenerateSecurePassword(int length = 12)
     {
-        try
-        {
-            string subject = "Your Password Has Been Successfully Updated – " + CompName;
-            string resetTime = DateTime.Now.ToString("dd MMM yyyy, hh:mm tt");
+        const string validChars =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
 
-            string body = @"
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-<meta charset='UTF-8'/>
-<meta name='viewport' content='width=device-width,initial-scale=1.0'/>
-<title>Password Reset Confirmation</title>
+        char[] password = new char[length];
+
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            byte[] data = new byte[length];
+            rng.GetBytes(data);
+
+            for (int i = 0; i < length; i++)
+            {
+                password[i] = validChars[data[i] % validChars.Length];
+            }
+        }
+
+        return new string(password);
+    }
+
+    // =============================================
+    // FORGOT OTP EMAIL (Orange Theme)
+    // =============================================
+    private void SendForgotOTPMail(string toEmail, string memberName, string otp)
+    {
+        string compName = Session["CompName"] != null ? Session["CompName"].ToString() : "ePay Digital";
+        string subject = "Password Reset OTP - " + compName;
+        string body = @"
+<!DOCTYPE html><html><head><meta charset='utf-8'>
 <style>
-  body{margin:0;padding:0;background:#0f172a;font-family:'Segoe UI',Arial,sans-serif;}
-  .wrap{max-width:560px;margin:40px auto;background:#1e293b;border-radius:16px;overflow:hidden;border:1px solid rgba(52,211,153,0.15);}
-  .header{background:linear-gradient(135deg,#059669,#0ea5e9);padding:36px 32px;text-align:center;}
-  .logo{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
-  .tagline{font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px;letter-spacing:2px;text-transform:uppercase;}
-  .success-icon{width:64px;height:64px;background:rgba(52,211,153,0.15);border:2px solid rgba(52,211,153,0.4);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;line-height:64px;text-align:center;}
-  .body{padding:36px 32px;}
-  .greeting{font-size:18px;font-weight:700;color:#e2e8f0;margin-bottom:12px;}
-  .text{font-size:14px;color:#94a3b8;line-height:1.7;margin-bottom:24px;}
-  .info-card{background:#0f172a;border:1px solid rgba(52,211,153,0.15);border-radius:12px;padding:20px 24px;margin-bottom:24px;}
-  .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(52,211,153,0.08);}
-  .info-row:last-child{border-bottom:none;}
-  .info-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
-  .info-value{font-size:13px;color:#34d399;font-family:'Courier New',monospace;font-weight:600;}
-  .alert-box{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:10px;padding:14px 18px;font-size:13px;color:#f87171;margin-bottom:24px;}
-  .btn{display:inline-block;background:linear-gradient(135deg,#059669,#0ea5e9);color:#fff!important;text-decoration:none;padding:14px 32px;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:0.3px;}
-  .footer{background:#0f172a;padding:20px 32px;text-align:center;font-size:11px;color:#475569;border-top:1px solid rgba(52,211,153,0.1);}
-  .footer a{color:#34d399;text-decoration:none;}
-  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(52,211,153,0.15),transparent);margin:0 0 24px;}
-  .badge{display:inline-block;background:rgba(52,211,153,0.1);color:#34d399;border:1px solid rgba(52,211,153,0.3);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;}
-</style>
-</head>
-<body>
-<div class='wrap'>
-  <div class='header'>
-    <div style='text-align:center;'>
-      <div style='font-size:40px;margin-bottom:8px;'>✓</div>
-      <div class='logo'>⚡ " + CompName + @"</div>
-      <div class='tagline'>Account Security</div>
+  body{margin:0;padding:0;background:#f4f6fb;font-family:Arial,sans-serif}
+  .outer{width:100%;background:#f4f6fb;padding:32px 16px}
+  .card{width:520px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
+  .hdr{background:linear-gradient(135deg,#f97316,#e84000);padding:28px 32px}
+  .hdr h2{margin:0;font-size:20px;color:#fff;font-weight:700}
+  .hdr p{margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.7)}
+  .bdy{padding:28px 32px}
+  .greeting{font-size:15px;color:#1e293b;font-weight:600;margin-bottom:12px}
+  .txt{font-size:13px;color:#475569;line-height:1.7;margin-bottom:20px}
+  .otp-box{background:#fff4ef;border:1px solid #ffd4c2;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px}
+  .otp-lbl{font-size:11px;color:#e84000;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+  .otp-code{font-size:40px;font-weight:800;letter-spacing:14px;color:#e84000;font-family:'Courier New',monospace}
+  .otp-valid{font-size:12px;color:#64748b;margin-top:10px}
+  .warn{background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400e;margin-bottom:0}
+  .ftr{background:#f8fafc;border-top:1px solid #e2e8f0;padding:18px 32px;font-size:12px;color:#94a3b8;text-align:center}
+</style></head><body>
+<div class='outer'><div class='card'>
+  <div class='hdr'><h2>Password Reset OTP</h2><p>" + compName + @"</p></div>
+  <div class='bdy'>
+    <p class='greeting'>Dear " + memberName + @",</p>
+    <p class='txt'>We received a request to reset your account password. Use the OTP below to proceed.</p>
+    <div class='otp-box'>
+      <p class='otp-lbl'>Your One-Time Password</p>
+      <p class='otp-code'>" + otp + @"</p>
+      <p class='otp-valid'>Valid for: <b>10 Minutes</b></p>
     </div>
+    <div class='warn'>WARNING: If you did not request this, please ignore this email or contact support immediately.</div>
   </div>
-  <div class='body'>
-    <span class='badge'>✓ Password Updated</span>
-    <p class='greeting'>Dear " + MemberName + @",</p>
-    <p class='text'>Your account password has been <strong style='color:#34d399;'>successfully changed</strong>. This is a confirmation that the password reset process was completed on your account.</p>
+  <div class='ftr'>&copy; " + DateTime.Now.Year + @" " + compName + @" &middot; Automated Security Alert</div>
+</div></div>
+</body></html>";
+        DispatchMail(toEmail, subject, body);
+    }
+
+    // =============================================
+    // PASSWORD RESET CONFIRMATION EMAIL
+    // =============================================
+    private void SendResetConfirmationEmail(string email, string name, string idNo, string pass, string epass)
+    {
+        string compName = Session["CompName"] != null ? Session["CompName"].ToString() : "ePay Digital";
+        string website = Session["CompWeb"] != null ? Session["CompWeb"].ToString() : "#";
+        string subject = "Your Password Has Been Successfully Updated - " + compName;
+        string resetTime = DateTime.Now.ToString("dd MMM yyyy, hh:mm tt");
+        string body = @"
+<!DOCTYPE html><html><head><meta charset='utf-8'>
+<style>
+  body{margin:0;padding:0;background:#f4f6fb;font-family:Arial,sans-serif}
+  .outer{width:100%;background:#f4f6fb;padding:32px 16px}
+  .card{width:520px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
+  .hdr{background:linear-gradient(135deg,#166534,#16a34a);padding:28px 32px;text-align:center}
+  .hdr h2{margin:0;font-size:18px;color:#fff;font-weight:700}
+  .hdr p{margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.65)}
+  .bdy{padding:28px 32px}
+  .badge{display:inline-block;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
+  .greeting{font-size:15px;font-weight:600;color:#1e293b;margin-bottom:12px}
+  .txt{font-size:13px;color:#475569;line-height:1.7;margin-bottom:20px}
+  .info-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:20px}
+  .info-row{display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid #f1f5f9}
+  .info-row:last-child{border-bottom:none}
+  .info-lbl{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;min-width:160px}
+  .info-val{font-size:13px;font-weight:600;color:#1e293b;text-align:right;flex:1}
+  .info-val.green{color:#16a34a}
+  .warn{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;font-size:13px;color:#b91c1c;margin-bottom:0}
+  .ftr{background:#f8fafc;border-top:1px solid #e2e8f0;padding:18px 32px;font-size:12px;color:#94a3b8;text-align:center}
+  .ftr a{color:#e84000;text-decoration:none}
+</style></head><body>
+<div class='outer'><div class='card'>
+  <div class='hdr'><h2>Password Updated Successfully</h2><p>" + compName + @"</p></div>
+  <div class='bdy'>
+    <span class='badge'>Confirmed</span>
+    <p class='greeting'>Dear " + name + @",</p>
+    <p class='txt'>Your account password has been <strong>successfully changed</strong>. Here are the details of this action:</p>
     <div class='info-card'>
       <div class='info-row'>
-        <span class='info-label'>Account</span>
-        <span class='info-value'>" + MemberName + @"</span>
+        <span class='info-lbl'>Account</span>
+        <span class='info-val'>" + name + @"</span>
       </div>
       <div class='info-row'>
-        <span class='info-label'>Action</span>
-        <span class='info-value'>Password Reset</span>
+        <span class='info-lbl'>Action</span>
+        <span class='info-val'>Password Reset</span>
       </div>
       <div class='info-row'>
-        <span class='info-label'>Date &amp; Time</span>
-        <span class='info-value'>" + resetTime + @"</span>
+        <span class='info-lbl'>User ID</span>
+        <span class='info-val'>" + idNo + @"</span>
       </div>
       <div class='info-row'>
-        <span class='info-label'>Status</span>
-        <span class='info-value' style='color:#34d399;'>✓ Successful</span>
+        <span class='info-lbl'>Login Password</span>
+        <span class='info-val'>" + pass + @"</span>
+      </div>
+      <div class='info-row'>
+        <span class='info-lbl'>Trans. Password</span>
+        <span class='info-val'>" + epass + @"</span>
+      </div>
+      <div class='info-row'>
+        <span class='info-lbl'>Date &amp; Time</span>
+        <span class='info-val'>" + resetTime + @"</span>
+      </div>
+      <div class='info-row' style='border-bottom:none;'>
+        <span class='info-lbl'>Status</span>
+        <span class='info-val green'>Successful</span>
       </div>
     </div>
-    <div class='alert-box'>
-      🔒 If you did not perform this action, please <strong>reset your password immediately</strong> and contact our support team. Your account security is our highest priority.
-    </div>
-    <div class='divider'></div>
-    <div style='text-align:center;margin-bottom:24px;'>
-      <a href='" + Website + @"' class='btn'>Go to Portal →</a>
-    </div>
+    <div class='warn'>If you did not perform this action, please reset your password immediately and contact our support team.</div>
   </div>
-  <div class='footer'>
-    © " + DateTime.Now.Year + " <strong><a href='" + Website + @"'>" + CompName + @"</a> Security Team</strong><br/>
-    This is an automated security notification. Please do not reply to this email.
-  </div>
-</div>
-</body>
-</html>";
-
-            return DispatchEmail(Email, subject, body);
-        }
-        catch { return false; }
+  <div class='ftr'>&copy; " + DateTime.Now.Year + @" <a href='" + website + @"'>" + compName + @" Security Team</a></div>
+</div></div>
+</body></html>";
+        DispatchMail(email, subject, body);
     }
 
-    // ──────────────────────────────────────────────────────────────────
-    // Shared SMTP dispatcher
-    // ──────────────────────────────────────────────────────────────────
-    private bool DispatchEmail(string toAddress, string subject, string htmlBody)
+    // =============================================
+    // SHARED SMTP DISPATCHER
+    // =============================================
+    private void DispatchMail(string toAddress, string subject, string htmlBody)
     {
-        try
+        var msg = new MailMessage(
+            new MailAddress(Session["CompMail"].ToString()),
+            new MailAddress(toAddress))
         {
-            var from = new MailAddress(Session["CompMail"].ToString());
-            var to = new MailAddress(toAddress);
-            var msg = new MailMessage(from, to)
-            {
-                Subject = subject,
-                Body = htmlBody,
-                IsBodyHtml = true
-            };
-
-            var smtp = new SmtpClient(Session["MailHost"].ToString())
-            {
-                Port = 587,
-                EnableSsl = false,
-                UseDefaultCredentials = false,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Credentials = new System.Net.NetworkCredential(
-                    Session["CompMail"].ToString(),
-                    Session["MailPass"].ToString()
-                )
-            };
-
-            smtp.Send(msg);
-            return true;
-        }
-        catch
+            Subject = subject,
+            Body = htmlBody,
+            IsBodyHtml = true
+        };
+        var smtp = new SmtpClient(Session["MailHost"].ToString())
         {
-            return false;
-        }
+            Port = 587,
+            EnableSsl = true,
+            UseDefaultCredentials = false,
+            DeliveryMethod = SmtpDeliveryMethod.Network,
+            Credentials = new System.Net.NetworkCredential(
+                Session["CompMail"].ToString(),
+                Session["MailPass"].ToString())
+        };
+        smtp.Send(msg);
     }
 
-    private void ShowAlert(string message)
+    // =============================================
+    // GENERATE 6-DIGIT OTP
+    // =============================================
+    private string GenerateOTP()
     {
-        ScriptManager.RegisterStartupScript(
-            this, GetType(), "alertMessage",
-            "alert('" + message.Replace("'", "\\'") + "')", true);
+        return new Random().Next(100000, 999999).ToString();
     }
-
-    protected void Page_LoadComplete(object sender, EventArgs e) { }
-    protected void Page_Unload(object sender, EventArgs e) { }
 }
+
+

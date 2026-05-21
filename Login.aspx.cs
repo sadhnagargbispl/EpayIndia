@@ -92,7 +92,7 @@ public partial class Login : System.Web.UI.Page
                 }
                 if (!string.IsNullOrEmpty(uid) && !string.IsNullOrEmpty(Pwd))
                 {
-                    enterHomePgForAdmin();
+                    enterHomePg();
                 }
             }
         }

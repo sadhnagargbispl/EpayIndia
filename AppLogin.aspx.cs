@@ -93,7 +93,7 @@ public partial class AppLogin : System.Web.UI.Page
 
                 {
 
-                    enterHomePgForAdmin();
+                    enterHomePg();
                 }
             }
         }

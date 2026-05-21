@@ -20,22 +20,124 @@ public partial class PaymentGatewayPurchase : System.Web.UI.Page
     {
         try
         {
-            if (Request["requestedId"] != null)
-            {
-                string sRequestData = HttpContext.Current.Request.Url.ToString();
-                GenerateQrCode(Request["requestedId"]);
-            }
-            else
-            {
-                Response.Redirect("AppLogin.aspx", false);
-            }
-        }
-        catch (Exception)
-        {
-            Response.Write("{\"response\":\"FAILED\"}");
-        }
+            string folderPath = Server.MapPath("~/Logs");
 
+            // Folder create if not exists
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // Current page name
+            string pageName = Path.GetFileNameWithoutExtension(Request.PhysicalPath);
+
+            // Log file according to page name
+            string logPath = Path.Combine(folderPath, pageName + ".txt");
+
+            using (StreamWriter sw = new StreamWriter(logPath, true))
+            {
+                sw.WriteLine("=================================================");
+                sw.WriteLine("DATE : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+
+                sw.WriteLine("PAGE NAME : " + pageName);
+
+                sw.WriteLine("URL : " + Request.Url.ToString());
+
+                sw.WriteLine("HTTP METHOD : " + Request.HttpMethod);
+
+                sw.WriteLine("requestedId : " + Convert.ToString(Request["requestedId"]));
+
+                sw.WriteLine("QUERY STRING");
+
+                foreach (string key in Request.QueryString.AllKeys)
+                {
+                    sw.WriteLine(key + " = " + Request.QueryString[key]);
+                }
+
+                sw.WriteLine("FORM DATA");
+
+                foreach (string key in Request.Form.AllKeys)
+                {
+                    sw.WriteLine(key + " = " + Request.Form[key]);
+                }
+
+                sw.WriteLine("RAW BODY");
+
+                Request.InputStream.Position = 0;
+
+                using (StreamReader reader = new StreamReader(Request.InputStream))
+                {
+                    string body = reader.ReadToEnd();
+                    sw.WriteLine(body);
+                }
+
+                sw.WriteLine("=================================================");
+                sw.WriteLine();
+            }
+
+            if (!IsPostBack)
+            {
+                if (!string.IsNullOrWhiteSpace(Convert.ToString(Request["requestedId"])))
+                {
+                    GenerateQrCode(Request["requestedId"].ToString());
+                }
+                else
+                {
+                    Response.Write("requestedId missing");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                string folderPath = Server.MapPath("~/Logs");
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                string pageName = Path.GetFileNameWithoutExtension(Request.PhysicalPath);
+
+                string errorPath = Path.Combine(folderPath, pageName + "_Error.txt");
+
+                using (StreamWriter sw = new StreamWriter(errorPath, true))
+                {
+                    sw.WriteLine("=================================================");
+                    sw.WriteLine("DATE : " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"));
+                    sw.WriteLine("PAGE NAME : " + pageName);
+                    sw.WriteLine("ERROR : " + ex.Message);
+                    sw.WriteLine("STACK : " + ex.StackTrace);
+                    sw.WriteLine("=================================================");
+                    sw.WriteLine();
+                }
+            }
+            catch
+            {
+            }
+        }
     }
+    //protected void Page_Load(object sender, EventArgs e)
+    //{
+    //    try
+    //    {
+    //        if (Request["requestedId"] != null)
+    //        {
+    //            string sRequestData = HttpContext.Current.Request.Url.ToString();
+    //            GenerateQrCode(Request["requestedId"]);
+    //        }
+    //        else
+    //        {
+    //            Response.Redirect("AppLogin.aspx", false);
+    //        }
+    //    }
+    //    catch (Exception)
+    //    {
+    //        Response.Write("{\"response\":\"FAILED\"}");
+    //    }
+
+    //}
     public string GenerateQrCode(string Orderid)
     {
         string str = string.Empty;
@@ -88,7 +190,7 @@ public partial class PaymentGatewayPurchase : System.Web.UI.Page
 
             string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str +
                              "' WHERE ReqID = '" + sResult +
-                             "' AND Req_From = 'AppPaymentProcessLoginLogin'";
+                             "' AND Req_From = 'AppLoginClaimLogin'";
 
             int x_res = SqlHelper.ExecuteNonQuery(
                 constr,
@@ -106,7 +208,7 @@ public partial class PaymentGatewayPurchase : System.Web.UI.Page
         {
             string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" +
                              ex.Message + "' WHERE ReqID = '" + sResult +
-                             "' AND Req_From = 'AppPaymentProcessLoginLogin'";
+                             "' AND Req_From = 'AppLoginClaimLogin'";
 
             SqlHelper.ExecuteNonQuery(
                 constr,

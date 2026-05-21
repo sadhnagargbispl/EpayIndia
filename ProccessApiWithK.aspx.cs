@@ -33,7 +33,9 @@ public partial class ProccessApiWithK : System.Web.UI.Page
     SqlDataAdapter Adp;
     DataSet Ds;
     SqlDataReader Dr;
-
+    private static readonly TripleDESCryptoServiceProvider DES = new TripleDESCryptoServiceProvider();
+    private static readonly MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
+    private static readonly string key = "sg75b79-nj48dh02";
     // Miscellaneous
     string _NewID = DateTime.Now.ToString("yyyyMMddHHmmssfff");
     Random Rnd = new Random();
@@ -295,6 +297,32 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                 string _ReqPassw = ClearInject(dict["passwd"]);
                 string Result_Json = checklogin(_ReqUser, _ReqPassw);
                 string sql_res = "UPDATE Tbl_ApiRequest_ResponseQrCode SET Response = '" + Result_Json.Trim() + "',ForType = 'reqlogin' WHERE ReqID = '" + sResult.Trim() + "'";
+                int x_res = Convert.ToInt32(SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res));
+                Result_Json = Result_Json.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
+                Response.Clear();
+                Response.ContentType = "application/json";
+                Response.Write(Result_Json);
+            }
+            else if (_ReqType == "checksponsor")
+            {
+                string _ReqMobileNo = "";
+                try
+                {
+                    _ReqMobileNo = ClearInject(dict["userid"]);
+                }
+                catch (Exception) { }
+
+                string _ReqOtpCode = "";
+                try
+                {
+                    _ReqOtpCode = ClearInject(dict["passwd"]);
+                }
+                catch (Exception) { }
+
+                string _ReqSponsor = ClearInject(dict["sponsorid"]);
+
+                string Result_Json = CheckSponsor(_ReqMobileNo, _ReqOtpCode, _ReqSponsor);
+                string sql_res = "UPDATE Tbl_ApiRequest_ResponseQrCode SET Response = '" + Result_Json.Trim() + "',ForType = 'checksponsor' WHERE ReqID = '" + sResult.Trim() + "'";
                 int x_res = Convert.ToInt32(SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res));
                 Result_Json = Result_Json.Replace(Environment.NewLine, "").Replace("\n", "").Replace("\r", "");
                 Response.Clear();
@@ -1233,9 +1261,9 @@ public partial class ProccessApiWithK : System.Web.UI.Page
 
         // Checking Referral ID
         Comm = new SqlCommand(
-                ObjDAL.Isostart + "Select FormNo, MemFirstName + ' ' + MemLastName as MemName from " + ObjDAL.dBName + "..M_MemberMaster " +
-                 "where Idno='" + Referral + "' AND( Formno in (Select distinct FormnoDwn FROM " + ObjDAL.dBName + "..R_MemTreeRelation) " +
-                 "Or Formno in(select distinct formno from " + ObjDAL.dBName + "..R_memtreeRelation))" + ObjDAL.IsoEnd,
+                IsoStart +
+                        "Select FormNo, MemFirstName + ' ' + MemLastName as MemName, ActiveStatus " +
+                        "from " + ObjDAL.dBName + "..M_MemberMaster where Idno='" + Referral + "'" + IsoEnd,
                  selectConn);
         Dread = Comm.ExecuteReader();
 
@@ -1244,7 +1272,6 @@ public partial class ProccessApiWithK : System.Web.UI.Page
             Dread.Close();
             return "Invalid Referral ID.";
         }
-
         _RefFormNo = Dread["FormNo"].ToString();
         Dread.Close();
         Comm.Cancel();
@@ -1286,49 +1313,49 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                 Comm.Cancel();
 
                 // Validate Side availability
-                Comm = new SqlCommand(
-                    ObjDAL.Isostart + "SELECT COUNT(*) AS CNT From " + ObjDAL.dBName + "..M_MemberMaster WHERE UpLnFormNo in " +
-                    "(Select FormNo From " + ObjDAL.dBName + "..M_MemberMaster Where IDNo='" + Sponsor + "') And Legno = " + Side + ObjDAL.IsoEnd,
-                    selectConn);
+                //Comm = new SqlCommand(
+                //    ObjDAL.Isostart + "SELECT COUNT(*) AS CNT From " + ObjDAL.dBName + "..M_MemberMaster WHERE UpLnFormNo in " +
+                //    "(Select FormNo From " + ObjDAL.dBName + "..M_MemberMaster Where IDNo='" + Sponsor + "') And Legno = " + Side + ObjDAL.IsoEnd,
+                //    selectConn);
 
-                Dread = Comm.ExecuteReader();
+                //Dread = Comm.ExecuteReader();
 
-                if (!Dread.Read())
-                {
-                    Dread.Close();
-                    return "Selected Side Not Available.";
-                }
-                else
-                {
-                    if (Convert.ToInt32(Dread["CNT"]) >= 1)
-                    {
-                        Dread.Close();
-                        return "Selected Side Not Available.";
-                    }
-                }
+                //if (!Dread.Read())
+                //{
+                //    Dread.Close();
+                //    return "Selected Side Not Available.";
+                //}
+                //else
+                //{
+                //    if (Convert.ToInt32(Dread["CNT"]) >= 1)
+                //    {
+                //        Dread.Close();
+                //        return "Selected Side Not Available.";
+                //    }
+                //}
 
-                Dread.Close();
-                Comm.Cancel();
+                //Dread.Close();
+                //Comm.Cancel();
 
                 // Check if Sponsor is in Referral Downline
-                if (_RefFormNo != _UpLnFormNo)
-                {
-                    Comm = new SqlCommand(
-                        ObjDAL.Isostart  + "Select * from " + ObjDAL.dBName + "..R_MemTreeRelation where FormNo=" + _RefFormNo +
-                        " And FormNoDwn=" + _UpLnFormNo + ObjDAL.IsoEnd,
-                        selectConn);
+                //if (_RefFormNo != _UpLnFormNo)
+                //{
+                //    Comm = new SqlCommand(
+                //        ObjDAL.Isostart  + "Select * from " + ObjDAL.dBName + "..R_MemTreeRelation where FormNo=" + _RefFormNo +
+                //        " And FormNoDwn=" + _UpLnFormNo + ObjDAL.IsoEnd,
+                //        selectConn);
 
-                    Dread = Comm.ExecuteReader();
+                //    Dread = Comm.ExecuteReader();
 
-                    if (!Dread.Read())
-                    {
-                        Dread.Close();
-                        return "Sponsor does not exist in referral downline.";
-                    }
+                //    if (!Dread.Read())
+                //    {
+                //        Dread.Close();
+                //        return "Sponsor does not exist in referral downline.";
+                //    }
 
-                    Dread.Close();
-                    Comm.Cancel();
-                }
+                //    Dread.Close();
+                //    Comm.Cancel();
+                //}
             }
         }
 
@@ -1442,6 +1469,85 @@ public partial class ProccessApiWithK : System.Web.UI.Page
 
         return retVal.ToString();
     }
+    private string checkMobileNo(string MobileNo)
+    {
+        string sql = "";
+        string _Output = "";
+        string errType = "";
+
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(MobileNo))
+            {
+                sql = ObjDAL.Isostart + "SELECT COUNT(*) Cnt FROM " + ObjDAL.dBName + "..M_Membermaster WHERE Mobl='" + MobileNo + "'" + ObjDAL.IsoEnd;
+
+                DataTable Dt = new DataTable();
+                Dt = SqlHelper.ExecuteDataset(selectConn, CommandType.Text, sql).Tables[0];
+                if (Dt.Rows.Count > 0)
+                {
+                    if (Convert.ToInt32(Dt.Rows[0]["Cnt"]) >= 1)
+                    {
+                        errType = "Mobile Number";
+                        _Output = "Faild";
+                    }
+                    else
+                    {
+                        _Output = "Ok";
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // log exception if needed
+        }
+
+        return _Output;
+    }
+    private string checkEmailID(string EmailID)
+    {
+        string sql = "";
+        string _Output = "";
+        string errType = "";
+
+        try
+        {
+            if (EmailID == null)
+            {
+                _Output = "Ok";
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(EmailID))
+                {
+                    sql = ObjDAL.Isostart + "SELECT COUNT(*) Cnt FROM " + ObjDAL.dBName + "..M_Membermaster WHERE Email='" + EmailID + "'" + ObjDAL.IsoEnd; ;
+                    Comm = new SqlCommand(sql, selectConn);
+                    Dr = Comm.ExecuteReader();
+
+                    if (Dr.Read())
+                    {
+                        if (Convert.ToInt32(Dr["Cnt"]) >= 1)
+                        {
+                            errType = "Email ID";
+                            _Output = "Faild";
+                        }
+                        else
+                        {
+                            _Output = "Ok";
+                        }
+                    }
+
+                    Dr.Close();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // log error if required
+        }
+
+        return _Output;
+    }
     public string Register(Dictionary<string, string> dict)
     {
         string _Output = "";
@@ -1473,9 +1579,19 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                     _Output = "{\"response\":\"FAILED\",\"msg\":\"Please Enter Mobile No.\"}";
                     return _Output;
                 }
+                if (checkMobileNo(dict["mobl"]) != "Ok")
+                {
+                    _Output = "{\"response\":\"FAILED\",\"msg\":\"Your Mobile No. already registered on another Ids.\"}";
+                    return _Output;
+                }
                 if (dict["email"] == "")
                 {
                     _Output = "{\"response\":\"FAILED\",\"msg\":\"Please Enter Email ID.\"}";
+                    return _Output;
+                }
+                if (checkEmailID(dict["email"]) != "Ok")
+                {
+                    _Output = "{\"response\":\"FAILED\",\"msg\":\"Your Email ID already registered on another Ids.\"}";
                     return _Output;
                 }
                 if (dict["countrycode"] == "0")
@@ -1483,6 +1599,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                     _Output = "{\"response\":\"FAILED\",\"msg\":\"Please select Country.\"}";
                     return _Output;
                 }
+
                 if (!string.IsNullOrWhiteSpace(dict["referralid"]))
                 {
                     _Response = Validate_(dict["referralid"], dict["referralid"], "1", "");
@@ -1493,7 +1610,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                 }
                 if (_Response == "OK")
                 {
-                   
+
                     Bv = 0; Rp = 0; Category = "Registration"; KitID = 1; JoinStatus = "N";
                     if (_Response == "OK")
                     {
@@ -1564,7 +1681,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                         string membername = "", Mobl = "", LastInsertid = "", Password = "", lastformno = "", sponsorName = "", sponsorMobl = "";
                         if (i != 0)
                         {
-                            Comm = new SqlCommand(IsoStart + "SELECT TOP 1 a.Mid,a.DSessid, a.IDNO,a.formno,b.IsBill,a.Passw,a.MemFirstname,a.MemlastName,a.Email,a.Mobl," +
+                            Comm = new SqlCommand(IsoStart + "SELECT TOP 1 a.Mid,a.DSessid, a.epassw,a.IDNO,a.formno,b.IsBill,a.Passw,a.MemFirstname,a.MemlastName,a.Email,a.Mobl," +
                                                   " (c.MemFirstName+''+c.MemLastName) as SponsorName,c.Mobl as SponsorMobl " +
                                                   " FROM " + ObjDAL.dBName + "..m_MemberMaster as a," + ObjDAL.dBName + "..m_KitMaster as b ," + ObjDAL.dBName + "..M_MemberMaster as c where a.RefFormno=c.Formno  and" +
                                                   " a.kitid=b.kitid  ORDER BY a.mid DESC" + IsoEnd, selectConn);
@@ -1572,9 +1689,11 @@ public partial class ProccessApiWithK : System.Web.UI.Page
 
                             if (DRead.Read())
                             {
-                                _Output = "{\"response\":\"OK\",\"msg\":\"Registered Successfully!!\",\"idno\":\"" + DRead["IDNo"] + "\"," +
-                                          "\"url\":\"" + HttpContext.Current.Session["CompWeb"].ToString().Trim() + "/Welcome.aspx?id=" + DRead["IDNo"] + "\"," +
-                                          "\"formno\":\"" + DRead["Formno"] + "\"}";
+                                //_Output = "{\"response\":\"OK\",\"msg\":\"Registered Successfully!!\",\"idno\":\"" + DRead["IDNo"] + "\",\"password\":\"" + DRead["passw"] + "\",\"trapassword\":\"" + DRead["epassw"] + "\"," +
+                                //          "\"url\":\"" + HttpContext.Current.Session["CompWeb"].ToString().Trim() + "/Welcome.aspx?id=" + DRead["IDNo"] + "\"," +
+                                //          "\"formno\":\"" + DRead["Formno"] + "\"}";
+                                _Output = "{\"response\":\"OK\",\"msg\":\"Thank You For Registration Your Login Details Is..\",\"idno\":\"" + DRead["IDNo"] + "\",\"password\":\"" + DRead["Passw"] + "\",\"trapassword\":\"" + DRead["epassw"] + "\"," +
+                                       "\"formno\":\"" + DRead["Formno"] + "\"}";
 
                                 membername = DRead["MemfirstName"] + " " + DRead["MemLastName"];
                                 LastInsertid = DRead["idno"].ToString();
@@ -1582,9 +1701,10 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                                 Password = DRead["Passw"].ToString();
                                 Mobl = DRead["Mobl"].ToString();
                                 HttpContext.Current.Session["Kit"] = DRead["IsBill"];
+                                SendToMemberMail(LastInsertid, DRead["Email"].ToString(), membername, Password, DRead["epassw"].ToString());
                             }
                             DRead.Close();
-                            
+
 
                         }
 
@@ -1610,41 +1730,129 @@ public partial class ProccessApiWithK : System.Web.UI.Page
         }
         return _Output;
     }
-    //public static string GetCompanyConnectionString(string dbName)
-    //{
-    //    // Web.config wali connection string lo aur sirf Database part change karo
-    //    string baseConn = ConfigurationManager.ConnectionStrings["CompanyInfoConn"].ConnectionString;
-    //    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(baseConn);
-    //    builder.InitialCatalog = dbName; // sirf Database name change hoga
-    //    return builder.ConnectionString;
-    //}
-    //private static string connectionString = ConfigurationManager.ConnectionStrings["CompanyInfoConn"].ConnectionString;
+    public bool SendToMemberMail(string IdNo, string Email, string MemberName, string Password, string TransactionPassword)
+    {
+        try
+        {
+            System.Net.Mail.MailAddress sendFrom =
+                new System.Net.Mail.MailAddress(Session["CompMail"].ToString());
+            System.Net.Mail.MailAddress sendTo =
+                new System.Net.Mail.MailAddress(Email);
+            System.Net.Mail.MailMessage myMessage =
+                new System.Net.Mail.MailMessage(sendFrom, sendTo);
 
-    //// DBNames fetch karna
-    //public static DataTable GetDBNames()
-    //{
-    //    DataTable dt = new DataTable();
+            string strMsg = @"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>Welcome to ePay Digital India</title>
+<style>
+  body{margin:0;padding:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif}
+  table{border-collapse:collapse}
+  .outer{width:100%;background:#f4f6fb;padding:32px 16px}
+  .card{width:560px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
+  .header{background:#0f2b5b;padding:32px 36px 28px}
+  .header-brand{margin:0 0 8px;font-size:12px;color:#93c5fd;letter-spacing:0.5px;font-family:Arial,sans-serif}
+  .header-title{margin:0;font-size:20px;font-weight:bold;color:#ffffff;line-height:1.35;font-family:Arial,sans-serif}
+  .body{padding:28px 36px}
+  .p{margin:0 0 16px;font-size:14px;color:#1e293b;line-height:1.75;font-family:Arial,sans-serif}
+  .name{color:#1a4db3;font-weight:bold}
+  .cred-table{width:100%;background:#f8faff;border-radius:8px;margin:0 0 20px;border:1px solid #dbeafe}
+  .cred-row-top{padding:12px 20px 8px;border-bottom:1px solid #e2e8f0}
+  .cred-row-mid{padding:8px 20px;border-bottom:1px solid #e2e8f0}
+  .cred-row-bot{padding:8px 20px 12px}
+  .cred-label{font-size:13px;color:#64748b;font-family:Arial,sans-serif}
+  .cred-val{font-size:13px;font-weight:bold;color:#1e293b;font-family:'Courier New',monospace;text-align:right}
+  .btn{display:inline-block;background:#1a4db3;color:#ffffff;text-decoration:none;padding:11px 26px;border-radius:8px;font-size:14px;font-weight:bold;font-family:Arial,sans-serif;margin:0 0 20px}
+  .warn{font-size:13px;color:#92400e;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;margin:0 0 20px;line-height:1.65;font-family:Arial,sans-serif}
+  .footer{border-top:1px solid #e2e8f0;padding:20px 36px}
+  .footer-p{margin:0;font-size:13px;color:#64748b;line-height:1.65;font-family:Arial,sans-serif}
+  .footer-name{color:#1e293b;font-weight:bold}
+</style>
+</head>
+<body>
+<div class='outer'>
+  <div class='card'>
 
-    //    try
-    //    {
-    //        using (SqlConnection conn = new SqlConnection(connectionString))
-    //        {
-    //            conn.Open();
-    //            string query = "SELECT dbname,statcd FROM company where CompActiveCd = 'ONet' ORDER BY dbname desc";
+    <div class='header'>
+      <p class='header-brand'>ePay Digital India Pvt. Ltd.</p>
+      <p class='header-title'>Welcome to ePay Digital India &ndash;<br>Your Account is Ready</p>
+    </div>
 
-    //            using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
-    //            {
-    //                adapter.Fill(dt);
-    //            }
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        throw new Exception("Error fetching DB Names: " + ex.Message);
-    //    }
+    <div class='body'>
+      <p class='p'>Dear <span class='name'>" + MemberName + @"</span>,</p>
+      <p class='p'>Welcome to <strong>ePay Digital India Pvt. Ltd.</strong> &mdash; your gateway to smart digital services and earning opportunities.</p>
+      <p class='p'>Your account has been successfully created. Please find your login credentials below:</p>
 
-    //    return dt;
-    //}
+      <table class='cred-table'>
+        <tr>
+          <td class='cred-row-top'>
+            <table width='100%'><tr>
+              <td class='cred-label'>User ID</td>
+              <td class='cred-val'>" + IdNo + @"</td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td class='cred-row-mid'>
+            <table width='100%'><tr>
+              <td class='cred-label'>Login Password</td>
+              <td class='cred-val'>" + Password + @"</td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td class='cred-row-bot'>
+            <table width='100%'><tr>
+              <td class='cred-label'>Transaction Password</td>
+              <td class='cred-val'>" + TransactionPassword + @"</td>
+            </tr></table>
+          </td>
+        </tr>
+      </table>
+
+      <a href='https://epayindia.in/' class='btn' style='color: white;'>Login Now &rarr;</a>
+
+      <p class='warn'>For your security, we strongly recommend changing your password after your first login.</p>
+
+      <p class='p' style='margin:0'>If you need any assistance, our support team is always here to help.</p>
+    </div>
+
+    <div class='footer'>
+      <p class='footer-p'>Warm regards,<br><span class='footer-name'>Team ePay Digital India Pvt. Ltd.</span></p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>";
+
+            myMessage.Subject = "Welcome to ePay Digital India – Your Account is Ready";
+            myMessage.Body = strMsg;
+            myMessage.IsBodyHtml = true;
+
+            System.Net.Mail.SmtpClient smtp =
+                new System.Net.Mail.SmtpClient(Session["MailHost"].ToString());
+            smtp.Port = 587;
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials =
+                new System.Net.NetworkCredential(
+                    Session["CompMail"].ToString(),
+                    Session["MailPass"].ToString()
+                );
+
+            smtp.Send(myMessage);
+            return true;
+        }
+        catch (Exception)
+        {
+            Response.Write("Mail could not be sent. Please try again later.");
+            return false;
+        }
+    }
     private bool SendSMSJoining(string SMS, string MobileNo)
     {
         using (WebClient client = new WebClient())
@@ -3424,7 +3632,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
         return _Output;
     }
 
-    
+
     public string Packagelist(string userid, string passwd)
     {
         string _Output = "";
@@ -4510,9 +4718,16 @@ public partial class ProccessApiWithK : System.Web.UI.Page
 
                 if (i != 0)
                 {
+                    string LgnID = Encrypt("uid=" + userName + "&pwd=" + Password);
+                    DateTime currentDate = DateTime.Now;
+                    string result = System.DateTime.Now.Day.ToString() + (System.DateTime.Now.Hour - 1).ToString() + System.DateTime.Now.Year.ToString() + (System.DateTime.Now.Month - 1).ToString();
+                    string urlmyac = "https://cpanel.epayindia.in/Default.aspx?lgnT=" + LgnID + "&ID=" + result;
+
+                    string url = "https://epayindia.in/AppLogin.aspx?lgnT=" + LgnID;
+
                     return "{ \"response\":\"OK\", \"mname\":\"" + MemName + "\", \"isactive\":\"" + ActiveStatus + "\", \"isfranchise\":\"" + IsFranchise + "\"," +
                            " \"kitid\":\"" + KitId + "\", \"profilepic\":\"" + profilePic + "\", \"mobileno\":\"" + Mobl + "\"," +
-                           " \"emailid\":\"" + Email + "\", \"idno\":\"" + Idno + "\", \"package\":\"" + Package + "\", \"doj\":\"" + DOj + "\", \"doa\":\"" + DOA + "\", \"address\":\"" + Address + "\" }";
+                           " \"emailid\":\"" + Email + "\", \"idno\":\"" + Idno + "\", \"package\":\"" + Package + "\", \"doj\":\"" + DOj + "\", \"doa\":\"" + DOA + "\",\"address\":\"" + Address + "\",\"url\":\"" + url + "\",\"urlmyac\":\"" + urlmyac + "\" }";
                 }
                 else
                 {
@@ -4657,6 +4872,33 @@ public partial class ProccessApiWithK : System.Web.UI.Page
         }
 
         return _Output;
+    }
+    public static byte[] MD5Hash(string value)
+    {
+        return MD5.ComputeHash(Encoding.ASCII.GetBytes(value));
+    }
+
+    public static string Encrypt(string stringToEncrypt)
+    {
+        DES.Key = MD5Hash(key);
+        DES.Mode = CipherMode.ECB;
+        byte[] buffer = ASCIIEncoding.ASCII.GetBytes(stringToEncrypt);
+        return Convert.ToBase64String(DES.CreateEncryptor().TransformFinalBlock(buffer, 0, buffer.Length));
+    }
+
+    public static string Decrypt(string encryptedString)
+    {
+        try
+        {
+            DES.Key = MD5Hash(key);
+            DES.Mode = CipherMode.ECB;
+            byte[] buffer = Convert.FromBase64String(encryptedString);
+            return ASCIIEncoding.ASCII.GetString(DES.CreateDecryptor().TransformFinalBlock(buffer, 0, buffer.Length));
+        }
+        catch (Exception ex)
+        {
+            return DBNull.Value.ToString();
+        }
     }
     private string GetFormNo(string IDNO)
     {
