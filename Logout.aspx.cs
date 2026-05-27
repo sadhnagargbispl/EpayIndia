@@ -9,17 +9,25 @@ public partial class logout : System.Web.UI.Page
 {
     protected void Page_Load(object sender, System.EventArgs e)
     {
-        string nextpage = Session["Logout"] as string;
-        nextpage = "index.aspx";
+        //string nextpage = Session["Logout"] as string;
+        //nextpage = "index.aspx";
+        //Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        //Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+        //Response.Cache.SetAllowResponseInBrowserHistory(false);
+        //Response.Cache.SetNoStore();
+        //Session.Abandon();
+        //Session.Clear();
+        //Response.Cookies.Clear();
+        //Session.RemoveAll();
+        //System.Web.Security.FormsAuthentication.SignOut();
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
         Response.Cache.SetAllowResponseInBrowserHistory(false);
         Response.Cache.SetNoStore();
+
+        string nextpage = Session["Logout"] as string;
         Session.Abandon();
-        Session.Clear();
-        Response.Cookies.Clear();
-        Session.RemoveAll();
-        System.Web.Security.FormsAuthentication.SignOut();
+        nextpage = "https://epayindia.in/index.aspx";
         Session["Status"] = "";
         Session["FormNo"] = "";
         Session["Idno"] = "";
@@ -28,8 +36,7 @@ public partial class logout : System.Web.UI.Page
         Session["KitId"] = "";
         Session["Uid"] = "";
         Session["CkyPinTransfer"] = "";
-        Response.Redirect(nextpage);
-
+        Response.Redirect(nextpage, false);
     }
 
 }

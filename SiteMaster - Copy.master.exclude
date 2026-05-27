@@ -38,7 +38,7 @@
             <nav class="navbar">
                 <div class="nav-inner">
                     <a href="#" class="logo">
-                        <img src="images/logo.png" alt="ePay Logo" class="logoheader"
+                        <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader"
                             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                         <span class="logo-text" style="display: none">e<span>Pay</span></span>
                     </a>
@@ -224,7 +224,7 @@
             <div class="footer-inner">
                 <div class="footer-brand">
                     <a href="#" class="footer-logo">
-                        <img src="images/footer_logo.png" alt="ePay Logo"
+                        <img src="demoepay/images/footer_logo.png" alt="ePay Logo"
                             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                         <span class="footer-logo-text" style="display: none">ePay</span>
                     </a>

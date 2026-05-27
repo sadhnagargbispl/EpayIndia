@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="images/favicon.png">
+<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
 <title>Management Team – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -254,7 +254,7 @@
       <!-- 1 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/1.%20Dr%20.Dhanpal%20Wathare.jpeg" alt="Dr. Dhanpal Wathare">
+          <img src="demoepay/images/management-team/1.%20Dr%20.Dhanpal%20Wathare.jpeg" alt="Dr. Dhanpal Wathare">
         </div>
         <div class="mt-info">
           <h3>Dr. Dhanpal Wathare</h3>
@@ -265,7 +265,7 @@
       <!-- 2 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/2.%20Mr.%20Suhas%20Kadam.png" alt="Mr. Suhas Kadam">
+          <img src="demoepay/images/management-team/2.%20Mr.%20Suhas%20Kadam.png" alt="Mr. Suhas Kadam">
         </div>
         <div class="mt-info">
           <h3>Mr. Suhas Kadam</h3>
@@ -276,7 +276,7 @@
       <!-- 3 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/3.%20Mr.%20Krishna%20Gavali.png" alt="Mr. Krishna Gavali">
+          <img src="demoepay/images/management-team/3.%20Mr.%20Krishna%20Gavali.png" alt="Mr. Krishna Gavali">
         </div>
         <div class="mt-info">
           <h3>Mr. Krishna Gavali</h3>
@@ -287,7 +287,7 @@
       <!-- 4 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/4.%20Mr.%20Sandip%20Rane.jpeg" alt="Mr. Sandip Rane">
+          <img src="demoepay/images/management-team/4.%20Mr.%20Sandip%20Rane.jpeg" alt="Mr. Sandip Rane">
         </div>
         <div class="mt-info">
           <h3>Mr. Sandip Rane</h3>
@@ -298,7 +298,7 @@
       <!-- 5 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/5.%20Mr.%20Veekkas%20Purii.jpeg" alt="Mr. Veekkas Purii">
+          <img src="demoepay/images/management-team/5.%20Mr.%20Veekkas%20Purii.jpeg" alt="Mr. Veekkas Purii">
         </div>
         <div class="mt-info">
           <h3>Mr. Veekkas Purii</h3>
@@ -309,7 +309,7 @@
       <!-- 6 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/6.%20Mr.Shashikant%20Patil.jpeg" alt="Mr. Shashikant Patil">
+          <img src="demoepay/images/management-team/6.%20Mr.Shashikant%20Patil.jpeg" alt="Mr. Shashikant Patil">
         </div>
         <div class="mt-info">
           <h3>Mr. Shashikant Patil</h3>
@@ -320,7 +320,7 @@
       <!-- 7 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/7.%20Mr.%20Santosh%20Patil..jpeg" alt="Mr. Santosh Patil">
+          <img src="demoepay/images/management-team/7.%20Mr.%20Santosh%20Patil..jpeg" alt="Mr. Santosh Patil">
         </div>
         <div class="mt-info">
           <h3>Mr. Santosh Patil</h3>
@@ -331,7 +331,7 @@
       <!-- 8 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-           <img src="images/management-team/8. Mr.Vijaykumar Sawant.jpg" alt="Mr. Vijaykumar Sawant">
+           <img src="demoepay/images/management-team/8. Mr.Vijaykumar Sawant.jpg" alt="Mr. Vijaykumar Sawant">
         </div>
         <div class="mt-info">
           <h3>Mr. Vijaykumar Sawant</h3>
@@ -342,7 +342,7 @@
       <!-- 9 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-           <img src="images/management-team/9.%20Mr.%20Maruti%20Kore.jpeg" alt="Mr. Maruti Kore">
+           <img src="demoepay/images/management-team/9.%20Mr.%20Maruti%20Kore.jpeg" alt="Mr. Maruti Kore">
         </div>
         <div class="mt-info">
           <h3>Mr. Maruti Kore</h3>
@@ -353,7 +353,7 @@
       <!-- 10 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-           <img src="images/management-team/10.%20Mr.%20Chandrakant%20Vatigave%20..png" alt="Mr. Chandrakant Vatigave">
+           <img src="demoepay/images/management-team/10.%20Mr.%20Chandrakant%20Vatigave%20..png" alt="Mr. Chandrakant Vatigave">
         </div>
         <div class="mt-info">
           <h3>Mr. Chandrakant Vatigave</h3>
@@ -364,7 +364,7 @@
       <!-- 11 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/11.%20Mr.%20Pradeep%20Dalavi.png" alt="Mr. Pradeep Dalavi">
+          <img src="demoepay/images/management-team/11.%20Mr.%20Pradeep%20Dalavi.png" alt="Mr. Pradeep Dalavi">
         </div>
         <div class="mt-info">
           <h3>Mr. Pradeep Dalavi</h3>
@@ -375,7 +375,7 @@
       <!-- 12 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/12.%20Mr.%20Dinkar%20khot.png" alt="Mr. Dinkar Khot">
+          <img src="demoepay/images/management-team/12.%20Mr.%20Dinkar%20khot.png" alt="Mr. Dinkar Khot">
         </div>
         <div class="mt-info">
           <h3>Mr. Dinkar Khot</h3>
@@ -386,7 +386,7 @@
       <!-- 13 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/13.%20Mr.%20Prashant%20Kadam.png" alt="Mr. Prashant Kadam">
+          <img src="demoepay/images/management-team/13.%20Mr.%20Prashant%20Kadam.png" alt="Mr. Prashant Kadam">
         </div>
         <div class="mt-info">
           <h3>Mr. Prashant Kadam</h3>
@@ -397,7 +397,7 @@
       <!-- 14 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/14.%20Mr.%20Sandip%20Patil.jpeg" alt="Mr. Sandip Patil">
+          <img src="demoepay/images/management-team/14.%20Mr.%20Sandip%20Patil.jpeg" alt="Mr. Sandip Patil">
         </div>
         <div class="mt-info">
           <h3>Mr. Sandip Patil</h3>
@@ -408,7 +408,7 @@
       <!-- 15 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="images/management-team/15.%20Mr.%20Jayprakash%20Dhanavde.png" alt="Mr. Jayprakash Dhanavde">
+          <img src="demoepay/images/management-team/15.%20Mr.%20Jayprakash%20Dhanavde.png" alt="Mr. Jayprakash Dhanavde">
         </div>
         <div class="mt-info">
           <h3>Mr. Jayprakash Dhanavde</h3>

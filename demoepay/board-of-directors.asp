@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="images/favicon.png">
+<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
 <title>Board of Directors – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -299,7 +299,7 @@
     <!-- Director 1 – Mr. Yash Navale -->
     <div class="bod-card">
       <div class="bod-photo-side">
-        <img src="images/board-of-directors/1.%20Mr.%20Yash%20Navale%20%20(Board%20of%20Director).jpeg" alt="Mr. Yash Navale">
+        <img src="demoepay/images/board-of-directors/1.%20Mr.%20Yash%20Navale%20%20(Board%20of%20Director).jpeg" alt="Mr. Yash Navale">
         <div class="bod-photo-overlay">
            <div class="bod-photo-role">&#9733; Board of Director</div>
         </div>
@@ -320,7 +320,7 @@
     <!-- Director 2 – Mr. Prakash Pawar -->
     <div class="bod-card">
       <div class="bod-photo-side">
-        <img src="images/board-of-directors/2.%20Mr.%20Prakash%20Pawar%20(Board%20of%20Director).jpeg" alt="Mr. Prakash Pawar">
+        <img src="demoepay/images/board-of-directors/2.%20Mr.%20Prakash%20Pawar%20(Board%20of%20Director).jpeg" alt="Mr. Prakash Pawar">
         <div class="bod-photo-overlay">
            <div class="bod-photo-role">&#9733; Board of Director</div>
         </div>

@@ -914,8 +914,11 @@
         function fUpdateSteps(n) {
             for (var i = 1; i <= 3; i++) {
                 var d = document.getElementById('fsc' + i), l = document.getElementById('fsl' + i);
-                d.className = 'fstep-dot' + (i < n ? ' done' : i === n ? ' active' : '');
-                l.className = 'fstep-lbl' + (i < n ? ' done' : i === n ? ' active' : '');
+                var isDone = (i < n) || (n === 3 && i === 3);  // ← Step 3 bhi done hoga
+                var isActive = (i === n) && (n !== 3);
+                d.className = 'fstep-dot' + (isDone ? ' done' : isActive ? ' active' : '');
+                l.className = 'fstep-lbl' + (isDone ? ' done' : isActive ? ' active' : '');
+                d.innerHTML = isDone ? '<i class="fa fa-check"></i>' : String(i);  // ← fa-check icon
                 if (i < 3) document.getElementById('fline' + i).className = 'fstep-line' + (i < n ? ' done' : '');
             }
         }

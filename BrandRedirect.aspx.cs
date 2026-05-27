@@ -21,7 +21,7 @@ public partial class BrandRedirect : System.Web.UI.Page
             {
                 formPostText =
             "<form method=\"POST\" action=\"https://shop.epayindia.in/members/index.php\" name=\"frm2Post\">" +
-            "<input type=\"hidden\" name=\"token\" value=\"fd714e13569a85889d5eeaae0431522a\" />" +
+            "<input type=\"hidden\" name=\"token\" value=\"d4b330a817070ddfae06b052774c4307\" />" +
             "<input type=\"hidden\" name=\"mod\" value=\"interLogin\" />" +
             "<input type=\"hidden\" name=\"userid\" value=\"" + Session["IDNo"] + "\" />" +
             "<input type=\"hidden\" name=\"password\" value=\"" + Session["MemPassw"] + "\" />" +

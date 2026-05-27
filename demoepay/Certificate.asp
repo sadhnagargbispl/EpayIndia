@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="images/favicon.png">
+<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
 <title>Certificates – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -426,7 +426,7 @@
 
       <div class="cert-card" onclick="openLightbox(0)">
         <div class="cert-thumb">
-          <img src="images/certificate/certificate_1.jpg" alt="Certificate 1" loading="lazy">
+          <img src="demoepay/images/certificate/certificate_1.jpg" alt="Certificate 1" loading="lazy">
           <div class="cert-zoom-hint">
             <div class="zoom-icon">&#128269;</div>
             <span>Click to Zoom</span>
@@ -443,7 +443,7 @@
 
       <div class="cert-card" onclick="openLightbox(1)">
         <div class="cert-thumb">
-          <img src="images/certificate/certificate_2.jpg" alt="Certificate 2" loading="lazy">
+          <img src="demoepay/images/certificate/certificate_2.jpg" alt="Certificate 2" loading="lazy">
           <div class="cert-zoom-hint">
             <div class="zoom-icon">&#128269;</div>
             <span>Click to Zoom</span>
@@ -460,7 +460,7 @@
 
       <div class="cert-card" onclick="openLightbox(2)">
         <div class="cert-thumb">
-          <img src="images/certificate/certificate_3.jpg" alt="Certificate 3" loading="lazy">
+          <img src="demoepay/images/certificate/certificate_3.jpg" alt="Certificate 3" loading="lazy">
           <div class="cert-zoom-hint">
             <div class="zoom-icon">&#128269;</div>
             <span>Click to Zoom</span>
@@ -477,7 +477,7 @@
 
       <div class="cert-card" onclick="openLightbox(3)">
         <div class="cert-thumb">
-          <img src="images/certificate/certificate_4.jpg" alt="Certificate 4" loading="lazy">
+          <img src="demoepay/images/certificate/certificate_4.jpg" alt="Certificate 4" loading="lazy">
           <div class="cert-zoom-hint">
             <div class="zoom-icon">&#128269;</div>
             <span>Click to Zoom</span>
@@ -494,7 +494,7 @@
 
       <div class="cert-card" onclick="openLightbox(4)">
         <div class="cert-thumb">
-          <img src="images/certificate/certificate_5.jpg" alt="Certificate 5" loading="lazy">
+          <img src="demoepay/images/certificate/certificate_5.jpg" alt="Certificate 5" loading="lazy">
           <div class="cert-zoom-hint">
             <div class="zoom-icon">&#128269;</div>
             <span>Click to Zoom</span>

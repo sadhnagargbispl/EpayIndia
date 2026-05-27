@@ -609,7 +609,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
                 {
                     string FlNm = DateTime.Now.ToString("yyyyMMddhhmmssfff");
-                    string FilePath = HttpContext.Current.Server.MapPath("images/UploadImage/" + FlNm + ".png");
+                    string FilePath = HttpContext.Current.Server.MapPath("demoepay/images/UploadImage/" + FlNm + ".png");
 
                     // Save the image to the server path
                     bitmap.Save(FilePath, System.Drawing.Imaging.ImageFormat.Png);
@@ -1636,16 +1636,26 @@ public partial class ProccessApiWithK : System.Web.UI.Page
                         DataTable dt = new DataTable();
                         string OrderNo;
                         DAL obj = new DAL();
-                        //string query = ObjDAL.Isostart + "EXEC dbo.GetExtreme_SP @RefFormNo, @LegNo;" + ObjDAL.IsoEnd;
-                        //using (SqlCommand cmd = new SqlCommand(query, selectConn))
-                        //{
-                        //    cmd.Parameters.AddWithValue("@RefFormNo", _RefFormNo);
-                        //    cmd.Parameters.AddWithValue("@LegNo", dict["side"]);
-                        //    object result = cmd.ExecuteScalar();
-                        //    string Uplnformno = (result == null || result == DBNull.Value) ? _RefFormNo : result.ToString();
-                        //    _UpLnFormNo = Uplnformno;
-                        //}
-                        //_UpLnFormNo = "0";
+                        string ddlMobileNAme = "1";
+                        try
+                        {
+
+                            string strQuery = IsoStart + "SELECT StdCode FROM " + ObjDAL.dBName + "..M_CountryMaster WHERE ACTIVESTATUS='Y' AND Cid = '" + dict["countrycode"] + "' " + IsoEnd;
+                            dt = SqlHelper.ExecuteDataset(constr1, CommandType.Text, strQuery).Tables[0];
+
+                            if (dt.Rows.Count > 0)
+                            {
+                                ddlMobileNAme = dt.Rows[0]["StdCode"].ToString();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Handle the exception
+                        }
+
+
+
+
                         strQry = "INSERT INTO m_memberMaster (" +
  "SessId,IdNo,CardNo,FormNo,KitId," +
  "UpLnFormNo,RefId,LegNo,RefLegNo,RefFormNo," +
@@ -1656,7 +1666,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
  "Passw,Doj,Relation,PanNo," +
  "BankID,MICRCode,BranchName,EMail,BV," +
  "UpGrdSessId,E_MainPassw,EPassw,ActiveStatus,billNo,RP,HostIp," +
- "PID,Paymode,ChDDNo,ChDDBankID,ChDDBank,ChddDate,ChDDBranch,IsPanCard,AadharNo,AadharNo2,AAdharNo3,fld6) " +
+ "PID,Paymode,ChDDNo,ChDDBankID,ChDDBank,ChddDate,ChDDBranch,IsPanCard,AadharNo,AadharNo2,AAdharNo3,fld6, usercode) " +
  "VALUES (" +
  SessID + ",0,0,0," + KitID + "," + _UpLnFormNo + ",0,1,0," + _RefFormNo + "," +
  "'" + ClearInject(dict["name"].ToUpper()) + "',''," +
@@ -1670,8 +1680,7 @@ public partial class ProccessApiWithK : System.Web.UI.Page
  Bv + ",0,'" + RandomNumber + "','" + RandomNumber + "'," +
  "'" + JoinStatus + "'," +
  "'" + InVoiceNo + "','" + Rp + "','" + HostIp + "',0,'',''," +
- "'0','','" + Dtp1.ToString("dd-MMM-yyyy") + "','','N','','0','0','APP'" +
- ")";
+ "'0','','" + Dtp1.ToString("dd-MMM-yyyy") + "','','N','','0','0','APP', '" + ddlMobileNAme + "')";
                         string Ks = " BEGIN TRY BEGIN TRANSACTION " + strQry + " COMMIT TRANSACTION END TRY BEGIN CATCH ROLLBACK TRANSACTION END CATCH ";
                         int i = 0;
                         if (Conn.State == ConnectionState.Closed) Conn.Open();

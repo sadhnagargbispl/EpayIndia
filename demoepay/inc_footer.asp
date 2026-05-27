@@ -1,8 +1,8 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="#" class="footer-logo"> <img src="images/logo.png" alt="ePay Logo" class="logoheader"> </a>
-      <p>India's leading ePay Digital &amp; ecommerce platform, empowering millions to shop, pay, and grow every day.</p>
+      <a href="#" class="footer-logo"> <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader"> </a>
+      <p> India's leading ePay Digital &amp; ecommerce platform, empowering millions to shop, pay, and grow every day. </p>
       <div class="footer-socials">
         <a href="#" class="social-btn" title="Facebook">f</a>
         <a href="#" class="social-btn" title="X (Twitter)">𝕏</a>
@@ -47,13 +47,13 @@
     <div class="footer-col">
       <h4>Support</h4>
       <ul>
-        <li><a href="#">Help Center</a></li>        
-        <li><a href="#">Cancellation / Refund Policy</a></li>
-        <li><a href="#">Shipping / Delivery Policy</a></li>
-        <li><a href="#">Return & Replacement Policy</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms & Conditions</a></li>        
-        <li><a href="#">Track Order</a></li>
+        <li><a href="help-center.asp">Help Center</a></li>
+        <li><a href="cancellation-refund-policy.asp">Cancellation / Refund Policy</a></li>
+        <li><a href="shipping-delivery-policy.asp">Shipping / Delivery Policy</a></li>
+        <li><a href="return-replacement-policy.asp">Return & Replacement Policy</a></li>
+        <li><a href="privacy-policy.asp">Privacy Policy</a></li>
+        <li><a href="terms-conditions.asp">Terms & Conditions</a></li>
+        <li><a href="track-order.asp">Track Order</a></li>
       </ul>
     </div>
 
@@ -61,10 +61,10 @@
       <h4>Download App</h4>
       <div class="app-badges">
         <a href="#" class="app-badge-img">
-          <img src="images/google_play.png" alt="Get it on Google Play">
+          <img src="demoepay/images/google_play.png" alt="Get it on Google Play">
         </a>
         <a href="#" class="app-badge-img">
-          <img src="images/app_store.png" alt="Download on the App Store">
+          <img src="demoepay/images/app_store.png" alt="Download on the App Store">
         </a>
       </div>
     </div>

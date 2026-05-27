@@ -318,7 +318,7 @@ html, body {
 /* ─── SCROLL BODY ─── */
 .scroll-body {
     overflow-y: auto;
-    height: calc(100vh - var(--header-h) - var(--footer-h));
+    /* height: calc(100vh - var(--header-h) - var(--footer-h)); */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -761,3 +761,4 @@ html, body {
         background: #c8cdd8;
     }
 }
+

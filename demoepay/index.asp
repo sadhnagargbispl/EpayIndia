@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="images/favicon.png">
+<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
 <title> ePay - India's Smart Digital & Ecommerce Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -208,7 +208,7 @@
           </div>
         </div>
         <div class="hero-phone">
-          <img src="images/slider_img.png" alt="ePay Digital App">
+          <img src="demoepay/images/slider_img.png" alt="ePay Digital App">
         </div>
       </div>
     </div>
@@ -233,7 +233,7 @@
           </div>
         </div>
         <div class="hero-phone">
-          <img src="images/slider_img_2.png" alt="ePay Digital App">
+          <img src="demoepay/images/slider_img_2.png" alt="ePay Digital App">
         </div>
       </div>
     </div>
@@ -258,7 +258,7 @@
           </div>
         </div>
          <div class="hero-phone">
-          <img src="images/slider_img_3.png" alt="ePay Digital App">
+          <img src="demoepay/images/slider_img_3.png" alt="ePay Digital App">
         </div>
       </div>
     </div>
@@ -396,6 +396,22 @@
       <div class="service-icon">📅</div>
       <h3>Booking Solutions</h3>
       <p>Fast and easy booking systems for travel, events & more.</p>
+      <a href="#" class="service-link">Explore Now →</a>
+    </div>
+
+    <div class="service-card-upcoming upc-amber">
+      <div class="coming-badge">⏳ Coming Soon</div>
+      <div class="service-icon">🌐</div>
+      <h3>ePay International</h3>
+      <p>Seamless cross-border payments and international money transfer solutions.</p>
+      <a href="#" class="service-link">Explore Now →</a>
+    </div>
+
+    <div class="service-card-upcoming upc-rose">
+      <div class="coming-badge">⏳ Coming Soon</div>
+      <div class="service-icon">💼</div>
+      <h3>ePay Job Portal</h3>
+      <p>Find your dream job or hire top talent — India's smart recruitment platform.</p>
       <a href="#" class="service-link">Explore Now →</a>
     </div>
 

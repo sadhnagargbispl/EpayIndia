@@ -7,7 +7,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Login – ePay India</title>
-    <link rel="icon" type="image/x-icon" href="images/favicon.png" />
+    <link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png" />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="demoepay/css/AppLogin.css?v=1.5" rel="stylesheet" />
@@ -22,14 +22,14 @@
                     <a href="webapp.aspx" class="h-back" title="Back" style="display: none;">
                         <i class="fa fa-arrow-left"></i>
                     </a>
-                    <img src="images/logo_light.png" alt="ePay" class="h-logo" onerror="this.style.display='none'" />
+                    <img src="demoepay/images/logo_light.png" alt="ePay" class="h-logo" onerror="this.style.display='none'" />
                     <div class="h-title">e<span>Pay</span> India</div>
                 </header>
 
                 <!-- HERO STRIP -->
                 <div class="hero-strip">
                     <div class="logo-circle">
-                        <img src="images/logo.png" alt="ePay India" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                        <img src="demoepay/images/logo.png" alt="ePay India" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
                         <i class="fa fa-wallet logo-icon-fallback" style="display: none;"></i>
                     </div>
                     <div class="hero-h">Welcome Back!</div>

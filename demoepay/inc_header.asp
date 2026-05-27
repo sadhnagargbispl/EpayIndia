@@ -16,7 +16,7 @@
 <!-- ─── NAVBAR ─── -->
 <nav class="navbar">
   <div class="nav-inner">    
-    <a href="index.asp" class="logo"> <img src="images/logo.png" alt="ePay Logo" class="logoheader"> </a>
+    <a href="index.asp" class="logo"> <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader"> </a>
     <ul class="nav-links">
       <li><a href="https://store.epayindia.in/" target="_blank">Store Shopping</a></li>
       <li><a href="https://utility.epayindia.in/" target="_blank">ePay Digital</a></li>
