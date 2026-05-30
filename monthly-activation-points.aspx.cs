@@ -243,183 +243,352 @@ public partial class monthly_activation_points : System.Web.UI.Page
     }
     public string GenerateQrCode(string Orderid, string Amount)
     {
-        string str = string.Empty;
-        decimal value = 0;
-        string Code = "";
-        DataSet ds = new DataSet();
-        DataSet data;
-        string sResult = string.Empty;
-
-        string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-        int random_number = new Random().Next(0, 999);
-        string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
-        sResult = formatted_datetime;
+        string str = "";
+        string sResult = DateTime.Now.ToString("yyyyMMddHHmmssfff") +
+                         new Random().Next(100, 999);
 
         try
         {
             ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             string URL = "https://allupi.com/api/login";
 
-            WebRequest tRequest = WebRequest.Create(URL);
-            tRequest.Method = "POST";
-            tRequest.ContentType = "application/json";
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create(URL);
+
+            request.Method = "POST";
+            request.ContentType = "application/json";
+
             string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
-            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
-                             "('" + sResult + "', '0', '" + URL + "', '" + postData +
-                             "', 'LoginClaimMonth', '" + Orderid + "','monthly_activation_points')";
 
-            int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
+            byte[] dataBytes = Encoding.UTF8.GetBytes(postData);
+            request.ContentLength = dataBytes.Length;
 
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-            tRequest.ContentLength = byteArray.Length;
-
-            using (Stream dataStream = tRequest.GetRequestStream())
+            using (Stream stream = request.GetRequestStream())
             {
-                dataStream.Write(byteArray, 0, byteArray.Length);
+                stream.Write(dataBytes, 0, dataBytes.Length);
             }
 
-            WebResponse tResponse = tRequest.GetResponse();
-            using (Stream responseStream = tResponse.GetResponseStream())
-            using (StreamReader tReader = new StreamReader(responseStream))
+            using (HttpWebResponse response =
+                (HttpWebResponse)request.GetResponse())
             {
-                str = tReader.ReadToEnd();
+                using (StreamReader reader =
+                    new StreamReader(response.GetResponseStream()))
+                {
+                    str = reader.ReadToEnd();
+                }
             }
 
-            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'LoginClaimMonth'";
+            DataSet ds = convertJsonStringToDataSet(str);
 
-            int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
+            if (ds.Tables.Count < 2 ||
+                ds.Tables[1].Rows.Count == 0)
+            {
+                throw new Exception("Login API Response Invalid");
+            }
 
-            data = convertJsonStringToDataSet(str);
+            string auth =
+                Convert.ToString(ds.Tables[1].Rows[0]["token"]);
 
-            string auth = data.Tables[1].Rows[0]["token"].ToString();
+            string sql =
+                @"INSERT INTO LoginTransaction
+            (TId,Username,role,token,refreshToken,name,transactionid,amount)
+            VALUES
+            (
+            '" + ds.Tables[1].Rows[0]["ID"] + @"',
+            '" + ds.Tables[1].Rows[0]["username"] + @"',
+            '" + ds.Tables[1].Rows[0]["role"] + @"',
+            '" + ds.Tables[1].Rows[0]["token"] + @"',
+            '" + ds.Tables[1].Rows[0]["refreshToken"] + @"',
+            '" + ds.Tables[1].Rows[0]["name"] + @"',
+            '" + Orderid + @"',
+            '" + Amount + @"'
+            )";
 
-            string sql = "INSERT INTO LoginTransaction " +
-                         "(TId, Username, role, token, refreshToken, name, transactionid, amount) VALUES (" +
-                         "'" + data.Tables[1].Rows[0]["ID"] + "'," +
-                         "'" + data.Tables[1].Rows[0]["username"] + "'," +
-                         "'" + data.Tables[1].Rows[0]["role"] + "'," +
-                         "'" + data.Tables[1].Rows[0]["token"] + "'," +
-                         "'" + data.Tables[1].Rows[0]["refreshToken"] + "'," +
-                         "'" + data.Tables[1].Rows[0]["name"] + "'," +
-                         "'" + Orderid + "'," +
-                         "'" + Amount + "')";
+            SqlHelper.ExecuteNonQuery(
+                constr,
+                CommandType.Text,
+                sql);
 
-            int x = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql);
-
-            Response.Write(data.Tables[1]);
-
-            CheckLiveRateCoin(auth, Orderid, Amount);
+            return CheckLiveRateCoin(auth, Orderid, Amount);
         }
         catch (Exception ex)
         {
-            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" + ex.Message +
-                             "' WHERE ReqID = '" + sResult +
-                             "' AND Req_From = 'LoginClaimMonth'";
+            File.AppendAllText(
+                Server.MapPath("~/Logs/PaymentError.txt"),
+                DateTime.Now + " GenerateQrCode : " +
+                ex + Environment.NewLine);
 
-            int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
+            throw;
         }
-
-        return str;
     }
-    protected string CheckLiveRateCoin(string auth, string orderid, string amount)
+    protected string CheckLiveRateCoin(string auth,string orderid,string amount)
     {
+        string redirectUrl = "";
+
         try
         {
-            string str = string.Empty;
-            decimal value = 0;
-            string code = "";
-            DataSet ds = new DataSet();
-            DataSet data;
-            DataSet dsLogin = new DataSet();
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            string completeUrl = "https://allupi.com/api/InitiateTransactionAsync";
-            string responseString = string.Empty;
-            string CustomerOTPmessage = "";
-            string url = "";
+            string apiUrl =
+                "https://allupi.com/api/InitiateTransactionAsync";
 
-            string sResult = string.Empty;
-            string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-            int random_number = new Random().Next(0, 999);
-            string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
-            sResult = formatted_datetime;
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create(apiUrl);
 
-            try
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers.Add("X-Auth", auth);
+
+            string postData =
+                "{"
+                + "\"requestedId\":\"" + orderid + "\","
+                + "\"amount\":" + amount + ","
+                + "\"upiId\":\"82215511\","
+                + "\"serverHookURL\":\"https://epayindia.in/Login.aspx\","
+                + "\"webHookURL\":\"https://epayindia.in/PaymentgatewayMonthly.aspx\""
+                + "}";
+
+            byte[] bytes = Encoding.UTF8.GetBytes(postData);
+
+            request.ContentLength = bytes.Length;
+
+            using (Stream stream = request.GetRequestStream())
             {
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-
-                WebRequest tRequest = (HttpWebRequest)WebRequest.Create(completeUrl);
-                tRequest.Method = "POST";
-                tRequest.ContentType = "application/json";
-                tRequest.Headers.Add("X-Auth", auth);
-
-                string postdata = "{\"requestedId\":\"" + orderid + "\",";
-                postdata += "\"amount\":" + amount + ",\"upiId\":\"82215511\",";
-                postdata += "\"serverHookURL\":\"https://epayindia.in/Login.aspx\",";
-                postdata += "\"webHookURL\":\"https://epayindia.in/PaymentgatewayMonthly.aspx\"}";
-
-                string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-                                 "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
-                                 "('" + sResult + "', '" + Session["formno"] + "', '" + url + "', '" +
-                                 postdata + "', 'InitiateTransactionAsyncClaimMonth', '" + orderid + "','monthly_activation_points')";
-
-                int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
-
-                byte[] byteArray = Encoding.UTF8.GetBytes(postdata);
-                tRequest.ContentLength = byteArray.Length;
-
-                using (Stream dataStream = tRequest.GetRequestStream())
-                {
-                    dataStream.Write(byteArray, 0, byteArray.Length);
-                }
-
-                WebResponse tResponse = tRequest.GetResponse();
-                using (Stream responseStream = tResponse.GetResponseStream())
-                using (StreamReader tReader = new StreamReader(responseStream))
-                {
-                    str = tReader.ReadToEnd();
-                }
-
-                string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'InitiateTransactionAsyncClaimMonth'";
-
-                int x_res = SqlHelper.ExecuteNonQuery(
-                    constr,
-                    CommandType.Text,
-                    sql_res
-                );
-
-                data = convertJsonStringToDataSet(str);
-
-                Response.Write(str);
-
-                if (data.Tables[0].Rows[0]["url"].ToString() != "")
-                {
-                    Response.Redirect(data.Tables[0].Rows[0]["url"].ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" +
-                                 ex.Message + "' WHERE ReqID = '" + sResult +
-                                 "' AND Req_From = 'InitiateTransactionAsyncClaimMonth'";
-
-                SqlHelper.ExecuteNonQuery(
-                    constr,
-                    CommandType.Text,
-                    sql_res
-                );
+                stream.Write(bytes, 0, bytes.Length);
             }
 
-            return url;
+            string responseText = "";
+
+            using (HttpWebResponse response =
+                (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader reader =
+                    new StreamReader(response.GetResponseStream()))
+                {
+                    responseText = reader.ReadToEnd();
+                }
+            }
+
+            File.AppendAllText(
+                Server.MapPath("~/Logs/AllUPIResponse.txt"),
+                DateTime.Now +
+                " OrderId=" + orderid +
+                " Response=" + responseText +
+                Environment.NewLine);
+
+            DataSet ds =
+                convertJsonStringToDataSet(responseText);
+
+            if (ds.Tables.Count > 0 &&
+                ds.Tables[0].Rows.Count > 0 &&
+                ds.Tables[0].Columns.Contains("url"))
+            {
+                redirectUrl =
+                    Convert.ToString(ds.Tables[0].Rows[0]["url"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(redirectUrl))
+            {
+                Response.Redirect(redirectUrl);
+            }
+            
+            throw new Exception(
+                "Payment URL not found in API response.");
+
         }
-        catch
+        catch (Exception ex)
         {
-            return string.Empty;
+            File.AppendAllText(
+                Server.MapPath("~/Logs/RedirectError.txt"),
+                DateTime.Now + " " +
+                ex + Environment.NewLine);
+
+            return "";
         }
+
     }
+    //public string GenerateQrCode(string Orderid, string Amount)
+    //{
+    //    string str = string.Empty;
+    //    decimal value = 0;
+    //    string Code = "";
+    //    DataSet ds = new DataSet();
+    //    DataSet data;
+    //    string sResult = string.Empty;
+
+    //    string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+    //    int random_number = new Random().Next(0, 999);
+    //    string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
+    //    sResult = formatted_datetime;
+
+    //    try
+    //    {
+    //        ServicePointManager.Expect100Continue = true;
+    //        ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+
+    //        string URL = "https://allupi.com/api/login";
+
+    //        WebRequest tRequest = WebRequest.Create(URL);
+    //        tRequest.Method = "POST";
+    //        tRequest.ContentType = "application/json";
+    //        string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
+    //        string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
+    //                         "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
+    //                         "('" + sResult + "', '0', '" + URL + "', '" + postData +
+    //                         "', 'LoginClaimMonth', '" + Orderid + "','monthly_activation_points')";
+
+    //        int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
+
+    //        byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+    //        tRequest.ContentLength = byteArray.Length;
+
+    //        using (Stream dataStream = tRequest.GetRequestStream())
+    //        {
+    //            dataStream.Write(byteArray, 0, byteArray.Length);
+    //        }
+
+    //        WebResponse tResponse = tRequest.GetResponse();
+    //        using (Stream responseStream = tResponse.GetResponseStream())
+    //        using (StreamReader tReader = new StreamReader(responseStream))
+    //        {
+    //            str = tReader.ReadToEnd();
+    //        }
+
+    //        string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'LoginClaimMonth'";
+
+    //        int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
+
+    //        data = convertJsonStringToDataSet(str);
+
+    //        string auth = data.Tables[1].Rows[0]["token"].ToString();
+
+    //        string sql = "INSERT INTO LoginTransaction " +
+    //                     "(TId, Username, role, token, refreshToken, name, transactionid, amount) VALUES (" +
+    //                     "'" + data.Tables[1].Rows[0]["ID"] + "'," +
+    //                     "'" + data.Tables[1].Rows[0]["username"] + "'," +
+    //                     "'" + data.Tables[1].Rows[0]["role"] + "'," +
+    //                     "'" + data.Tables[1].Rows[0]["token"] + "'," +
+    //                     "'" + data.Tables[1].Rows[0]["refreshToken"] + "'," +
+    //                     "'" + data.Tables[1].Rows[0]["name"] + "'," +
+    //                     "'" + Orderid + "'," +
+    //                     "'" + Amount + "')";
+
+    //        int x = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql);
+
+    //        Response.Write(data.Tables[1]);
+
+    //        CheckLiveRateCoin(auth, Orderid, Amount);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" + ex.Message +
+    //                         "' WHERE ReqID = '" + sResult +
+    //                         "' AND Req_From = 'LoginClaimMonth'";
+
+    //        int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
+    //    }
+
+    //    return str;
+    //}
+    //protected string CheckLiveRateCoin(string auth, string orderid, string amount)
+    //{
+    //    try
+    //    {
+    //        string str = string.Empty;
+    //        decimal value = 0;
+    //        string code = "";
+    //        DataSet ds = new DataSet();
+    //        DataSet data;
+    //        DataSet dsLogin = new DataSet();
+
+    //        string completeUrl = "https://allupi.com/api/InitiateTransactionAsync";
+    //        string responseString = string.Empty;
+    //        string CustomerOTPmessage = "";
+    //        string url = "";
+
+    //        string sResult = string.Empty;
+    //        string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+    //        int random_number = new Random().Next(0, 999);
+    //        string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
+    //        sResult = formatted_datetime;
+
+    //        try
+    //        {
+    //            ServicePointManager.Expect100Continue = true;
+    //            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+
+    //            WebRequest tRequest = (HttpWebRequest)WebRequest.Create(completeUrl);
+    //            tRequest.Method = "POST";
+    //            tRequest.ContentType = "application/json";
+    //            tRequest.Headers.Add("X-Auth", auth);
+
+    //            string postdata = "{\"requestedId\":\"" + orderid + "\",";
+    //            postdata += "\"amount\":" + amount + ",\"upiId\":\"82215511\",";
+    //            postdata += "\"serverHookURL\":\"https://epayindia.in/Login.aspx\",";
+    //            postdata += "\"webHookURL\":\"https://epayindia.in/PaymentgatewayMonthly.aspx\"}";
+
+    //            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
+    //                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
+    //                             "('" + sResult + "', '" + Session["formno"] + "', '" + url + "', '" +
+    //                             postdata + "', 'InitiateTransactionAsyncClaimMonth', '" + orderid + "','monthly_activation_points')";
+
+    //            int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
+
+    //            byte[] byteArray = Encoding.UTF8.GetBytes(postdata);
+    //            tRequest.ContentLength = byteArray.Length;
+
+    //            using (Stream dataStream = tRequest.GetRequestStream())
+    //            {
+    //                dataStream.Write(byteArray, 0, byteArray.Length);
+    //            }
+
+    //            WebResponse tResponse = tRequest.GetResponse();
+    //            using (Stream responseStream = tResponse.GetResponseStream())
+    //            using (StreamReader tReader = new StreamReader(responseStream))
+    //            {
+    //                str = tReader.ReadToEnd();
+    //            }
+
+    //            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'InitiateTransactionAsyncClaimMonth'";
+
+    //            int x_res = SqlHelper.ExecuteNonQuery(
+    //                constr,
+    //                CommandType.Text,
+    //                sql_res
+    //            );
+
+    //            data = convertJsonStringToDataSet(str);
+
+    //            Response.Write(str);
+
+    //            if (data.Tables[0].Rows[0]["url"].ToString() != "")
+    //            {
+    //                Response.Redirect(data.Tables[0].Rows[0]["url"].ToString());
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" +
+    //                             ex.Message + "' WHERE ReqID = '" + sResult +
+    //                             "' AND Req_From = 'InitiateTransactionAsyncClaimMonth'";
+
+    //            SqlHelper.ExecuteNonQuery(
+    //                constr,
+    //                CommandType.Text,
+    //                sql_res
+    //            );
+    //        }
+
+    //        return url;
+    //    }
+    //    catch
+    //    {
+    //        return string.Empty;
+    //    }
+    //}
     public DataSet convertJsonStringToDataSet(string jsonString)
     {
         XmlDocument xd = new XmlDocument();
@@ -435,5 +604,4 @@ public partial class monthly_activation_points : System.Web.UI.Page
 
         return ds;
     }
-
 }

@@ -386,10 +386,20 @@ public partial class PaymentGatewayPurchase : System.Web.UI.Page
                     Response.Redirect("Appsubscription-now.aspx", false);
                 }
             }
-            else if (status.ToUpper() == "PENDING")
-            {
-                Response.Redirect("AppLogin.aspx", false);
-            }
+            Response.Clear();
+
+            Response.Redirect(
+                "Appsubscription-now.aspx",
+                false);
+
+            Context.ApplicationInstance
+                .CompleteRequest();
+
+            return "";
+            //else if (status.ToUpper() == "PENDING")
+            //{
+            //    Response.Redirect("AppLogin.aspx", false);
+            //}
         }
         catch (Exception ex)
         {

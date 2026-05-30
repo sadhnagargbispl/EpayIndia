@@ -386,10 +386,20 @@ public partial class Paymentgatewayapp : System.Web.UI.Page
                     Response.Redirect("Appmonthly-activation-points.aspx", false);
                 }
             }
-            else if (status.ToUpper() == "PENDING")
-            {
-                Response.Redirect("https://epayindia.in/AppLogin.aspx", false);
-            }
+            Response.Clear();
+
+            Response.Redirect(
+                "Appmonthly-activation-points.aspx",
+                false);
+
+            Context.ApplicationInstance
+                .CompleteRequest();
+
+            return "";
+            //else if (status.ToUpper() == "PENDING")
+            //{
+            //    Response.Redirect("https://epayindia.in/AppLogin.aspx", false);
+            //}
         }
         catch (Exception ex)
         {

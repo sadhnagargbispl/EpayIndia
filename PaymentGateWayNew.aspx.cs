@@ -386,10 +386,17 @@ public partial class PaymentGateWayNew : System.Web.UI.Page
                     Response.Redirect("subscription-now.aspx", false);
                 }
             }
-            else if (status.ToUpper() == "PENDING")
-            {
-                Response.Redirect("https://epayindia.in/Login.aspx", false);
-            }
+            Response.Clear();
+
+            Response.Redirect(
+                "https://epayindia.in/Login.aspx",
+                false);
+
+            Context.ApplicationInstance
+                .CompleteRequest();
+
+            return "";
+            //Response.Redirect("https://epayindia.in/Login.aspx", false);
         }
         catch (Exception ex)
         {
