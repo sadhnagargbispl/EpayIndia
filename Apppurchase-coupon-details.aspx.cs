@@ -244,25 +244,173 @@ public partial class Apppurchase_coupon_details : System.Web.UI.Page
             }
             else
             {
-                MM_VoucherPurchase();
-                //string RemainingBal = Fund_Balance_Check();
+                
+                string RemainingBal = Fund_Balance_Check();
 
-                //if (Convert.ToDecimal(RemainingBal) >= Convert.ToDecimal(FinalAmount))
-                //{
-                //    var response = Fun_SameMasterDebitEntrty(LblUserID.Text.Trim(), Convert.ToInt32(kitid_), Convert.ToDecimal(FinalAmount));
-                //    if (response.ToString().ToUpper() == "OK")
-                //    {
-
-                //    }
-                //}
-                //else
-                //{
-                //    scrName = "<SCRIPT language='javascript'>alert('Insufficient Balance In Utility Wallet.Please Contact To Admin.!');</SCRIPT>";
-                //    ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "Error", scrName, false);
-                //}
+                if (Convert.ToDecimal(RemainingBal) >= Convert.ToDecimal(FinalAmount))
+                {
+                    var response = Fun_SameMasterDebitEntrty(LblUserID.Text.Trim(), Convert.ToInt32(kitid_), Convert.ToDecimal(FinalAmount));
+                    if (response.ToString().ToUpper() == "OK")
+                    {
+                        MM_VoucherPurchase();
+                    }
+                }
+                else
+                {
+                    scrName = "<SCRIPT language='javascript'>alert('Insufficient Balance In Utility Wallet.Please Contact To Admin.!');</SCRIPT>";
+                    ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "Error", scrName, false);
+                }
             }
         }
 
+    }
+    public string Fund_Balance_Check()
+    {
+        string sResult = "";
+        string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        int random_number = new Random().Next(0, 999);
+        string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
+        sResult = formatted_datetime;
+
+        string postData = "";
+        string URL = "";
+        string Str = "";
+        string balance = "";
+
+        try
+        {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+
+            URL = "http://masteradmin.bisplindia.in/DTProcess";
+            HttpWebRequest tRequest = (HttpWebRequest)WebRequest.Create(URL);
+            tRequest.Method = "POST";
+            tRequest.ContentType = "application/json";
+
+            postData = "{\"reqtype\": \"getwalletbalance\",\"companyid\": \"120\",\"actype\": \"M\",\"key\": \"kgFt9rswQ6hDu3Pm\"}";
+            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+
+            string sql_req = "INSERT INTO Tbl_ApiRequest_Response(ReqID, Formno, Request, postdata, ForType) " +
+                             "VALUES('" + sResult + "','" + Convert.ToInt32(HttpContext.Current.Session["FormNo"]) + "', '" + URL + "', '" + postData + "', 'BalancemasterWalletApp')";
+            int x_Req = Convert.ToInt32(SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, sql_req));
+
+            tRequest.ContentLength = byteArray.Length;
+            using (Stream dataStream = tRequest.GetRequestStream())
+            {
+                dataStream.Write(byteArray, 0, byteArray.Length);
+            }
+
+            WebResponse tResponse = tRequest.GetResponse();
+            using (Stream dataStream = tResponse.GetResponseStream())
+            using (StreamReader tReader = new StreamReader(dataStream))
+            {
+                Str = tReader.ReadToEnd();
+            }
+
+            string sql_res = "Update Tbl_ApiRequest_Response Set Response = '" + Str.Trim() +
+                             "' Where ReqID = '" + sResult.Trim() + "' AND ForType = 'BalancemasterWalletApp'";
+            int x_res = Convert.ToInt32(SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, sql_res));
+
+            try
+            {
+                DataSet data = convertJsonStringToDataSet(Str);
+                balance = Convert.ToDecimal(data.Tables[1].Rows[0]["Balance"]).ToString();
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = ex.Message;
+
+                string errorQry = "INSERT INTO TrnLogData(ErrorText, LogDate, Url, WalletAddress, PostData, formno) " +
+                                  "VALUES('" + errorMsg + "', GETDATE(),'" + URL + "','','" + Str + "','98')";
+                int x1 = SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, errorQry);
+
+                balance = "0";
+            }
+        }
+        catch (Exception ex)
+        {
+            string sql_res = "Update Tbl_ApiRequest_Response Set Response = '" + ex.Message +
+                             "' Where ReqID = '" + sResult.Trim() + "' AND ForType = 'BalancemasterWalletApp'";
+            int x_res = Convert.ToInt32(SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, sql_res));
+            balance = "0";
+        }
+
+        return balance;
+    }
+    public string Fun_SameMasterDebitEntrty(string username, int kitid, decimal amount)
+    {
+        string sResult = "";
+        string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        int random_number = new Random().Next(0, 999);
+        string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
+        sResult = formatted_datetime;
+
+        string status = "";
+        string responseString = string.Empty;
+        DataSet data = new DataSet();
+
+        try
+        {
+            string MaxVoucherNo_ = "2" + DateTime.Now.ToString("ddMMyyyyHHmmssfff");
+            long maxVno_ = Convert.ToInt64(MaxVoucherNo_) + Convert.ToInt64(HttpContext.Current.Session["Formno"].ToString());
+            string reqNo = maxVno_.ToString();
+
+            string deductionDetails = "Amount Deduction By Id Activation of IdNo: " + username;
+            string deductionRefno = "Master/" + kitid + "/" + Convert.ToInt32(HttpContext.Current.Session["FormNo"]) + "/" + sResult;
+
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+
+            string URL = "http://masteradmin.bisplindia.in/DTProcess";
+            HttpWebRequest tRequest = (HttpWebRequest)WebRequest.Create(URL);
+            tRequest.Method = "POST";
+            tRequest.ContentType = "application/json";
+
+            string postData = "{\"reqtype\":\"debitamount\",\"tokenno\":\"DF78F4C276874E46BFC151C3065ABE1A\",\"id\":\"120\",\"amount\":\"" + amount + "\"," +
+                              "\"narration\":\"" + deductionDetails + "\",\"refno\":\"" + deductionRefno + "\",\"vtype\":\"D\",\"actype\":\"M\",\"useactype\":\"M\",\"key\":\"kgFt9rswQ6hDu3Pm\"}";
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+
+            string sql_req = "INSERT INTO Tbl_ApiRequest_Response (ReqID, Formno, Request, postdata, ForType) " +
+                             "VALUES ('" + sResult + "','" + Convert.ToInt32(HttpContext.Current.Session["FormNo"]) + "','" + URL + "','" + postData + "','MasterWalletDebitApp')";
+            int x_Req = Convert.ToInt32(SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, sql_req));
+
+            tRequest.ContentLength = byteArray.Length;
+            using (Stream dataStream = tRequest.GetRequestStream())
+            {
+                dataStream.Write(byteArray, 0, byteArray.Length);
+            }
+
+            WebResponse tResponse = tRequest.GetResponse();
+            using (Stream dataStream = tResponse.GetResponseStream())
+            using (StreamReader tReader = new StreamReader(dataStream))
+            {
+                responseString = tReader.ReadToEnd();
+            }
+
+            string sql_res = "UPDATE Tbl_ApiRequest_Response SET Response = '" + responseString.Trim() + "' WHERE ReqID = '" + sResult + "' AND ForType = 'MasterWalletDebitApp'";
+            int x_res = Convert.ToInt32(SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, sql_res));
+
+            data = convertJsonStringToDataSet(responseString);
+            status = data.Tables[0].Rows[0]["response"].ToString();
+        }
+        catch (Exception ex)
+        {
+            string sql_res = "UPDATE Tbl_ApiRequest_Response SET Response = '" + ex.Message + "' WHERE ReqID = '" + sResult.Trim() + "' AND ForType = 'MasterWalletDebitApp'";
+            int x_res = Convert.ToInt32(SqlHelper.ExecuteNonQuery(ConfigurationManager.ConnectionStrings["constr"].ConnectionString, CommandType.Text, sql_res));
+            status = "failed";
+        }
+
+        return status;
+    }
+    public DataSet convertJsonStringToDataSet(string jsonString)
+    {
+        XmlDocument xd = new XmlDocument();
+        jsonString = "{ \"rootNode\": {" + jsonString.Trim().TrimStart('{').TrimEnd('}') + "} }";
+        xd = (XmlDocument)JsonConvert.DeserializeXmlNode(jsonString);
+        DataSet ds = new DataSet();
+        ds.ReadXml(new XmlNodeReader(xd));
+        return ds;
     }
     public PackageCheckResultS Fund_PackageCondtion_Check()
     {
