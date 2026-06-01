@@ -149,7 +149,7 @@
             <div class="service-card-live">
                 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
                 <div class="service-icon">🍔</div>
-                <h3>Food Tadka</h3>
+                <h3>ePay Food</h3>
                 <p>Order your favourite food with fast delivery and exclusive offers.</p>
                 <a href="FoodBookingRedirect.aspx" target="_blank" class="service-link">Order Food →</a>
             </div>
@@ -157,7 +157,7 @@
             <div class="service-card-live">
                 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
                 <div class="service-icon">🎬</div>
-                <h3>Movie Tadka</h3>
+                <h3>ePay Movie</h3>
                 <p>Book your favourite movies with exclusive deals and offers.</p>
                 <a href="MovieBookingRedirect.aspx" target="_blank" class="service-link">Book Ticket →</a>
             </div>

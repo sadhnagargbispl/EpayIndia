@@ -325,7 +325,7 @@ public partial class subscription_now : System.Web.UI.Page
             string auth = data.Tables[1].Rows[0]["token"].ToString();
 
             string sql = "INSERT INTO LoginTransaction " +
-                         "(TId, Username, role, token, refreshToken, name, transactionid, amount) VALUES (" +
+                         "(TId, Username, role, token, refreshToken, name, transactionid, amount,FormNo) VALUES (" +
                          "'" + data.Tables[1].Rows[0]["ID"] + "'," +
                          "'" + data.Tables[1].Rows[0]["username"] + "'," +
                          "'" + data.Tables[1].Rows[0]["role"] + "'," +
@@ -333,7 +333,7 @@ public partial class subscription_now : System.Web.UI.Page
                          "'" + data.Tables[1].Rows[0]["refreshToken"] + "'," +
                          "'" + data.Tables[1].Rows[0]["name"] + "'," +
                          "'" + Orderid + "'," +
-                         "'" + Amount + "')";
+                         "'" + Amount + "','" + Session["formno"] + "')";
 
             int x = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql);
 

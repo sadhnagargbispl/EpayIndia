@@ -258,8 +258,8 @@
                         <li><a href="BrandRedirect.aspx" target="_blank">e-Commerce</a></li>
                         <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital</a></li>
                         <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
-                        <li><a href="FoodBookingRedirect.aspx" target="_blank">Food Tadka</a></li>
-                        <li><a href="MovieBookingRedirect.aspx" target="_blank">Movie Tadka</a></li>
+                        <li><a href="FoodBookingRedirect.aspx" target="_blank">ePay Food</a></li>
+                        <li><a href="MovieBookingRedirect.aspx" target="_blank">ePay Movie</a></li>
                         <%--    <li><a class="text-uppercase" href="StoreRedirect.aspx" target="_blank">🏪 STORE SHOPPING</a></li>
                         <li><a class="text-uppercase" href="UtilityServicesRedirect.aspx" target="_blank">⚙️ UTILITY </a></li>
                         <li><a class="text-uppercase" href="GVRedirect.aspx" target="_blank">🎁 GIFT VOUCHERS</a></li>

@@ -273,7 +273,7 @@
             <div class="mt-grid">
 
                 <!-- 1 -->
-                <div class="mt-card">
+               <%-- <div class="mt-card">
                     <div class="mt-photo-wrap">
                         <img src="demoepay/images/management-team/1.%20Dr%20.Dhanpal%20Wathare.jpeg" alt="Dr. Dhanpal Wathare">
                     </div>
@@ -281,7 +281,7 @@
                         <h3>Dr. Dhanpal Wathare</h3>
                         <span class="mt-role-badge">&#9733; Management</span>
                     </div>
-                </div>
+                </div>--%>
 
                 <!-- 2 -->
                 <div class="mt-card">
@@ -383,7 +383,7 @@
                 </div>
 
                 <!-- 11 -->
-                <div class="mt-card">
+               <%-- <div class="mt-card">
                     <div class="mt-photo-wrap">
                         <img src="demoepay/images/management-team/11.%20Mr.%20Pradeep%20Dalavi.png" alt="Mr. Pradeep Dalavi">
                     </div>
@@ -391,7 +391,7 @@
                         <h3>Mr. Pradeep Dalavi</h3>
                         <span class="mt-role-badge">&#9733; Management</span>
                     </div>
-                </div>
+                </div>--%>
 
                 <!-- 12 -->
                 <div class="mt-card">

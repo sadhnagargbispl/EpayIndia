@@ -40,13 +40,13 @@
 
    <a class="svc-card" href="FoodBookingRedirect.aspx" target="_blank">
      <div class="svc-ico ic-re"><i class="fa fa-utensils"></i></div>
-     <div class="svc-name">Food Order</div>
+     <div class="svc-name">ePay Food</div>
      <div class="svc-desc">Order food online</div>
    </a>
 
    <a class="svc-card" href="MovieBookingRedirect.aspx" target="_blank">
      <div class="svc-ico ic-ye"><i class="fa fa-film"></i></div>
-     <div class="svc-name">Movie Booking</div>
+     <div class="svc-name">ePay Movie</div>
      <div class="svc-desc">Book your tickets</div>
    </a>
 
