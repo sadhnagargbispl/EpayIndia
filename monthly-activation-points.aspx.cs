@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AjaxControlToolkit.HtmlEditor.ToolbarButtons;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -261,6 +262,12 @@ public partial class monthly_activation_points : System.Web.UI.Page
             request.ContentType = "application/json";
 
             string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
+            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
+                            "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
+                            "('" + sResult + "', '0', '" + URL + "', '" + postData +
+                            "', 'LoginClaimMonth', '" + Orderid + "','monthly_activation_points')";
+
+            int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
 
             byte[] dataBytes = Encoding.UTF8.GetBytes(postData);
             request.ContentLength = dataBytes.Length;
@@ -279,6 +286,9 @@ public partial class monthly_activation_points : System.Web.UI.Page
                     str = reader.ReadToEnd();
                 }
             }
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'LoginClaimMonth'";
+
+            int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
 
             DataSet ds = convertJsonStringToDataSet(str);
 
@@ -315,6 +325,11 @@ public partial class monthly_activation_points : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" + ex.Message +
+                            "' WHERE ReqID = '" + sResult +
+                            "' AND Req_From = 'LoginClaimMonth'";
+
+            int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
             File.AppendAllText(
                 Server.MapPath("~/Logs/PaymentError.txt"),
                 DateTime.Now + " GenerateQrCode : " +
@@ -326,7 +341,8 @@ public partial class monthly_activation_points : System.Web.UI.Page
     protected string CheckLiveRateCoin(string auth,string orderid,string amount)
     {
         string redirectUrl = "";
-
+        string sResult = DateTime.Now.ToString("yyyyMMddHHmmssfff") +
+                       new Random().Next(100, 999);
         try
         {
             ServicePointManager.Expect100Continue = true;
@@ -350,7 +366,12 @@ public partial class monthly_activation_points : System.Web.UI.Page
                 + "\"serverHookURL\":\"https://epayindia.in/Login.aspx\","
                 + "\"webHookURL\":\"https://epayindia.in/PaymentgatewayMonthly.aspx\""
                 + "}";
+            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
+                      "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
+                      "('" + sResult + "', '" + Session["formno"] + "', '" + apiUrl + "', '" +
+                      postData + "', 'AppInitiateTransactionAsyncClaimMonth', '" + orderid + "','Appmonthly_activation_points')";
 
+            int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
             byte[] bytes = Encoding.UTF8.GetBytes(postData);
 
             request.ContentLength = bytes.Length;
@@ -378,7 +399,13 @@ public partial class monthly_activation_points : System.Web.UI.Page
                 " OrderId=" + orderid +
                 " Response=" + responseText +
                 Environment.NewLine);
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + responseText + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'InitiateTransactionAsyncClaimMonth'";
 
+            int x_res = SqlHelper.ExecuteNonQuery(
+                constr,
+                CommandType.Text,
+                sql_res
+            );
             DataSet ds =
                 convertJsonStringToDataSet(responseText);
 
@@ -405,7 +432,15 @@ public partial class monthly_activation_points : System.Web.UI.Page
                 Server.MapPath("~/Logs/RedirectError.txt"),
                 DateTime.Now + " " +
                 ex + Environment.NewLine);
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" +
+                             ex.Message + "' WHERE ReqID = '" + sResult +
+                             "' AND Req_From = 'InitiateTransactionAsyncClaimMonth'";
 
+            SqlHelper.ExecuteNonQuery(
+                constr,
+                CommandType.Text,
+                sql_res
+            );
             return "";
         }
 

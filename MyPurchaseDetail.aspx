@@ -377,7 +377,7 @@
                     AutoGenerateColumns="true"
                     ShowHeaderWhenEmpty="true"
                     AllowPaging="true"
-                    PageSize="15"
+                    PageSize="5"
                     OnPageIndexChanging="gv_PageIndexChanging"
                     GridLines="None"
                     HeaderStyle-CssClass="GridHeader"
