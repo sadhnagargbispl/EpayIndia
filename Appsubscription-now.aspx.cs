@@ -274,7 +274,7 @@ public partial class Appsubscription_now : System.Web.UI.Page
         string str = "";
         string sResult = DateTime.Now.ToString("yyyyMMddHHmmssfff") +
                          new Random().Next(100, 999);
-
+        string auth = "";
         try
         {
             ServicePointManager.Expect100Continue = true;
@@ -323,7 +323,7 @@ public partial class Appsubscription_now : System.Web.UI.Page
                 throw new Exception("Login API Response Invalid");
             }
 
-            string auth =
+             auth =
                 Convert.ToString(ds.Tables[1].Rows[0]["token"]);
 
             string sql =
@@ -358,7 +358,7 @@ public partial class Appsubscription_now : System.Web.UI.Page
                 Server.MapPath("~/Logs/AppSubscriptionPaymentError.txt"),
                 DateTime.Now + " GenerateQrCode : " +
                 ex + Environment.NewLine);
-
+            //return CheckLiveRateCoin(auth, Orderid, Amount);
             throw;
         }
     }
@@ -446,7 +446,7 @@ public partial class Appsubscription_now : System.Web.UI.Page
             {
                 Response.Redirect(redirectUrl);
             }
-
+            //Response.Redirect(redirectUrl);
             throw new Exception(
                 "Payment URL not found in API response.");
 
@@ -464,7 +464,8 @@ public partial class Appsubscription_now : System.Web.UI.Page
                 CommandType.Text,
                 sql_res
             );
-            return "";
+            //Response.Redirect(redirectUrl);
+           return "";
         }
 
     }

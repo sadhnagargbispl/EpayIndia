@@ -26,7 +26,7 @@
                         <p>One app for all your shopping, gift vouchers, digital services &amp; more. Simplify your financial life today.</p>
                         <div class="hero-btns">
                             <a href="#" class="btn-primary">Explore Services →</a>
-                            <a href="#" class="btn-outline">⬇ Download App</a>
+                            <a href="epay-india-1.0.0_v3.apk" download="" class="btn-outline">⬇ Download App</a>
                         </div>
                     </div>
                     <div class="hero-phone">

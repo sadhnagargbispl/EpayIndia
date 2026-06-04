@@ -274,7 +274,7 @@ public partial class subscription_now : System.Web.UI.Page
         string str = "";
         string sResult = DateTime.Now.ToString("yyyyMMddHHmmssfff") +
                          new Random().Next(100, 999);
-
+        string auth = "";
         try
         {
             ServicePointManager.Expect100Continue = true;
@@ -323,8 +323,7 @@ public partial class subscription_now : System.Web.UI.Page
                 throw new Exception("Login API Response Invalid");
             }
 
-            string auth =
-                Convert.ToString(ds.Tables[1].Rows[0]["token"]);
+             auth = Convert.ToString(ds.Tables[1].Rows[0]["token"]);
 
             string sql =
                 @"INSERT INTO LoginTransaction
@@ -356,7 +355,7 @@ public partial class subscription_now : System.Web.UI.Page
                 Server.MapPath("~/Logs/SubscriptionPaymentError.txt"),
                 DateTime.Now + " GenerateQrCode : " +
                 ex + Environment.NewLine);
-
+           // return CheckLiveRateCoin(auth, Orderid, Amount);
             throw;
         }
     }
@@ -387,7 +386,7 @@ public partial class subscription_now : System.Web.UI.Page
                 + "\"amount\":" + amount + ","
                 + "\"upiId\":\"82215511\","
                 + "\"serverHookURL\":\"https://epayindia.in/Login.aspx\","
-                + "\"webHookURL\":\"https://epayindia.in/PaymentGateWayNew.aspx\""
+                + "\"webHookURL\":\"https://epayindia.in/paymentsubscriptionpanel.aspx\""
                 + "}";
             string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
                              "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
@@ -444,7 +443,7 @@ public partial class subscription_now : System.Web.UI.Page
             {
                 Response.Redirect(redirectUrl);
             }
-
+           // Response.Redirect(redirectUrl);
             throw new Exception(
                 "Payment URL not found in API response.");
 
@@ -465,6 +464,7 @@ public partial class subscription_now : System.Web.UI.Page
                 CommandType.Text,
                 sql_res
             );
+            //Response.Redirect(redirectUrl);
             return "";
         }
 
@@ -587,8 +587,8 @@ public partial class subscription_now : System.Web.UI.Page
     //            string postdata = "{\"requestedId\":\"" + orderid + "\",";
     //            postdata += "\"amount\":" + amount + ",\"upiId\":\"82215511\",";
     //            postdata += "\"serverHookURL\":\"https://epayindia.in/Login.aspx\",";
-    //            postdata += "\"webHookURL\":\"https://epayindia.in/PaymentGateWayNew.aspx\"}";
-    //            //postdata += "\"webHookURL\":\"https://epayindia.in/PaymentGateWayNew.aspx\"}";
+    //            postdata += "\"webHookURL\":\"https://epayindia.in/paymentsubscriptionpanel.aspx\"}";
+    //            //postdata += "\"webHookURL\":\"https://epayindia.in/paymentsubscriptionpanel.aspx\"}";
 
     //            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
     //                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +

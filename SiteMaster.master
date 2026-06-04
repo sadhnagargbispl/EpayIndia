@@ -240,7 +240,7 @@
                         <span>India's Leading ePay Digital &amp; E-commerce Platform</span>
                     </div>
                     <div class="topbar-right">
-                        <a href="#"><span>📱</span> <span class="hide-sm">Download App</span></a>
+                        <a href="epay-india-1.0.0_v3.apk" download=""><span>📱</span> <span class="hide-sm">Download App</span></a>
                         <a href="#"><span>📦</span> <span class="hide-sm">Track Order</span></a>
                         <a href="#"><span>🎧</span> <span class="hide-sm">Help Center</span></a>
                     </div>
@@ -440,10 +440,10 @@
                 <div class="footer-col">
                     <h4>Download App</h4>
                     <div class="app-badges">
-                        <a href="#" class="app-badge-img">
+                        <a href="epay-india-1.0.0_v3.apk" download="" class="app-badge-img">
                             <img src="demoepay/images/google_play.png" alt="Get it on Google Play">
                         </a>
-                        <a href="#" class="app-badge-img">
+                        <a href="epay-india-1.0.0_v3.apk" download="" class="app-badge-img">
                             <img src="demoepay/images/app_store.png" alt="Download on the App Store">
                         </a>
                     </div>

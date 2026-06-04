@@ -1,0 +1,23 @@
+04-Jun-26 02:55:41 PM GenerateQrCode : System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 467
+   at subscription_now.GenerateQrCode(String Orderid, String Amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 348
+04-Jun-26 02:57:39 PM GenerateQrCode : System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 467
+   at subscription_now.GenerateQrCode(String Orderid, String Amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 348
+04-Jun-26 02:59:31 PM GenerateQrCode : System.Threading.ThreadAbortException: Thread was being aborted.
+   at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 447
+   at subscription_now.GenerateQrCode(String Orderid, String Amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 348
+04-Jun-26 03:00:34 PM GenerateQrCode : System.Threading.ThreadAbortException: Thread was being aborted.
+   at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 447
+   at subscription_now.GenerateQrCode(String Orderid, String Amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 348
+04-Jun-26 04:59:32 PM GenerateQrCode : System.Threading.ThreadAbortException: Thread was being aborted.
+   at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 447
+   at subscription_now.GenerateQrCode(String Orderid, String Amount) in E:\Sadhna Garg\GitHubC#\EpayIndia\subscription-now.aspx.cs:line 348
