@@ -443,7 +443,7 @@
                         <a href="epay-india-1.0.0_v3.apk" download="" class="app-badge-img">
                             <img src="demoepay/images/google_play.png" alt="Get it on Google Play">
                         </a>
-                        <a href="epay-india-1.0.0_v3.apk" download="" class="app-badge-img">
+                        <a href="#" class="app-badge-img">
                             <img src="demoepay/images/app_store.png" alt="Download on the App Store">
                         </a>
                     </div>
