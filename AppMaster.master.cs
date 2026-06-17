@@ -41,7 +41,7 @@ public partial class AppMaster : System.Web.UI.MasterPage
                     
                     ddUserNamenameee.InnerText = dt.Rows[0]["memfirstname"].ToString().Substring(0, 1);
                     ddUserName.InnerText = dt.Rows[0]["memfirstname"].ToString();
-                    ddUserNameName.InnerText = dt.Rows[0]["memfirstname"].ToString();
+                    //ddUserNameName.InnerText = dt.Rows[0]["memfirstname"].ToString();
                     LblIDD.Text = dt.Rows[0]["idno"].ToString();
                 }
             }
