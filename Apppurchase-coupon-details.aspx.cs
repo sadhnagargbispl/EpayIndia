@@ -36,7 +36,7 @@ public partial class Apppurchase_coupon_details : System.Web.UI.Page
                 {
                     kitid_ = Crypto.Decrypt(objModuleFun.EncodeBase64(Request["kitid"]));
                     FillKit(kitid_);
-                    //FillDis(kitid_);
+                    FillDis(kitid_);
                 }
 
                 if (!Page.IsPostBack)
@@ -54,6 +54,47 @@ public partial class Apppurchase_coupon_details : System.Web.UI.Page
             throw new Exception(ex.Message);
         }
 
+    }
+    private void FillDis(string kitid)
+    {
+        try
+        {
+            DataSet ds = new DataSet();
+            string sql = "Exec Sp_GetKitDisDetailsNew @KitID";
+
+            // Using parameterized query to avoid SQL injection
+            SqlParameter[] parameters = {
+            new SqlParameter("@KitID", SqlDbType.Int) { Value = kitid }
+        };
+
+            ds = SqlHelper.ExecuteDataset(constr1, CommandType.Text, sql, parameters);
+
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(ds.Tables[0].Rows[0]["Dis"].ToString()))
+                {
+                    LblFoodDis.Text = ds.Tables[0].Rows[0]["Dis"].ToString();
+                    LblFoodUse.Text = ds.Tables[0].Rows[0]["Uses"].ToString();
+                    LblFoodTerms.Text = ds.Tables[0].Rows[0]["Trmscon"].ToString();
+                    DivMDescription_Food.Visible = true;
+                    DivMDescription_Food1.Visible = true;
+                }
+                else
+                {
+                    DivMDescription_Food.Visible = false;
+                    DivMDescription_Food1.Visible = false;
+                }
+            }
+            else
+            {
+                DivMDescription_Food.Visible = false;
+                DivMDescription_Food1.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
     private string DisableTheButton(Control pge, Control btn)
     {

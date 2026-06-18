@@ -541,7 +541,8 @@
                     <i class="fa-solid fa-burger"></i>
                 </div>
                 <div class="cd-preview-pct">
-                    <asp:Label ID="LblDiscount" runat="server" Text=""></asp:Label>%</div>
+                    <asp:Label ID="LblDiscount" runat="server" Text=""></asp:Label>%
+                </div>
                 <div class="cd-preview-off">Off</div>
             </div>
             <div class="cd-preview-div">
@@ -550,7 +551,8 @@
             <div class="cd-preview-right">
                 <div class="cd-preview-qty">
                     <asp:Label ID="Lbltickets" runat="server" Text="" Style="font-family: 'Sora', sans-serif; font-size: .95rem; font-weight: 800; color: var(--text);"></asp:Label>
-                    Coupons <span>/ Pack</span></div>
+                    Coupons <span>/ Pack</span>
+                </div>
                 <div class="cd-preview-orig">&#8377;<asp:Label ID="LblAMount" runat="server" Text=""></asp:Label></div>
                 <div class="cd-preview-final">&#8377;<asp:Label ID="Lblwallet" runat="server" Text=""></asp:Label></div>
                 <div class="cd-preview-save">Save &#8377;<asp:Label ID="LblSaveamount" runat="server" Text=""></asp:Label></div>
@@ -676,7 +678,7 @@
     </div>
 
     <!-- TABS -->
-    <div class="cd-tabs-nav">
+    <div class="cd-tabs-nav" runat="server" id="DivMDescription_Food" visible="False">
         <button type="button" class="cd-tab-btn active" onclick="switchTab(this,'tab-desc')">
             <i class="fa-solid fa-file-lines"></i>Description
        
@@ -691,9 +693,13 @@
         </button>
     </div>
 
-    <div class="cd-card">
+    <div class="cd-card" runat="server" id="DivMDescription_Food1" visible="False">
         <div class="cd-tab-content active" id="tab-desc">
             <p>
+                <asp:Label ID="LblFoodDis" runat="server" Text=""></asp:Label>
+
+            </p>
+            <%--<p>
                 This coupon package gives you access to exclusive food and movie bookings at the best prices.
                 Purchase in bulk and enjoy maximum savings with ePay's Ecommerce Wallet balance credited directly to your account.
            
@@ -703,22 +709,28 @@
                 <li>Usable at 1000+ partner restaurants &amp; cinemas</li>
                 <li>Ecommerce Wallet balance credited immediately</li>
                 <li>Savings up to 50% on total coupon value</li>
-            </ul>
+            </ul>--%>
         </div>
 
         <div class="cd-tab-content" id="tab-how">
-            <ul>
+            <p>
+                <asp:Label ID="LblFoodUse" runat="server" Text=""></asp:Label>
+            </p>
+            <%-- <ul>
                 <li>Login to your ePay account and go to "My Coupons" section.</li>
                 <li>Select the coupon you wish to use at checkout.</li>
                 <li>At the restaurant or cinema, show your digital coupon code at the counter.</li>
                 <li>The discount will be applied automatically on the total bill amount.</li>
                 <li>Remaining wallet balance stays in your ePay account for future use.</li>
                 <li>Contact ePay support for any assistance during redemption.</li>
-            </ul>
+            </ul>--%>
         </div>
 
         <div class="cd-tab-content" id="tab-tc">
-            <ul>
+            <p>
+                <asp:Label ID="LblFoodTerms" runat="server" Text=""></asp:Label>
+            </p>
+            <%--   <ul>
                 <li class="tc">Coupons are non-transferable and cannot be exchanged for cash.</li>
                 <li class="tc">Each coupon is valid for single use only unless stated otherwise.</li>
                 <li class="tc">ePay reserves the right to cancel coupons in case of fraudulent activity.</li>
@@ -726,7 +738,7 @@
                 <li class="tc">Coupons cannot be clubbed with any other ongoing offer or discount.</li>
                 <li class="tc">Refunds will only be processed as per ePay's refund policy.</li>
                 <li class="tc">ePay Digital India Pvt. Ltd. is the final authority on all disputes.</li>
-            </ul>
+            </ul>--%>
         </div>
     </div>
 

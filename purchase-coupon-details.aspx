@@ -694,43 +694,54 @@
                     </div>
 
                     <!-- Tabs -->
-                    <div class="cpd-tabs-card">
+                    
+                    <div class="cpd-tabs-card" runat="server" id="DivMDescription_Food" visible="False">
                         <div class="cpd-tabs-nav">
                             <button type="button" class="cpd-tab-btn active" onclick="switchTab(this,'tab-desc')">📄 Description</button>
                             <button type="button" class="cpd-tab-btn" onclick="switchTab(this,'tab-how')">📖 How to Use</button>
                             <button type="button" class="cpd-tab-btn" onclick="switchTab(this,'tab-tc')">📜 Terms &amp; Conditions</button>
                         </div>
 
-                        <!-- Description -->
+
                         <div class="cpd-tab-content active" id="tab-desc">
                             <h4>About This Coupon Package</h4>
-                            <p>This coupon package gives you access to exclusive food and movie bookings at the best prices. Purchase in bulk and enjoy maximum savings with ePay's Ecommerce Wallet balance credited directly to your account.</p>
+                            <p>
+                                <asp:Label ID="LblFoodDis" runat="server" Text=""></asp:Label>
+
+                            </p>
+                            <%-- <p>This coupon package gives you access to exclusive food and movie bookings at the best prices. Purchase in bulk and enjoy maximum savings with ePay's Ecommerce Wallet balance credited directly to your account.</p>
                             <p>Each coupon can be used at participating restaurants and movie theatres across India. Valid for use within the specified validity period from the date of purchase.</p>
                             <ul>
                                 <li>Instant digital delivery after purchase</li>
                                 <li>Usable at 1000+ partner restaurants &amp; cinemas</li>
                                 <li>Ecommerce Wallet balance credited immediately</li>
                                 <li>Savings up to 50% on total coupon value</li>
-                            </ul>
+                            </ul>--%>
                         </div>
 
-                        <!-- How to Use -->
+
                         <div class="cpd-tab-content" id="tab-how">
                             <h4>How to Use Your Coupon</h4>
-                            <ul>
+                            <p>
+                                <asp:Label ID="LblFoodUse" runat="server" Text=""></asp:Label>
+                            </p>
+                            <%--<ul>
                                 <li>Login to your ePay account and go to "My Coupons" section.</li>
                                 <li>Select the coupon you wish to use at checkout.</li>
                                 <li>At the restaurant or cinema, show your digital coupon code at the counter.</li>
                                 <li>The discount will be applied automatically on the total bill amount.</li>
                                 <li>Remaining wallet balance stays in your ePay account for future use.</li>
                                 <li>Contact ePay support for any assistance during redemption.</li>
-                            </ul>
+                            </ul>--%>
                         </div>
 
-                        <!-- Terms & Conditions -->
+
                         <div class="cpd-tab-content" id="tab-tc">
                             <h4>Terms &amp; Conditions</h4>
-                            <ul>
+                            <p>
+                                <asp:Label ID="LblFoodTerms" runat="server" Text=""></asp:Label>
+                            </p>
+                            <%--<ul>
                                 <li class="tc">Coupons are non-transferable and cannot be exchanged for cash.</li>
                                 <li class="tc">Each coupon is valid for single use only unless stated otherwise.</li>
                                 <li class="tc">ePay reserves the right to cancel coupons in case of fraudulent activity.</li>
@@ -738,7 +749,7 @@
                                 <li class="tc">Coupons cannot be clubbed with any other ongoing offer or discount.</li>
                                 <li class="tc">Refunds will only be processed as per ePay's refund policy.</li>
                                 <li class="tc">ePay Digital India Pvt. Ltd. is the final authority on all disputes.</li>
-                            </ul>
+                            </ul>--%>
                         </div>
 
                     </div>
