@@ -520,7 +520,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
 
-
     <!-- ─── HERO BANNER ─── -->
     <section class="abt-hero">
         <div class="abt-hero-inner">
@@ -728,150 +727,150 @@
     </section>
     <script>
 
-    // ─────────────────────────────
-    // User Dropdown Toggle
-    // ─────────────────────────────
-    const userDropdownBtn = document.getElementById('userDropdownBtn');
-    const userDropdown = document.getElementById('userDropdown');
-    const userDropdownWrap = document.getElementById('userDropdownWrap');
+        // ─────────────────────────────
+        // User Dropdown Toggle
+        // ─────────────────────────────
+        const userDropdownBtn = document.getElementById('userDropdownBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownWrap = document.getElementById('userDropdownWrap');
 
-    if (userDropdownBtn && userDropdown && userDropdownWrap) {
+        if (userDropdownBtn && userDropdown && userDropdownWrap) {
 
-        userDropdownBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            userDropdown.classList.toggle('open');
-        });
+            userDropdownBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('open');
+            });
 
-        document.addEventListener('click', function (e) {
+            document.addEventListener('click', function (e) {
 
-            if (!userDropdownWrap.contains(e.target)) {
-                userDropdown.classList.remove('open');
-            }
+                if (!userDropdownWrap.contains(e.target)) {
+                    userDropdown.classList.remove('open');
+                }
 
-        });
-    }
-
-
-    // ─────────────────────────────
-    // Mobile Navigation Toggle
-    // ─────────────────────────────
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileNav = document.getElementById('mobileNav');
-
-    if (hamburgerBtn && mobileNav) {
-
-        // Open / Close Menu
-        hamburgerBtn.addEventListener('click', function (e) {
-
-            e.stopPropagation();
-
-            const isOpen = mobileNav.classList.toggle('open');
-
-            hamburgerBtn.classList.toggle('open', isOpen);
-
-            hamburgerBtn.setAttribute('aria-expanded', isOpen);
-        });
+            });
+        }
 
 
-        // Close Menu On Link Click
-        mobileNav.querySelectorAll('a').forEach(function (link) {
+        // ─────────────────────────────
+        // Mobile Navigation Toggle
+        // ─────────────────────────────
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
 
-            link.addEventListener('click', function () {
+        if (hamburgerBtn && mobileNav) {
 
-                mobileNav.classList.remove('open');
+            // Open / Close Menu
+            hamburgerBtn.addEventListener('click', function (e) {
 
-                hamburgerBtn.classList.remove('open');
+                e.stopPropagation();
 
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
+                const isOpen = mobileNav.classList.toggle('open');
+
+                hamburgerBtn.classList.toggle('open', isOpen);
+
+                hamburgerBtn.setAttribute('aria-expanded', isOpen);
+            });
+
+
+            // Close Menu On Link Click
+            mobileNav.querySelectorAll('a').forEach(function (link) {
+
+                link.addEventListener('click', function () {
+
+                    mobileNav.classList.remove('open');
+
+                    hamburgerBtn.classList.remove('open');
+
+                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+
+                });
 
             });
 
-        });
+
+            // Close Menu On Outside Click
+            document.addEventListener('click', function (e) {
+
+                if (
+                    !hamburgerBtn.contains(e.target) &&
+                    !mobileNav.contains(e.target)
+                ) {
+
+                    mobileNav.classList.remove('open');
+
+                    hamburgerBtn.classList.remove('open');
+
+                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+                }
+
+            });
 
 
-        // Close Menu On Outside Click
-        document.addEventListener('click', function (e) {
+            // ESC Key Support
+            document.addEventListener('keydown', function (e) {
 
-            if (
-                !hamburgerBtn.contains(e.target) &&
-                !mobileNav.contains(e.target)
-            ) {
+                if (e.key === 'Escape') {
 
-                mobileNav.classList.remove('open');
+                    mobileNav.classList.remove('open');
 
-                hamburgerBtn.classList.remove('open');
+                    hamburgerBtn.classList.remove('open');
 
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-            }
+                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+                }
 
-        });
-
-
-        // ESC Key Support
-        document.addEventListener('keydown', function (e) {
-
-            if (e.key === 'Escape') {
-
-                mobileNav.classList.remove('open');
-
-                hamburgerBtn.classList.remove('open');
-
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-            }
-
-        });
-
-    }
-
-
-    // ─────────────────────────────
-    // Category Scroll
-    // ─────────────────────────────
-    function scrollCats(dir) {
-
-        const el = document.getElementById('catsScroll');
-
-        if (el) {
-
-            el.scrollBy({
-                left: dir * 240,
-                behavior: 'smooth'
             });
 
         }
-    }
 
 
-    // ─────────────────────────────
-    // Scroll Animation
-    // ─────────────────────────────
-    const observer = new IntersectionObserver((entries, observer) => {
+        // ─────────────────────────────
+        // Category Scroll
+        // ─────────────────────────────
+        function scrollCats(dir) {
 
-        entries.forEach(entry => {
+            const el = document.getElementById('catsScroll');
 
-            if (entry.isIntersecting) {
+            if (el) {
 
-                entry.target.classList.add('show');
+                el.scrollBy({
+                    left: dir * 240,
+                    behavior: 'smooth'
+                });
 
-                observer.unobserve(entry.target);
             }
+        }
 
+
+        // ─────────────────────────────
+        // Scroll Animation
+        // ─────────────────────────────
+        const observer = new IntersectionObserver((entries, observer) => {
+
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add('show');
+
+                    observer.unobserve(entry.target);
+                }
+
+            });
+
+        }, {
+            threshold: 0.08
         });
 
-    }, {
-        threshold: 0.08
-    });
 
+        document.querySelectorAll(
+            '.service-card, .cat-card, .about-feat, .why-feat, [data-anim]'
+        ).forEach((el, i) => {
 
-    document.querySelectorAll(
-        '.service-card, .cat-card, .about-feat, .why-feat, [data-anim]'
-    ).forEach((el, i) => {
+            el.style.transitionDelay = `${i * 0.08}s`;
 
-        el.style.transitionDelay = `${i * 0.08}s`;
+            observer.observe(el);
 
-        observer.observe(el);
-
-    });
+        });
 
     </script>
 </asp:Content>

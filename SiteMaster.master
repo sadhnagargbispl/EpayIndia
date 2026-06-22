@@ -17,8 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <%--<link rel="stylesheet" href="css/custom_stylesheet.css">
 <link rel="stylesheet" href="css/style.css">--%>
-    <link href="demoepay/css/custom_stylesheet.css?v=1.5" rel="stylesheet" />
-    <link href="demoepay/css/style.css?v=1.5" rel="stylesheet" />
+    <link href="demoepay/css/custom_stylesheet.css?v=1.6" rel="stylesheet" />
+    <link href="demoepay/css/style.css?v=1.6" rel="stylesheet" />
     <!-- CSS here -->
     <%--    <link rel="stylesheet" href="Megamart.css?v=1">--%>
     <style>
@@ -227,7 +227,7 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    
+
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
         <div>
 
@@ -337,7 +337,7 @@
 
             <!-- ─── NAVBAR ─── -->
 
-       <%--     <div class="search-bar-wrap">
+            <%--     <div class="search-bar-wrap">
                 <div class="search-inner">
                     <div class="search-box">
                         <div class="search-cat">
@@ -395,7 +395,7 @@
                         <li><a href="#">Gift Voucher </a></li>
                         <li><a href="#">ePay Digital Services</a></li>--%>
                         <li><a href="StoreRedirect.aspx" target="_blank">Store Shopping</a></li>
-                        <li><a href="BrandRedirect.aspx" target="_blank">e-Commerce</a></li>
+                        <li><a href="BrandRedirect.aspx" target="_blank">eCommerce / Brand Shopping</a></li>
                         <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital</a></li>
                         <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
                         <li><a href="FoodBookingRedirect.aspx" target="_blank">Food Tadka</a></li>
@@ -416,15 +416,26 @@
                         <li><a href="Certificate.aspx">Certificate</a></li>
                         <li><a href="board-of-directors.aspx">Board of Directors</a></li>
                         <li><a href="management-team.aspx">Management Team</a></li>
-                        <li><a href="#">Gallery Network</a></li>
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Contact Us</a></li>
+                        <%--<li><a href="#">Gallery Network</a></li>
+                        <li><a href="#">FAQs</a></li>--%>
+                        <li><a href="contact-us.aspx">Contact Us</a></li>
 
 
                     </ul>
                 </div>
-
                 <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <!-- <li><a href="help-center.asp">Help Center</a></li> -->
+                        <li><a href="cancellation-refund-policy_web.aspx">Cancellation / Refund Policy</a></li>
+                        <li><a href="shipping-delivery-policy_web.aspx">Shipping / Delivery Policy</a></li>
+                        <li><a href="return-replacement-policy_web.aspx">Return & Replacement Policy</a></li>
+                        <li><a href="privacy-policy_web.aspx">Privacy Policy</a></li>
+                        <li><a href="terms_and_conditions_web.aspx">Terms & Conditions</a></li>
+                        <!-- <li><a href="track-order_web.asp">Track Order</a></li> -->
+                    </ul>
+                </div>
+                <%-- <div class="footer-col">
                     <h4>Support</h4>
                     <ul>
                         <li><a href="#">Help Center</a></li>
@@ -435,7 +446,7 @@
                         <li><a href="#">Terms & Conditions</a></li>
                         <li><a href="#">Track Order</a></li>
                     </ul>
-                </div>
+                </div>--%>
 
                 <div class="footer-col">
                     <h4>Download App</h4>
