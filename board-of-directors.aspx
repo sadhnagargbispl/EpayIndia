@@ -357,7 +357,7 @@
                     <h2>Mr. Prakash Pawar. </h2>
                     <div class="bod-title-line"></div>
                     <div class="bod-content-tag">Business Expansion</div>
-                    <p>Mr. Prakash Pawar plays a vital role in driving the company's strategic vision and nationwide expansion. He focuses on leading PAN India growth by identifying new markets, building strong regional presence, and strengthening the franchise network.</p>
+                    <p>Mr. Prakash Pawar plays a vital role in driving the company's strategic vision and nationwide expansion. He focuses on driving PAN India growth by identifying new markets, building strong regional presence, and strengthening the franchise network.</p>
                     <br>
                     <p>With a result-oriented approach, he ensures scalable business development and consistent performance across locations. His leadership supports long-term planning, market penetration, and sustainable growth while maintaining strong operational alignment across the organization.</p>
                 </div>

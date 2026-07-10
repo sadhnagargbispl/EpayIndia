@@ -206,7 +206,7 @@
         <div class="policy-section">
             <h2>How does the delivery process work?</h2>
             <p>Once our system processes your order, your products are inspected thoroughly to ensure they are in a perfect condition.</p>
-            <p>After they pass through the final round of quality check, they are packed and handed over to our trusted delivery partner i.e. <strong>Blue Dart</strong>.</p>
+            <p>After they pass through the final round of quality check, they are packed and handed over to our delivery partner i.e. <strong>Blue Dart</strong>.</p>
             <p>Our delivery partners then bring the package to you at the earliest possibility. In case they are unable to reach your provided address or at a suitable time, they will contact you to resolve the issue.</p>
             <p>Guarantee for delivery made by the Company is subject to the terms and conditions of the courier company. Any inconsistency/errors in name or address will result in non-delivery of the product.</p>
         </div>

@@ -7,7 +7,7 @@
       <div class="hero">
       <div class="hero-greeting" id="greeting"></div>
       <div class="hero-name" id="ddUserName" runat="server"></div>
-      <div class="hero-sub">India's Smart Digital &amp; eCommerce Platform</div>
+      <div class="hero-sub">Digital Commerce &amp; Utility Platform</div>
   </div>
 </asp:Content>
 
