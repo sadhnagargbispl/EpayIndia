@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
 <title>About Us – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -423,8 +423,8 @@
 <div class="abt-stats">
   <div class="abt-stats-grid">
     <div class="abt-stat-item">
-      <div class="abt-stat-num">1M+</div>
-      <div class="abt-stat-label">Happy Users</div>
+      <div class="abt-stat-num">Growing</div>
+      <div class="abt-stat-label">User Community</div>
     </div>
     <div class="abt-stat-item">
       <div class="abt-stat-num">50K+</div>
@@ -435,8 +435,8 @@
       <div class="abt-stat-label">States Covered</div>
     </div>
     <div class="abt-stat-item">
-      <div class="abt-stat-num">99.9%</div>
-      <div class="abt-stat-label">Uptime</div>
+      <div class="abt-stat-num">Reliable</div>
+      <div class="abt-stat-label">Platform</div>
     </div>
   </div>
 </div>
@@ -446,7 +446,7 @@
 <section class="abt-section">
   <div class="abt-wrap">
     <div class="abt-section-tag">Who We Are</div>
-    <h2 class="abt-section-title">Empowering Digital Growth <span>Across India</span></h2>
+    <h2 class="abt-section-title">Supporting Digital Access <span>Across India</span></h2>
     <p class="abt-section-sub">Founded with the vision of empowering individuals through digital innovation, ePay Digital India Pvt. Ltd. simplifies everyday services while creating opportunities for growth in the digital economy. Our platform provides convenient access to essential digital services, online shopping solutions, and value-added benefits through a user-friendly and scalable system.</p>
     <div class="abt-info-row">
       <div class="abt-info-card">
@@ -468,7 +468,7 @@
         <span class="abt-info-icon">&#128274;</span>
         <div>
           <strong>Secure &amp; Reliable</strong>
-          <p>Enterprise-grade security with 99.9% platform uptime guarantee.</p>
+          <p>Enterprise-grade security with a focus on platform reliability and stability.</p>
         </div>
       </div>
     </div>
@@ -487,7 +487,7 @@
       <div class="abt-vm-card">
         <div class="abt-vm-icon">&#127919;</div>
         <h3>Our Vision</h3>
-        <p>To become a trusted and innovative digital platform that empowers people across India through technology, convenience, and growth opportunities — making digital services accessible to every corner of the country.</p>
+        <p>To become a reliable and innovative digital platform that helps people across India through technology, convenience, and growth opportunities — making digital services accessible to every corner of the country.</p>
       </div>
 
       <!-- Mission -->
@@ -561,7 +561,7 @@
       <div class="abt-why-card">
         <span class="abt-why-emoji">&#128187;</span>
         <h4>Technology-Driven Platform</h4>
-        <p>Built on modern, secure, and scalable infrastructure to handle millions of transactions reliably.</p>
+        <p>Built on modern, secure, and scalable infrastructure designed to handle high transaction volumes reliably.</p>
       </div>
 
       <div class="abt-why-card">
@@ -610,7 +610,7 @@
       <span class="abt-pillar">&#128200; Growth</span>
       <span class="abt-pillar">&#128274; Trust</span>
     </div>
-    <div class="abt-tagline">"Empowering Digital Growth Across India." — ePay Digital India Pvt. Ltd.</div>
+    <div class="abt-tagline">"Supporting Digital Access Across India." — ePay Digital India Pvt. Ltd.</div>
   </div>
 </section>
 

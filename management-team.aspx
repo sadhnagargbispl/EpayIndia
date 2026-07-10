@@ -2,6 +2,16 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style>
+        :root {
+            --orange: #E84000;
+            --orange-light: #FF5722;
+            --orange-glow: rgba(232,64,0,0.12);
+            --dark: #0D1117;
+            --muted: #6B7280;
+            --border: #E2E8F0;
+            --text: #1A1A2E;
+        }
+
         /* ── Page Hero ── */
         .pg-hero {
             background: linear-gradient(135deg, #f8fafc 0%, #ffffff 60%, #f0f4ff 100%);
@@ -240,10 +250,121 @@
                 padding: 50px 16px 44px;
             }
         }
+
+        /* ── Top Management Council Section ── */
+        .tmc-section {
+            padding: 56px 20px 20px;
+            background: #f9fafb;
+        }
+
+        .tmc-wrap {
+            max-width: 1120px;
+            margin: auto;
+        }
+
+        .tmc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .tmc-card {
+            background: #fff;
+            border: 1px solid rgba(232,64,0,.3);
+            border-radius: 20px;
+            overflow: hidden;
+            text-align: center;
+            transition: box-shadow .3s, transform .3s, border-color .3s;
+            position: relative;
+            box-shadow: 0 6px 24px rgba(232,64,0,.08);
+        }
+
+            .tmc-card:hover {
+                box-shadow: 0 16px 44px rgba(232,64,0,.18);
+                transform: translateY(-5px);
+                border-color: var(--orange);
+            }
+
+            .tmc-card::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, var(--orange), #FF8C42);
+            }
+
+        .tmc-photo-wrap {
+            width: 100%;
+            aspect-ratio: 1 / 1.1;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(160deg, #f0f2f5, #e8eaf0);
+        }
+
+            .tmc-photo-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: top center;
+                display: block;
+                transition: transform .4s ease;
+            }
+
+        .tmc-card:hover .tmc-photo-wrap img {
+            transform: scale(1.06);
+        }
+
+        .tmc-info {
+            padding: 20px 16px 22px;
+        }
+
+            .tmc-info h3 {
+                font-family: 'Sora', sans-serif;
+                font-size: 1.02rem;
+                font-weight: 700;
+                color: var(--text);
+                margin: 0 0 8px;
+                line-height: 1.3;
+            }
+
+            .tmc-info .tmc-role-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                background: linear-gradient(90deg, var(--orange), #FF8C42);
+                color: #fff;
+                font-size: .7rem;
+                font-weight: 700;
+                letter-spacing: .5px;
+                padding: 5px 14px;
+                border-radius: 50px;
+                text-transform: uppercase;
+            }
+
+        @media (max-width: 680px) {
+            .tmc-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .tmc-section {
+                padding: 44px 14px 10px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .tmc-grid {
+                grid-template-columns: repeat(1, 1fr);
+                gap: 14px;
+            }
+        }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-
     <!-- ─── HERO ─── -->
     <section class="pg-hero">
         <div class="pg-hero-inner">
@@ -260,6 +381,55 @@
         Management Team
     </div>
 
+    <!-- ─── TOP MANAGEMENT COUNCIL ─── -->
+    <section class="tmc-section">
+        <div class="tmc-wrap">
+
+            <div class="mt-section-label">
+                <div class="line left"></div>
+                <div class="mt-section-label-text">Top Management Council</div>
+                <div class="line"></div>
+            </div>
+
+            <div class="tmc-grid">
+
+                <!-- 1 -->
+                <div class="tmc-card">
+                    <div class="tmc-photo-wrap">
+                        <img src="demoepay/images/management-team/2.%20Mr.%20Suhas%20Kadam.png" alt="Mr. Suhas Kadam">
+                    </div>
+                    <div class="tmc-info">
+                        <h3>Mr. Suhas Kadam</h3>
+                        <span class="tmc-role-badge">&#9733; Top Management</span>
+                    </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="tmc-card">
+                    <div class="tmc-photo-wrap">
+                        <img src="demoepay/images/management-team/3.%20Mr.%20Krishna%20Gavali.png" alt="Mr. Krishna Gavali">
+                    </div>
+                    <div class="tmc-info">
+                        <h3>Mr. Krishna Gavali</h3>
+                        <span class="tmc-role-badge">&#9733; Top Management</span>
+                    </div>
+                </div>
+
+                <!-- 3 -->
+                <div class="tmc-card">
+                    <div class="tmc-photo-wrap">
+                        <img src="demoepay/images/management-team/7.%20Mr.%20Santosh%20Patil..jpeg" alt="Mr. Santosh Patil">
+                    </div>
+                    <div class="tmc-info">
+                        <h3>Mr. Santosh Patil</h3>
+                        <span class="tmc-role-badge">&#9733; Top Management</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <!-- ─── TEAM GRID ─── -->
     <section class="mt-section">
         <div class="mt-wrap">
@@ -271,39 +441,6 @@
             </div>
 
             <div class="mt-grid">
-
-                <!-- 1 -->
-               <%-- <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/1.%20Dr%20.Dhanpal%20Wathare.jpeg" alt="Dr. Dhanpal Wathare">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Dr. Dhanpal Wathare</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>--%>
-
-                <!-- 2 -->
-                <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/2.%20Mr.%20Suhas%20Kadam.png" alt="Mr. Suhas Kadam">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Suhas Kadam</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>
-
-                <!-- 3 -->
-                <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/3.%20Mr.%20Krishna%20Gavali.png" alt="Mr. Krishna Gavali">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Krishna Gavali</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>
 
                 <!-- 4 -->
                 <div class="mt-card">
@@ -338,17 +475,6 @@
                     </div>
                 </div>
 
-                <!-- 7 -->
-                <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/7.%20Mr.%20Santosh%20Patil..jpeg" alt="Mr. Santosh Patil">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Santosh Patil</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>
-
                 <!-- 8 -->
                 <div class="mt-card">
                     <div class="mt-photo-wrap">
@@ -371,28 +497,6 @@
                     </div>
                 </div>
 
-                <!-- 10 -->
-                <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/10.%20Mr.%20Chandrakant%20Vatigave%20..png" alt="Mr. Chandrakant Vatigave">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Chandrakant Vatigave</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>
-
-                <!-- 11 -->
-               <%-- <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/11.%20Mr.%20Pradeep%20Dalavi.png" alt="Mr. Pradeep Dalavi">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Pradeep Dalavi</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>--%>
-
                 <!-- 12 -->
                 <div class="mt-card">
                     <div class="mt-photo-wrap">
@@ -403,28 +507,6 @@
                         <span class="mt-role-badge">&#9733; Management</span>
                     </div>
                 </div>
-
-                <!-- 13 -->
-                <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/13.%20Mr.%20Prashant%20Kadam.png" alt="Mr. Prashant Kadam">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Prashant Kadam</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>
-
-                <!-- 14 -->
-         <%--       <div class="mt-card">
-                    <div class="mt-photo-wrap">
-                        <img src="demoepay/images/management-team/14.%20Mr.%20Sandip%20Patil.jpeg" alt="Mr. Sandip Patil">
-                    </div>
-                    <div class="mt-info">
-                        <h3>Mr. Sandip Patil</h3>
-                        <span class="mt-role-badge">&#9733; Management</span>
-                    </div>
-                </div>--%>
 
                 <!-- 15 -->
                 <div class="mt-card">
@@ -440,152 +522,153 @@
             </div>
         </div>
     </section>
+
     <script>
 
-    // ─────────────────────────────
-    // User Dropdown Toggle
-    // ─────────────────────────────
-    const userDropdownBtn = document.getElementById('userDropdownBtn');
-    const userDropdown = document.getElementById('userDropdown');
-    const userDropdownWrap = document.getElementById('userDropdownWrap');
+        // ─────────────────────────────
+        // User Dropdown Toggle
+        // ─────────────────────────────
+        const userDropdownBtn = document.getElementById('userDropdownBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownWrap = document.getElementById('userDropdownWrap');
 
-    if (userDropdownBtn && userDropdown && userDropdownWrap) {
+        if (userDropdownBtn && userDropdown && userDropdownWrap) {
 
-        userDropdownBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            userDropdown.classList.toggle('open');
-        });
+            userDropdownBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('open');
+            });
 
-        document.addEventListener('click', function (e) {
+            document.addEventListener('click', function (e) {
 
-            if (!userDropdownWrap.contains(e.target)) {
-                userDropdown.classList.remove('open');
-            }
+                if (!userDropdownWrap.contains(e.target)) {
+                    userDropdown.classList.remove('open');
+                }
 
-        });
-    }
-
-
-    // ─────────────────────────────
-    // Mobile Navigation Toggle
-    // ─────────────────────────────
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileNav = document.getElementById('mobileNav');
-
-    if (hamburgerBtn && mobileNav) {
-
-        // Open / Close Menu
-        hamburgerBtn.addEventListener('click', function (e) {
-
-            e.stopPropagation();
-
-            const isOpen = mobileNav.classList.toggle('open');
-
-            hamburgerBtn.classList.toggle('open', isOpen);
-
-            hamburgerBtn.setAttribute('aria-expanded', isOpen);
-        });
+            });
+        }
 
 
-        // Close Menu On Link Click
-        mobileNav.querySelectorAll('a').forEach(function (link) {
+        // ─────────────────────────────
+        // Mobile Navigation Toggle
+        // ─────────────────────────────
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
 
-            link.addEventListener('click', function () {
+        if (hamburgerBtn && mobileNav) {
 
-                mobileNav.classList.remove('open');
+            // Open / Close Menu
+            hamburgerBtn.addEventListener('click', function (e) {
 
-                hamburgerBtn.classList.remove('open');
+                e.stopPropagation();
 
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
+                const isOpen = mobileNav.classList.toggle('open');
+
+                hamburgerBtn.classList.toggle('open', isOpen);
+
+                hamburgerBtn.setAttribute('aria-expanded', isOpen);
+            });
+
+
+            // Close Menu On Link Click
+            mobileNav.querySelectorAll('a').forEach(function (link) {
+
+                link.addEventListener('click', function () {
+
+                    mobileNav.classList.remove('open');
+
+                    hamburgerBtn.classList.remove('open');
+
+                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+
+                });
 
             });
 
-        });
+
+            // Close Menu On Outside Click
+            document.addEventListener('click', function (e) {
+
+                if (
+                    !hamburgerBtn.contains(e.target) &&
+                    !mobileNav.contains(e.target)
+                ) {
+
+                    mobileNav.classList.remove('open');
+
+                    hamburgerBtn.classList.remove('open');
+
+                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+                }
+
+            });
 
 
-        // Close Menu On Outside Click
-        document.addEventListener('click', function (e) {
+            // ESC Key Support
+            document.addEventListener('keydown', function (e) {
 
-            if (
-                !hamburgerBtn.contains(e.target) &&
-                !mobileNav.contains(e.target)
-            ) {
+                if (e.key === 'Escape') {
 
-                mobileNav.classList.remove('open');
+                    mobileNav.classList.remove('open');
 
-                hamburgerBtn.classList.remove('open');
+                    hamburgerBtn.classList.remove('open');
 
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-            }
+                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+                }
 
-        });
-
-
-        // ESC Key Support
-        document.addEventListener('keydown', function (e) {
-
-            if (e.key === 'Escape') {
-
-                mobileNav.classList.remove('open');
-
-                hamburgerBtn.classList.remove('open');
-
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-            }
-
-        });
-
-    }
-
-
-    // ─────────────────────────────
-    // Category Scroll
-    // ─────────────────────────────
-    function scrollCats(dir) {
-
-        const el = document.getElementById('catsScroll');
-
-        if (el) {
-
-            el.scrollBy({
-                left: dir * 240,
-                behavior: 'smooth'
             });
 
         }
-    }
 
 
-    // ─────────────────────────────
-    // Scroll Animation
-    // ─────────────────────────────
-    const observer = new IntersectionObserver((entries, observer) => {
+        // ─────────────────────────────
+        // Category Scroll
+        // ─────────────────────────────
+        function scrollCats(dir) {
 
-        entries.forEach(entry => {
+            const el = document.getElementById('catsScroll');
 
-            if (entry.isIntersecting) {
+            if (el) {
 
-                entry.target.classList.add('show');
+                el.scrollBy({
+                    left: dir * 240,
+                    behavior: 'smooth'
+                });
 
-                observer.unobserve(entry.target);
             }
+        }
 
+
+        // ─────────────────────────────
+        // Scroll Animation
+        // ─────────────────────────────
+        const observer = new IntersectionObserver((entries, observer) => {
+
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add('show');
+
+                    observer.unobserve(entry.target);
+                }
+
+            });
+
+        }, {
+            threshold: 0.08
         });
 
-    }, {
-        threshold: 0.08
-    });
 
+        document.querySelectorAll(
+            '.service-card, .cat-card, .about-feat, .why-feat, [data-anim]'
+        ).forEach((el, i) => {
 
-    document.querySelectorAll(
-        '.service-card, .cat-card, .about-feat, .why-feat, [data-anim]'
-    ).forEach((el, i) => {
+            el.style.transitionDelay = `${i * 0.08}s`;
 
-        el.style.transitionDelay = `${i * 0.08}s`;
+            observer.observe(el);
 
-        observer.observe(el);
-
-    });
+        });
 
     </script>
 </asp:Content>

@@ -3,7 +3,7 @@
   <div class="topbar-inner">
     <div class="topbar-left">
       <span class="topbar-star">✦</span>
-      <span>India's Leading ePay Digital &amp; E-commerce Platform</span>
+      <span>ePay Digital Commerce &amp; Utility Platform</span>
     </div>
     <div class="topbar-right">
       <a href="#"><span>📱</span> <span class="hide-sm">Download App</span></a>
@@ -16,7 +16,7 @@
 <!-- ─── NAVBAR ─── -->
 <nav class="navbar">
   <div class="nav-inner">    
-    <a href="index.asp" class="logo"> <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader"> </a>
+    <a href="index.asp" class="logo"> <img src="images/logo.png" alt="ePay Logo" class="logoheader"> </a>
     <ul class="nav-links">
       <li><a href="https://store.epayindia.in/" target="_blank">Store Shopping</a></li>
       <li><a href="https://utility.epayindia.in/" target="_blank">ePay Digital</a></li>
@@ -25,12 +25,9 @@
       <li><a href="#">Brand Shopping</a></li>
     </ul>
 
-
-
     <div class="nav-actions">
       <!-- <button class="bell-btn" aria-label="Notifications">🔔</button> -->
-      <button class="login-btn">Login / Sign Up</button>
-
+      <a href="#" class="login-btn">Login / Sign Up</a>
       <div class="user-dropdown-wrap" id="userDropdownWrap">
         <button class="user-btn" id="userDropdownBtn">
           <span class="user-avatar">R</span>

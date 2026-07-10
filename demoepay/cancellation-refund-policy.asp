@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
 <title>Cancellation / Refund Policy – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -69,52 +69,24 @@
     margin: 60px auto;
     padding: 0 20px 80px;
   }
-  .coming-soon-box {
-    text-align: center;
-    padding: 80px 40px;
-    background: #f9fafb;
-    border: 2px dashed var(--border);
-    border-radius: 20px;
-  }
-  .coming-soon-box .cs-icon { font-size: 4rem; margin-bottom: 20px; }
-  .coming-soon-box h2 {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.6rem;
-    font-weight: 800;
+  .policy-body ul {
+    padding-left: 1.4rem;
     color: var(--text);
-    margin-bottom: 12px;
+    font-size: .97rem;
+    line-height: 1.9;
   }
-  .coming-soon-box p { color: var(--muted); font-size: .95rem; line-height: 1.8; }
+  .policy-body ul li { margin-bottom: 10px; }
+  .policy-body h6 {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--orange);
+    margin-top: 2.5rem;
+    margin-bottom: .5rem;
+  }
 </style>
 </head>
 <body>
-
-<!-- #include file="inc_header.asp" -->
-
-<div class="search-bar-wrap">
-  <div class="search-inner">
-    <div class="search-box">
-      <div class="search-cat">
-        <select>
-          <option>All Categories</option>
-          <option>Mobiles</option>
-          <option>Fashion</option>
-          <option>Electronics</option>
-          <option>Home & Kitchen</option>
-          <option>Beauty</option>
-          <option>Books</option>
-          <option>Baby & Kids</option>
-          <option>Sports</option>
-        </select>
-        <span>▾</span>
-      </div>
-      <div class="search-input-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Search for products, services and more...">
-      </div>
-    </div>
-  </div>
-</div>
 
 <section class="page-hero">
   <div class="page-hero-inner">
@@ -125,40 +97,32 @@
 </section>
 
 <div class="page-content">
-  <div class="coming-soon-box">
-    <div class="cs-icon">📋</div>
-    <h2>Content Coming Soon</h2>
-    <p>We are currently working on this page. Our detailed Cancellation and Refund Policy will be published here shortly.</p>
+  <div class="policy-body" align="justify">
+
+    <h6>Order Cancellation by Company</h6>
+    <ul class="mt-2">
+      <li>There may be certain orders that we might be unable to process due to certain reasons. EPay Digital India Pvt Ltd solely reserves the right to refuse or cancel any order.</li>
+      <li>Certain criteria that may result in your order being cancelled include limitations on quantities available for purchase, inaccuracy or errors in product or pricing information, or problems identified by our credit and fraud avoidance department.</li>
+      <li>In such cases, if a customer has placed an order and made the payment but we are unable to provide the product, the refund amount will be processed and credited to the original mode of payment within 7 working days after the refund request is approved.</li>
+    </ul>
+
+    <h6>Customer Cancellation</h6>
+    <ul class="mt-2">
+      <li>If the order is cancelled by the customer after being processed, the amount of that order won't be refunded.</li>
+    </ul>
+
+    <h6>Delivery & Refund Policy</h6>
+    <ul class="mt-2">
+      <li>The recipient, upon signing the delivery receipt, acknowledges the receipt of the product in terms of the order placed with the Company.</li>
+      <li>The Company is not liable to the Customer / recipient for any refund / replacement, under any circumstances, for any subsequent complaints with respect to such deliveries.</li>
+      <li>If the recipient is not available at the time of delivery, the Company / courier agent shall try and deliver the item thrice before returning the same.</li>
+      <li>All costs for re-shipment and handling in the case of non-delivery to the Member shall be chargeable to the Member.</li>
+      <li>In such case the order will be cancelled and the voucher amount of such product will not be refundable.</li>
+    </ul>
+
   </div>
 </div>
 
-<!-- #include file="inc_footer.asp" -->
-
-<script>
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const mobileNav    = document.getElementById('mobileNav');
-  if (hamburgerBtn && mobileNav) {
-    hamburgerBtn.addEventListener('click', function () {
-      const isOpen = mobileNav.classList.toggle('open');
-      hamburgerBtn.classList.toggle('open', isOpen);
-      hamburgerBtn.setAttribute('aria-expanded', isOpen);
-    });
-    mobileNav.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        mobileNav.classList.remove('open');
-        hamburgerBtn.classList.remove('open');
-        hamburgerBtn.setAttribute('aria-expanded', 'false');
-      });
-    });
-    document.addEventListener('click', function (e) {
-      if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
-        mobileNav.classList.remove('open');
-        hamburgerBtn.classList.remove('open');
-        hamburgerBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-</script>
 
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
 <title>Return & Replacement Policy – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -69,52 +69,24 @@
     margin: 60px auto;
     padding: 0 20px 80px;
   }
-  .coming-soon-box {
-    text-align: center;
-    padding: 80px 40px;
-    background: #f9fafb;
-    border: 2px dashed var(--border);
-    border-radius: 20px;
-  }
-  .coming-soon-box .cs-icon { font-size: 4rem; margin-bottom: 20px; }
-  .coming-soon-box h2 {
-    font-family: 'Sora', sans-serif;
-    font-size: 1.6rem;
-    font-weight: 800;
+  .policy-body ul {
+    padding-left: 1.4rem;
     color: var(--text);
-    margin-bottom: 12px;
+    font-size: .97rem;
+    line-height: 1.9;
   }
-  .coming-soon-box p { color: var(--muted); font-size: .95rem; line-height: 1.8; }
+  .policy-body ul li { margin-bottom: 10px; }
+  .policy-body h6 {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--orange);
+    margin-top: 2.5rem;
+    margin-bottom: .5rem;
+  }
 </style>
 </head>
 <body>
-
-<!-- #include file="inc_header.asp" -->
-
-<div class="search-bar-wrap">
-  <div class="search-inner">
-    <div class="search-box">
-      <div class="search-cat">
-        <select>
-          <option>All Categories</option>
-          <option>Mobiles</option>
-          <option>Fashion</option>
-          <option>Electronics</option>
-          <option>Home & Kitchen</option>
-          <option>Beauty</option>
-          <option>Books</option>
-          <option>Baby & Kids</option>
-          <option>Sports</option>
-        </select>
-        <span>▾</span>
-      </div>
-      <div class="search-input-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Search for products, services and more...">
-      </div>
-    </div>
-  </div>
-</div>
 
 <section class="page-hero">
   <div class="page-hero-inner">
@@ -125,40 +97,48 @@
 </section>
 
 <div class="page-content">
-  <div class="coming-soon-box">
-    <div class="cs-icon">🔄</div>
-    <h2>Content Coming Soon</h2>
-    <p>We are currently working on this page. Our detailed Return and Replacement Policy will be published here shortly.</p>
+  <div class="policy-body" align="justify">
+
+    <h6>Our Return Policy</h6>
+    <ul class="mt-2">
+      <li>EPay Digital India Pvt Ltd offers its customers an 'Easy Return Policy', wherein you can raise a return request for a product within 1–3 business days of its delivery.</li>
+      <li>Returns are accepted if the product you receive has a mismatch in colour or size, or arrives in a damaged / defective condition.</li>
+      <li>We do not entertain returns if you simply dislike the product or wish to exchange it for personal preference reasons.</li>
+    </ul>
+
+    <h6>Our Replacement Policy</h6>
+    <ul class="mt-2">
+      <li>If the product delivered to you is damaged, defective, or different from what was ordered, you are eligible for a replacement, subject to the same 1–3 business day reporting window from the date of delivery.</li>
+      <li>Once a replacement request is raised, our team verifies the issue and arranges a pickup of the original product.</li>
+      <li>A replacement is shipped subject to availability of stock. If the product is out of stock, a full refund will be processed instead.</li>
+    </ul>
+
+    <h6>Checklist to Return / Replace the Product</h6>
+    <ul class="mt-2">
+      <li>Products must be returned with all original tags intact.</li>
+      <li>Original packaging, invoice, and accessories must be intact and undamaged.</li>
+      <li>Items must be in an unwashed, undamaged, and unused condition.</li>
+      <li>Refund / replacement will be issued only after a thorough inspection of the returned product(s).</li>
+      <li>The process will be completed within 72 working hours once the product is received at our office.</li>
+    </ul>
+
+    <h6>Items Not Eligible for Return / Replacement</h6>
+    <ul class="mt-2">
+      <li>Products without original tags, packaging, or invoice.</li>
+      <li>Products that are used, washed, or damaged by the customer after delivery.</li>
+      <li>Return / replacement requests raised after the 1–3 business day window from delivery.</li>
+      <li>Products returned due to personal preference or change of mind.</li>
+    </ul>
+
+    <h6>Refund Timeline</h6>
+    <ul class="mt-2">
+      <li>Once your returned product passes inspection, the refund amount will be processed and credited to your original mode of payment within 7 working days.</li>
+      <li>All arising disputes will be subject to Sangli, Maharashtra Jurisdiction only.</li>
+    </ul>
+
   </div>
 </div>
 
-<!-- #include file="inc_footer.asp" -->
-
-<script>
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const mobileNav    = document.getElementById('mobileNav');
-  if (hamburgerBtn && mobileNav) {
-    hamburgerBtn.addEventListener('click', function () {
-      const isOpen = mobileNav.classList.toggle('open');
-      hamburgerBtn.classList.toggle('open', isOpen);
-      hamburgerBtn.setAttribute('aria-expanded', isOpen);
-    });
-    mobileNav.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        mobileNav.classList.remove('open');
-        hamburgerBtn.classList.remove('open');
-        hamburgerBtn.setAttribute('aria-expanded', 'false');
-      });
-    });
-    document.addEventListener('click', function (e) {
-      if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
-        mobileNav.classList.remove('open');
-        hamburgerBtn.classList.remove('open');
-        hamburgerBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-</script>
 
 </body>
 </html>

@@ -1,8 +1,8 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="#" class="footer-logo"> <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader"> </a>
-      <p> India's leading ePay Digital &amp; ecommerce platform, empowering millions to shop, pay, and grow every day. </p>
+      <a href="#" class="footer-logo"> <img src="images/logo.png" alt="ePay Logo" class="logoheader"> </a>
+      <p> ePay Digital India Pvt. Ltd. provides digital commerce, shopping, utility services, gift vouchers, and business solutions through a single platform. </p>
       <div class="footer-socials">
         <a href="#" class="social-btn" title="Facebook">f</a>
         <a href="#" class="social-btn" title="X (Twitter)">𝕏</a>
@@ -36,24 +36,22 @@
         <li><a href="Certificate.asp">Certificate</a></li>
         <li><a href="board-of-directors.asp">Board of Directors</a></li>
         <li><a href="management-team.asp"> Management Team</a></li>
-        <li><a href="#">Gallery Network</a></li>
-        <li><a href="#">FAQs</a></li>
-        <li><a href="#">Contact Us</a></li>        
-        
-        
+        <!-- <li><a href="#">Gallery Network</a></li> -->
+        <!-- <li><a href="#">FAQs</a></li> -->
+        <li><a href="contact-us.asp">Contact Us</a></li>        
       </ul>
     </div>
 
     <div class="footer-col">
       <h4>Support</h4>
       <ul>
-        <li><a href="help-center.asp">Help Center</a></li>
-        <li><a href="cancellation-refund-policy.asp">Cancellation / Refund Policy</a></li>
-        <li><a href="shipping-delivery-policy.asp">Shipping / Delivery Policy</a></li>
-        <li><a href="return-replacement-policy.asp">Return & Replacement Policy</a></li>
-        <li><a href="privacy-policy.asp">Privacy Policy</a></li>
-        <li><a href="terms-conditions.asp">Terms & Conditions</a></li>
-        <li><a href="track-order.asp">Track Order</a></li>
+        <!-- <li><a href="help-center.asp">Help Center</a></li> -->
+        <li><a href="cancellation-refund-policy_web.asp">Cancellation / Refund Policy</a></li>
+        <li><a href="shipping-delivery-policy_web.asp">Shipping / Delivery Policy</a></li>
+        <li><a href="return-replacement-policy_web.asp">Return & Replacement Policy</a></li>
+        <li><a href="privacy-policy_web.asp">Privacy Policy</a></li>
+        <li><a href="terms_and_conditions_web.asp">Terms & Conditions</a></li>
+        <!-- <li><a href="track-order_web.asp">Track Order</a></li> -->
       </ul>
     </div>
 
@@ -61,17 +59,17 @@
       <h4>Download App</h4>
       <div class="app-badges">
         <a href="#" class="app-badge-img">
-          <img src="demoepay/images/google_play.png" alt="Get it on Google Play">
+          <img src="images/google_play.png" alt="Get it on Google Play">
         </a>
         <a href="#" class="app-badge-img">
-          <img src="demoepay/images/app_store.png" alt="Download on the App Store">
+          <img src="images/app_store.png" alt="Download on the App Store">
         </a>
       </div>
     </div>
   </div>
 
   <div class="footer-bottom">
-    <span>© 2025 ePay Digital India Pvt. Ltd. All Rights Reserved.</span>
+    <span>© 2026 ePay Digital India Pvt. Ltd. All Rights Reserved. </span>
     <div class="footer-certs">
       <div class="cert-badge"><span class="cert-icon">🔒</span> SSL Secured</div>
       <div class="cert-badge"><span class="cert-icon">✅</span> PCI DSS Certified</div>

@@ -4,29 +4,14 @@
 
 <html>
 <head runat="server">
-    <%--   <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Booking | Utility Service | Gift Voucher </title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="https://thebrandtadka.com/websiteurl/epayindia/img/favicon.ico">--%>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
-    <title>ePay - India's Smart Digital & Ecommerce Platform</title>
+    <title>ePay – Digital Commerce & eCommerce Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <%--<link rel="stylesheet" href="css/custom_stylesheet.css">
-<link rel="stylesheet" href="css/style.css">--%>
     <link href="demoepay/css/custom_stylesheet.css?v=1.6" rel="stylesheet" />
     <link href="demoepay/css/style.css?v=1.6" rel="stylesheet" />
-    <!-- CSS here -->
-    <%--    <link rel="stylesheet" href="Megamart.css?v=1">--%>
     <style>
-        /* ════════════════════════════════════════
-     HERO SLIDER – LIGHT THEME OVERRIDES
-  ════════════════════════════════════════ */
-
-        /* ── Slide 1 – Light Green ── */
         .hero-slide-1 {
             background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 45%, #e0f2f1 100%) !important;
             background-image: none !important;
@@ -237,7 +222,7 @@
                 <div class="topbar-inner">
                     <div class="topbar-left">
                         <span class="topbar-star">✦</span>
-                        <span>India's Leading ePay Digital &amp; E-commerce Platform</span>
+                        <span>ePay Digital Commerce &amp; Utility Platform</span>
                     </div>
                     <div class="topbar-right">
                         <a href="https://drive.google.com/drive/u/0/folders/1ONf2Lf_FlLbIZTqqb56OJjh-F6dIT_vT" download=""><span>📱</span> <span class="hide-sm">Download App</span></a>

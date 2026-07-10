@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
 <title>Board of Directors – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -299,7 +299,7 @@
     <!-- Director 1 – Mr. Yash Navale -->
     <div class="bod-card">
       <div class="bod-photo-side">
-        <img src="demoepay/images/board-of-directors/1.%20Mr.%20Yash%20Navale%20%20(Board%20of%20Director).jpeg" alt="Mr. Yash Navale">
+        <img src="images/board-of-directors/1.%20Mr.%20Yash%20Navale%20%20(Board%20of%20Director).jpeg" alt="Mr. Yash Navale">
         <div class="bod-photo-overlay">
            <div class="bod-photo-role">&#9733; Board of Director</div>
         </div>
@@ -320,7 +320,7 @@
     <!-- Director 2 – Mr. Prakash Pawar -->
     <div class="bod-card">
       <div class="bod-photo-side">
-        <img src="demoepay/images/board-of-directors/2.%20Mr.%20Prakash%20Pawar%20(Board%20of%20Director).jpeg" alt="Mr. Prakash Pawar">
+        <img src="images/board-of-directors/2.%20Mr.%20Prakash%20Pawar%20(Board%20of%20Director).jpeg" alt="Mr. Prakash Pawar">
         <div class="bod-photo-overlay">
            <div class="bod-photo-role">&#9733; Board of Director</div>
         </div>
@@ -330,7 +330,7 @@
         <h2>Mr. Prakash Pawar. </h2>
         <div class="bod-title-line"></div>
         <div class="bod-content-tag">Business Expansion</div>
-        <p>Mr. Prakash Pawar plays a vital role in driving the company's strategic vision and nationwide expansion. He focuses on leading PAN India growth by identifying new markets, building strong regional presence, and strengthening the franchise network.</p>
+        <p>Mr. Prakash Pawar plays a vital role in driving the company's strategic vision and nationwide expansion. He focuses on driving PAN India growth by identifying new markets, building strong regional presence, and strengthening the franchise network.</p>
         <br>
         <p>With a result-oriented approach, he ensures scalable business development and consistent performance across locations. His leadership supports long-term planning, market penetration, and sustainable growth while maintaining strong operational alignment across the organization.</p>
       </div>

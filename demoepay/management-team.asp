@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
 <title>Management Team – ePay Digital India Pvt. Ltd.</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
@@ -191,6 +191,92 @@
     .mt-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .pg-hero { padding: 50px 16px 44px; }
   }
+
+  /* ── Top Management Council Section ── */
+  .tmc-section {
+    padding: 56px 20px 20px;
+    background: #f9fafb;
+  }
+  .tmc-wrap { max-width: 1120px; margin: auto; }
+
+  .tmc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  .tmc-card {
+    background: #fff;
+    border: 1px solid rgba(232,64,0,.3);
+    border-radius: 20px;
+    overflow: hidden;
+    text-align: center;
+    transition: box-shadow .3s, transform .3s, border-color .3s;
+    position: relative;
+    box-shadow: 0 6px 24px rgba(232,64,0,.08);
+  }
+  .tmc-card:hover {
+    box-shadow: 0 16px 44px rgba(232,64,0,.18);
+    transform: translateY(-5px);
+    border-color: var(--orange);
+  }
+  .tmc-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--orange), #FF8C42);
+  }
+
+  .tmc-photo-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1.1;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(160deg, #f0f2f5, #e8eaf0);
+  }
+  .tmc-photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    transition: transform .4s ease;
+  }
+  .tmc-card:hover .tmc-photo-wrap img { transform: scale(1.06); }
+
+  .tmc-info { padding: 20px 16px 22px; }
+  .tmc-info h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 8px;
+    line-height: 1.3;
+  }
+  .tmc-info .tmc-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(90deg, var(--orange), #FF8C42);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    padding: 5px 14px;
+    border-radius: 50px;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 680px) {
+    .tmc-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .tmc-section { padding: 44px 14px 10px; }
+  }
+  @media (max-width: 420px) {
+    .tmc-grid { grid-template-columns: repeat(1, 1fr); gap: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -239,6 +325,55 @@
   Management Team
 </div>
 
+<!-- ─── TOP MANAGEMENT COUNCIL ─── -->
+<section class="tmc-section">
+  <div class="tmc-wrap">
+
+    <div class="mt-section-label">
+      <div class="line left"></div>
+      <div class="mt-section-label-text">Top Management Council</div>
+      <div class="line"></div>
+    </div>
+
+    <div class="tmc-grid">
+
+      <!-- 1 -->
+      <div class="tmc-card">
+        <div class="tmc-photo-wrap">
+          <img src="images/management-team/2.%20Mr.%20Suhas%20Kadam.png" alt="Mr. Suhas Kadam">
+        </div>
+        <div class="tmc-info">
+          <h3>Mr. Suhas Kadam</h3>
+          <span class="tmc-role-badge">&#9733; Top Management</span>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="tmc-card">
+        <div class="tmc-photo-wrap">
+          <img src="images/management-team/3.%20Mr.%20Krishna%20Gavali.png" alt="Mr. Krishna Gavali">
+        </div>
+        <div class="tmc-info">
+          <h3>Mr. Krishna Gavali</h3>
+          <span class="tmc-role-badge">&#9733; Top Management</span>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="tmc-card">
+        <div class="tmc-photo-wrap">
+          <img src="images/management-team/7.%20Mr.%20Santosh%20Patil..jpeg" alt="Mr. Santosh Patil">
+        </div>
+        <div class="tmc-info">
+          <h3>Mr. Santosh Patil</h3>
+          <span class="tmc-role-badge">&#9733; Top Management</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ─── TEAM GRID ─── -->
 <section class="mt-section">
   <div class="mt-wrap">
@@ -251,43 +386,10 @@
 
     <div class="mt-grid">
 
-      <!-- 1 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/1.%20Dr%20.Dhanpal%20Wathare.jpeg" alt="Dr. Dhanpal Wathare">
-        </div>
-        <div class="mt-info">
-          <h3>Dr. Dhanpal Wathare</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
-      <!-- 2 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/2.%20Mr.%20Suhas%20Kadam.png" alt="Mr. Suhas Kadam">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Suhas Kadam</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
-      <!-- 3 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/3.%20Mr.%20Krishna%20Gavali.png" alt="Mr. Krishna Gavali">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Krishna Gavali</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
       <!-- 4 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/4.%20Mr.%20Sandip%20Rane.jpeg" alt="Mr. Sandip Rane">
+          <img src="images/management-team/4.%20Mr.%20Sandip%20Rane.jpeg" alt="Mr. Sandip Rane">
         </div>
         <div class="mt-info">
           <h3>Mr. Sandip Rane</h3>
@@ -298,7 +400,7 @@
       <!-- 5 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/5.%20Mr.%20Veekkas%20Purii.jpeg" alt="Mr. Veekkas Purii">
+          <img src="images/management-team/5.%20Mr.%20Veekkas%20Purii.jpeg" alt="Mr. Veekkas Purii">
         </div>
         <div class="mt-info">
           <h3>Mr. Veekkas Purii</h3>
@@ -309,7 +411,7 @@
       <!-- 6 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/6.%20Mr.Shashikant%20Patil.jpeg" alt="Mr. Shashikant Patil">
+          <img src="images/management-team/6.%20Mr.Shashikant%20Patil.jpeg" alt="Mr. Shashikant Patil">
         </div>
         <div class="mt-info">
           <h3>Mr. Shashikant Patil</h3>
@@ -317,21 +419,10 @@
         </div>
       </div>
 
-      <!-- 7 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/7.%20Mr.%20Santosh%20Patil..jpeg" alt="Mr. Santosh Patil">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Santosh Patil</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
       <!-- 8 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-           <img src="demoepay/images/management-team/8. Mr.Vijaykumar Sawant.jpg" alt="Mr. Vijaykumar Sawant">
+           <img src="images/management-team/8. Mr.Vijaykumar Sawant.jpg" alt="Mr. Vijaykumar Sawant">
         </div>
         <div class="mt-info">
           <h3>Mr. Vijaykumar Sawant</h3>
@@ -342,7 +433,7 @@
       <!-- 9 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-           <img src="demoepay/images/management-team/9.%20Mr.%20Maruti%20Kore.jpeg" alt="Mr. Maruti Kore">
+           <img src="images/management-team/9.%20Mr.%20Maruti%20Kore.jpeg" alt="Mr. Maruti Kore">
         </div>
         <div class="mt-info">
           <h3>Mr. Maruti Kore</h3>
@@ -350,32 +441,10 @@
         </div>
       </div>
 
-      <!-- 10 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-           <img src="demoepay/images/management-team/10.%20Mr.%20Chandrakant%20Vatigave%20..png" alt="Mr. Chandrakant Vatigave">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Chandrakant Vatigave</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
-      <!-- 11 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/11.%20Mr.%20Pradeep%20Dalavi.png" alt="Mr. Pradeep Dalavi">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Pradeep Dalavi</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
       <!-- 12 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/12.%20Mr.%20Dinkar%20khot.png" alt="Mr. Dinkar Khot">
+          <img src="images/management-team/12.%20Mr.%20Dinkar%20khot.png" alt="Mr. Dinkar Khot">
         </div>
         <div class="mt-info">
           <h3>Mr. Dinkar Khot</h3>
@@ -383,32 +452,10 @@
         </div>
       </div>
 
-      <!-- 13 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/13.%20Mr.%20Prashant%20Kadam.png" alt="Mr. Prashant Kadam">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Prashant Kadam</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
-      <!-- 14 -->
-      <div class="mt-card">
-        <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/14.%20Mr.%20Sandip%20Patil.jpeg" alt="Mr. Sandip Patil">
-        </div>
-        <div class="mt-info">
-          <h3>Mr. Sandip Patil</h3>
-          <span class="mt-role-badge">&#9733; Management</span>
-        </div>
-      </div>
-
       <!-- 15 -->
       <div class="mt-card">
         <div class="mt-photo-wrap">
-          <img src="demoepay/images/management-team/15.%20Mr.%20Jayprakash%20Dhanavde.png" alt="Mr. Jayprakash Dhanavde">
+          <img src="images/management-team/15.%20Mr.%20Jayprakash%20Dhanavde.png" alt="Mr. Jayprakash Dhanavde">
         </div>
         <div class="mt-info">
           <h3>Mr. Jayprakash Dhanavde</h3>
@@ -458,7 +505,7 @@
     });
   }, { threshold: 0.08 });
 
-  document.querySelectorAll('.mt-card').forEach((el, i) => {
+  document.querySelectorAll('.mt-card, .tmc-card').forEach((el, i) => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(24px) scale(0.97)';
     el.style.transition = `opacity .5s ease ${i * 0.05}s, transform .5s ease ${i * 0.05}s`;

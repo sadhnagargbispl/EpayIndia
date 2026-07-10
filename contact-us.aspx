@@ -410,7 +410,7 @@
                             <span class="cnt-info-icon">&#9993;</span>
                             <div>
                                 <strong>Email</strong>
-                                <a href="/cdn-cgi/l/email-protection#31424441415e43451f54415048585f55585071565c50585d1f525e5c"><span class="__cf_email__" data-cfemail="7b080e0b0b14090f551e0b1a0212151f121a3b1c161a121755181416">[email&#160;protected]</span></a>
+                               <a href="mailto:support.epayindia@gmail.com">support.epayindia@gmail.com</a>
                             </div>
                         </div>
 

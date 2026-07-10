@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="demoepay/images/favicon.png">
-<title> ePay - India's Smart Digital & Ecommerce Platform</title>
+<link rel="icon" type="image/x-icon" href="images/favicon.png">
+<title> ePay – Digital Commerce &amp; eCommerce Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/custom_stylesheet.css">
 <link rel="stylesheet" href="css/style.css">
@@ -194,12 +194,12 @@
         <div class="hero-content">
           <div class="hero-badge">
             <div class="hero-badge-dot"></div>
-            Smart Digital Platform — India's #1 Choice
+            Digital Commerce &amp; Utility Platform
           </div>
           <h1>
-            India's Smart<br>
-            <span class="accent">ePay</span> Digital &amp;<br>
-            Ecommerce Platform
+            <span class="accent">ePay</span> Digital<br>
+            Commerce &amp;<br>
+            Utility Platform
           </h1>
           <p>One app for all your shopping, gift vouchers, digital services &amp; more. Simplify your financial life today.</p>
           <div class="hero-btns">
@@ -208,7 +208,7 @@
           </div>
         </div>
         <div class="hero-phone">
-          <img src="demoepay/images/slider_img.png" alt="ePay Digital App">
+          <img src="images/slider_img.png" alt="ePay Digital App">
         </div>
       </div>
     </div>
@@ -233,7 +233,7 @@
           </div>
         </div>
         <div class="hero-phone">
-          <img src="demoepay/images/slider_img_2.png" alt="ePay Digital App">
+          <img src="images/slider_img_2.png" alt="ePay Digital App">
         </div>
       </div>
     </div>
@@ -258,7 +258,7 @@
           </div>
         </div>
          <div class="hero-phone">
-          <img src="demoepay/images/slider_img_3.png" alt="ePay Digital App">
+          <img src="images/slider_img_3.png" alt="ePay Digital App">
         </div>
       </div>
     </div>
@@ -411,7 +411,7 @@
       <div class="coming-badge">⏳ Coming Soon</div>
       <div class="service-icon">💼</div>
       <h3>ePay Job Portal</h3>
-      <p>Find your dream job or hire top talent — India's smart recruitment platform.</p>
+      <p>Find your next opportunity or connect with candidates — a digital recruitment platform.</p>
       <a href="#" class="service-link">Explore Now →</a>
     </div>
 
@@ -596,8 +596,8 @@
       <div class="why-feat">
         <div class="why-feat-icon">🏷️</div>
         <div class="why-feat-text">
-          <h4>Best Offers</h4>
-          <p>Enjoy exclusive deals and discounts.</p>
+          <h4>Available Offers</h4>
+          <p>Discover deals and discounts across services.</p>
         </div>
       </div>
       <div class="why-feat">
@@ -622,8 +622,8 @@
   <div class="stat-item">
     <div class="stat-icon">👥</div>
     <div>
-      <div class="stat-num">2 Lakh+</div>
-      <div class="stat-label">Happy Users</div>
+      <div class="stat-num">Growing</div>
+      <div class="stat-label">User Community</div>
     </div>
   </div>
 
@@ -652,8 +652,8 @@
   <div class="stat-item">
     <div class="stat-icon">⏰</div>
     <div>
-      <div class="stat-num">99.9%</div>
-      <div class="stat-label">Uptime</div>
+      <div class="stat-num">Reliable</div>
+      <div class="stat-label">Platform</div>
     </div>
   </div>
 
@@ -668,7 +668,7 @@
 <section class="about-section">
   <div class="about-inner">
     <div class="about-content">
-      <h2>India's Smart <span class="accent">ePay</span> Digital &amp; Ecommerce Platform</h2>
+      <h2>About <span class="accent">ePay</span> Digital India Pvt. Ltd.</h2>
       <p>Welcome to ePay Digital India Pvt. Ltd. is a technology-driven platform offering eCommerce through a unified ecosystem.
 
 Our platform is designed to provide users with seamless access to online shopping, digital services & Business Solutions.
@@ -694,7 +694,7 @@ ePay focuses on delivering a secure, user-friendly, and scalable digital experie
         <div class="about-feat">
           <div class="about-feat-icon">✅</div>
           <div class="about-feat-text">
-            <h5>Secure & Trusted</h5>
+            <h5>Secure &amp; Reliable</h5>
             <p>Bank-grade encrypted and PCI DSS certified opportunity</p>
           </div>
         </div>
