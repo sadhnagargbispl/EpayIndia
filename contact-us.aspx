@@ -370,7 +370,7 @@
                             <span class="cnt-info-icon">&#127970;</span>
                             <div>
                                 <strong>Corporate Address</strong>
-                                <span>3rd Floor, Amar Heights, Sawkar Colony, Islampur, Sangli, Maharashtra – 415409</span>
+                                <span>3rd Floor, Amar Heights, Sawkar Colony, Ishwarpur, Sangli, Maharashtra – 415409</span>
                             </div>
                         </div>
 

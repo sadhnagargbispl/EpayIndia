@@ -287,7 +287,8 @@
         <!-- Contact -->
         <div class="contact-box">
             <h3>Need Help with a Return or Replacement?</h3>
-            <p>&#9993; Email: <a href="/cdn-cgi/l/email-protection#493a3c3939263b3d672c39283020272d2028092e24282025672a2624"><span class="__cf_email__" data-cfemail="50232520203f22247e35203129393e34393110373d31393c7e333f3d">[email&#160;protected]</span></a></p>
+            <p>&#9993; Email: <a href="mailto:support.epayindia@gmail.com">support.epayindia@gmail.com</a>
+            </p>
             <p>&#128722; eCommerce Support: <a href="tel:+919684029323">+91 96840 29323</a></p>
             <p>&#128295; Technical Support: <a href="tel:+919684029313">+91 96840 29313</a></p>
             <p>Working Hours: Monday to Saturday | 10:00 AM – 6:00 PM</p>

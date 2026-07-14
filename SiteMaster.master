@@ -224,11 +224,11 @@
                         <span class="topbar-star">✦</span>
                         <span>ePay Digital Commerce &amp; Utility Platform</span>
                     </div>
-                    <div class="topbar-right">
+                    <%--<div class="topbar-right">
                         <a href="https://drive.google.com/drive/u/0/folders/1ONf2Lf_FlLbIZTqqb56OJjh-F6dIT_vT" download=""><span>📱</span> <span class="hide-sm">Download App</span></a>
                         <a href="#"><span>📦</span> <span class="hide-sm">Track Order</span></a>
                         <a href="#"><span>🎧</span> <span class="hide-sm">Help Center</span></a>
-                    </div>
+                    </div>--%>
                 </div>
             </div>
 
@@ -245,17 +245,11 @@
                         <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
                         <li><a href="FoodBookingRedirect.aspx" target="_blank">ePay Food</a></li>
                         <li><a href="MovieBookingRedirect.aspx" target="_blank">ePay Movie</a></li>
-                        <%--    <li><a class="text-uppercase" href="StoreRedirect.aspx" target="_blank">🏪 STORE SHOPPING</a></li>
-                        <li><a class="text-uppercase" href="UtilityServicesRedirect.aspx" target="_blank">⚙️ UTILITY </a></li>
-                        <li><a class="text-uppercase" href="GVRedirect.aspx" target="_blank">🎁 GIFT VOUCHERS</a></li>
-                        <li><a class="text-uppercase" href="BrandRedirect.aspx" target="_blank">🛒 E-COMMERCE </a></li>--%>
                     </ul>
 
 
 
                     <div class="nav-actions">
-                        <!-- <button class="bell-btn" aria-label="Notifications">🔔</button> -->
-
                         <% if (Session["Status"] != null && Session["Status"].ToString() == "OK")
                             { %>
                         <div class="user-dropdown-wrap" id="userDropdownWrap">
@@ -274,8 +268,6 @@
                                 <ul class="user-dropdown-menu">
                                     <li><a href="MainAccountRedirect.aspx">👤 Main Account</a></li>
                                     <li><a href="MyPurchaseDetail.aspx">🚪 Coupon Purchase</a></li>
-                                    <%--         <li><a href="#">💰 Wallet</a></li>
-                                    <li><a href="#">📦 My Orders</a></li>--%>
                                     <li class="user-dropdown-divider"></li>
                                     <li><a href="Logout.aspx" class="logout-link">🚪 Logout</a></li>
                                 </ul>
@@ -320,32 +312,6 @@
             </nav>
 
 
-            <!-- ─── NAVBAR ─── -->
-
-            <%--     <div class="search-bar-wrap">
-                <div class="search-inner">
-                    <div class="search-box">
-                        <div class="search-cat">
-                            <select>
-                                <option>All Categories</option>
-                                <option>Mobiles</option>
-                                <option>Fashion</option>
-                                <option>Electronics</option>
-                                <option>Home & Kitchen</option>
-                                <option>Beauty</option>
-                                <option>Books</option>
-                                <option>Baby & Kids</option>
-                                <option>Sports</option>
-                            </select>
-                            <span>▾</span>
-                        </div>
-                        <div class="search-input-wrap">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" placeholder="Search for products, services and more...">
-                        </div>
-                    </div>
-                </div>
-            </div>--%>
 
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
@@ -359,7 +325,11 @@
                         <img src="demoepay/images/logo.png" alt="ePay Logo" class="logoheader">
                     </a>
                     <p>ePay Digital India Pvt. Ltd. provides digital commerce, shopping, utility services, gift vouchers, and business solutions through a single platform.</p>
-                    <div class="footer-socials">
+                    <div class="footer-contact">
+                        <a href="tel:+919684029323"><span class="footer-contact-icon">📞</span> +91 96840 29323</a>
+                        <a href="mailto:support.epayindia@gmail.com"><span class="footer-contact-icon">✉️</span> support.epayindia@gmail.com</a>
+                    </div>
+                    <%-- <div class="footer-socials">
                         <a href="#" class="social-btn" title="Facebook">f</a>
                         <a href="#" class="social-btn" title="X (Twitter)">𝕏</a>
                         <a href="#" class="social-btn" title="LinkedIn">in</a>
@@ -369,28 +339,20 @@
                             </svg>
                         </a>
                         <a href="#" class="social-btn" title="YouTube">▶ </a>
-                    </div>
+                    </div>--%>
                 </div>
 
                 <div class="footer-col">
                     <h4>Services</h4>
                     <ul>
-                        <%-- <li><a href="#">Online store</a></li>
-                        <li><a href="#">eCommerce / Brand Shopping </a></li>
-                        <li><a href="#">Gift Voucher </a></li>
-                        <li><a href="#">ePay Digital Services</a></li>--%>
+
                         <li><a href="StoreRedirect.aspx" target="_blank">Store Shopping</a></li>
                         <li><a href="BrandRedirect.aspx" target="_blank">eCommerce / Brand Shopping</a></li>
                         <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital</a></li>
                         <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
                         <li><a href="FoodBookingRedirect.aspx" target="_blank">Food Tadka</a></li>
                         <li><a href="MovieBookingRedirect.aspx" target="_blank">Movie Tadka</a></li>
-                        <%-- <li><a href="StoreRedirect.aspx" target="_blank">Online Store</a></li>
-                        <li><a href="UtilityServicesRedirect.aspx" target="_blank">ePay Digital Services</a></li>
-                        <li><a href="GVRedirect.aspx" target="_blank">Gift Vouchers</a></li>
-                        <li><a href="BrandRedirect.aspx" target="_blank">eCommerce / Brand Shopping</a></li>
-                        <li><a href="#">Food Booking </a></li>
-                        <li><a href="#">Movie Booking</a></li>--%>
+
                     </ul>
                 </div>
 
@@ -401,8 +363,6 @@
                         <li><a href="Certificate.aspx">Certificate</a></li>
                         <li><a href="board-of-directors.aspx">Board of Directors</a></li>
                         <li><a href="management-team.aspx">Management Team</a></li>
-                        <%--<li><a href="#">Gallery Network</a></li>
-                        <li><a href="#">FAQs</a></li>--%>
                         <li><a href="contact-us.aspx">Contact Us</a></li>
 
 
@@ -411,29 +371,18 @@
                 <div class="footer-col">
                     <h4>Support</h4>
                     <ul>
-                        <!-- <li><a href="help-center.asp">Help Center</a></li> -->
+
                         <li><a href="cancellation-refund-policy_web.aspx">Cancellation / Refund Policy</a></li>
                         <li><a href="shipping-delivery-policy_web.aspx">Shipping / Delivery Policy</a></li>
                         <li><a href="return-replacement-policy_web.aspx">Return & Replacement Policy</a></li>
                         <li><a href="privacy-policy_web.aspx">Privacy Policy</a></li>
                         <li><a href="terms_and_conditions_web.aspx">Terms & Conditions</a></li>
-                        <!-- <li><a href="track-order_web.asp">Track Order</a></li> -->
+
                     </ul>
                 </div>
-                <%-- <div class="footer-col">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Cancellation / Refund Policy</a></li>
-                        <li><a href="#">Shipping / Delivery Policy</a></li>
-                        <li><a href="#">Return & Replacement Policy</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms & Conditions</a></li>
-                        <li><a href="#">Track Order</a></li>
-                    </ul>
-                </div>--%>
 
-                <div class="footer-col">
+
+                <%--  <div class="footer-col">
                     <h4>Download App</h4>
                     <div class="app-badges">
                         <a href="https://drive.google.com/drive/u/0/folders/1ONf2Lf_FlLbIZTqqb56OJjh-F6dIT_vT" download="" class="app-badge-img">
@@ -443,15 +392,15 @@
                             <img src="demoepay/images/app_store.png" alt="Download on the App Store">
                         </a>
                     </div>
-                </div>
+                </div>--%>
             </div>
 
             <div class="footer-bottom">
-                <span>© 2025 ePay Digital India Pvt. Ltd. All Rights Reserved.</span>
-                <div class="footer-certs">
+                <span>© 2026 ePay Digital India Pvt. Ltd. All Rights Reserved.</span>
+                <%-- <div class="footer-certs">
                     <div class="cert-badge"><span class="cert-icon">🔒</span> SSL Secured</div>
                     <div class="cert-badge"><span class="cert-icon">✅</span> PCI DSS Certified</div>
-                </div>
+                </div>--%>
             </div>
         </footer>
 

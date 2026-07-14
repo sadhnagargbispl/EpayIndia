@@ -22,11 +22,11 @@
                         <h1><span class="accent">ePay</span> Digital<br>
                             Commerce &amp;<br>
                             Utility Platform
-          </h1>
+                        </h1>
                         <p>One app for all your shopping, gift vouchers, digital services &amp; more. Simplify your financial life today.</p>
                         <div class="hero-btns">
-                            <a href="#" class="btn-primary">Explore Services →</a>
-                            <a href="https://drive.google.com/drive/u/0/folders/1ONf2Lf_FlLbIZTqqb56OJjh-F6dIT_vT" download="" class="btn-outline">⬇ Download App</a>
+                            <%-- <a href="#" class="btn-primary">Explore Services →</a>--%>
+                            <%--  <a href="https://drive.google.com/drive/u/0/folders/1ONf2Lf_FlLbIZTqqb56OJjh-F6dIT_vT" download="" class="btn-outline">⬇ Download App</a>--%>
                         </div>
                     </div>
                     <div class="hero-phone">
@@ -47,11 +47,11 @@
                         <h1>Shop Smarter,<br>
                             Save <span class="accent">Bigger</span> Every<br>
                             Single Day
-          </h1>
+                        </h1>
                         <p>Thousands of products at your fingertips. Exclusive offers, fast delivery &amp; easy returns — all in one place.</p>
                         <div class="hero-btns">
-                            <a href="https://store.epayindia.in/" target="_blank" class="btn-primary">Visit Store →</a>
-                            <a href="#" class="btn-outline">🏷️ View Offers</a>
+                            <a href="StoreRedirect.aspx" target="_blank" class="btn-primary">Visit Store →</a>
+                            <%--<a href="#" class="btn-outline">🏷️ View Offers</a>--%>
                         </div>
                     </div>
                     <div class="hero-phone">
@@ -72,11 +72,11 @@
                         <h1>Send <span class="accent">Gift Vouchers</span><br>
                             &amp; Access Digital<br>
                             Services Instantly
-          </h1>
+                        </h1>
                         <p>Instant e-gift cards for every occasion &amp; powerful digital utility tools — all under one ePay membership.</p>
                         <div class="hero-btns">
-                            <a href="https://gv.epayindia.in/" target="_blank" class="btn-primary">Buy Vouchers →</a>
-                            <a href="https://utility.epayindia.in/" target="_blank" class="btn-outline">⚙️ Digital Services</a>
+                            <a href="GVRedirect.aspx" target="_blank" class="btn-primary">Buy Vouchers →</a>
+                            <a href="UtilityServicesRedirect.aspx" target="_blank" class="btn-outline">⚙️ Digital Services</a>
                         </div>
                     </div>
                     <div class="hero-phone">
@@ -191,7 +191,6 @@
     </section>
 
 
-
     <section class="section services-section">
         <div class="section-header">
             <h2>ePay  <span class="accent">Upcoming Services </span></h2>
@@ -222,8 +221,58 @@
                 <a href="#" class="service-link">Explore Now →</a>
             </div>
 
+            <div class="service-card-upcoming upc-amber">
+                <div class="coming-badge">⏳ Coming Soon</div>
+                <div class="service-icon">🌐</div>
+                <h3>ePay International</h3>
+                <p>Seamless cross-border payments and international money transfer solutions.</p>
+                <a href="#" class="service-link">Explore Now →</a>
+            </div>
+
+            <div class="service-card-upcoming upc-rose">
+                <div class="coming-badge">⏳ Coming Soon</div>
+                <div class="service-icon">💼</div>
+                <h3>ePay Job Portal</h3>
+                <p>Find your next opportunity or connect with candidates — a digital recruitment platform.</p>
+                <a href="#" class="service-link">Explore Now →</a>
+            </div>
+
         </div>
     </section>
+
+
+    <%--    <section class="section services-section">
+        <div class="section-header">
+            <h2>ePay  <span class="accent">Upcoming Services </span></h2>
+            <div class="section-divider">
+                <div class="divider-line rev"></div>
+                <span class="divider-icon">⚡</span>
+                <div class="divider-line"></div>
+            </div>
+            <p>Discover exciting new features and services coming soon to enhance your digital experience </p>
+        </div>
+
+
+        <div class="services-grid" style="justify-content: center;">
+
+            <div class="service-card-upcoming upc-blue">
+                <div class="coming-badge">⏳ Coming Soon</div>
+                <div class="service-icon">💳</div>
+                <h3>Fintech Services</h3>
+                <p>Secure digital payment and fintech solutions.</p>
+                <a href="#" class="service-link">Explore Now →</a>
+            </div>
+
+            <div class="service-card-upcoming upc-purple">
+                <div class="coming-badge">⏳ Coming Soon</div>
+                <div class="service-icon">📅</div>
+                <h3>Booking Solutions</h3>
+                <p>Fast and easy booking systems for travel, events & more.</p>
+                <a href="#" class="service-link">Explore Now →</a>
+            </div>
+
+        </div>
+    </section>--%>
 
     <!-- ─── PREMIUM CTA BANNER ─── -->
 
@@ -239,8 +288,8 @@
                     Shop, Save &amp; Earn Every Day</h2>
                 <p>One-time subscription. Unlimited rewards, exclusive deals, priority support &amp; cashback on every order — forever.</p>
                 <div class="premium-btns">
-                    <a href="#" class="btn-primary">Subscription →</a>
-                    <a href="#" class="btn-outline">Learn More</a>
+                    <%-- <a href="#" class="btn-primary">Subscription →</a>
+                    <a href="#" class="btn-outline">Learn More</a>--%>
                 </div>
             </div>
             <div class="upcoming-features">
@@ -404,7 +453,7 @@
                 <div class="why-feat">
                     <div class="why-feat-icon">🎧</div>
                     <div class="why-feat-text">
-                        <h4>10 AM to 6 PM Dedicated Support</h4>
+                        <h4>24/7 Support</h4>
                         <p>We are here for you always.</p>
                     </div>
                 </div>
@@ -520,121 +569,121 @@ ePay focuses on delivering a secure, user-friendly, and scalable digital experie
         </div>
     </section>
 
-            <script>
-            // ─── Hero Slider ───
-            (function () {
-                var slides = document.getElementById('heroSlides');
-                var dots = document.querySelectorAll('.slider-dot');
-                var total = 3;
-                var current = 0;
-                var timer;
+    <script>
+        // ─── Hero Slider ───
+        (function () {
+            var slides = document.getElementById('heroSlides');
+            var dots = document.querySelectorAll('.slider-dot');
+            var total = 3;
+            var current = 0;
+            var timer;
 
-                function goTo(index) {
-                    current = (index + total) % total;
-                    slides.style.transform = 'translateX(-' + current * 100 + '%)';
-                    dots.forEach(function (d, i) {
-                        d.classList.toggle('active', i === current);
-                    });
-                }
-
-                function next() { goTo(current + 1); }
-                function prev() { goTo(current - 1); }
-
-                function startAuto() { timer = setInterval(next, 6500); }
-                function stopAuto() { clearInterval(timer); }
-
-                document.getElementById('heroNext').addEventListener('click', function () { stopAuto(); next(); startAuto(); });
-                document.getElementById('heroPrev').addEventListener('click', function () { stopAuto(); prev(); startAuto(); });
-
-                dots.forEach(function (d) {
-                    d.addEventListener('click', function () {
-                        stopAuto();
-                        goTo(parseInt(this.dataset.index));
-                        startAuto();
-                    });
-                });
-
-                // Pause on hover
-                document.getElementById('heroSlider').addEventListener('mouseenter', stopAuto);
-                document.getElementById('heroSlider').addEventListener('mouseleave', startAuto);
-
-                startAuto();
-            })();
-
-            // ─── User dropdown toggle ───
-            const userDropdownBtn = document.getElementById('userDropdownBtn');
-            const userDropdown = document.getElementById('userDropdown');
-            const userDropdownWrap = document.getElementById('userDropdownWrap');
-
-            if (userDropdownBtn && userDropdown) {
-                userDropdownBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('open');
-                });
-                document.addEventListener('click', function (e) {
-                    if (!userDropdownWrap.contains(e.target)) {
-                        userDropdown.classList.remove('open');
-                    }
+            function goTo(index) {
+                current = (index + total) % total;
+                slides.style.transform = 'translateX(-' + current * 100 + '%)';
+                dots.forEach(function (d, i) {
+                    d.classList.toggle('active', i === current);
                 });
             }
 
-            // ─── Mobile nav toggle ───
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const mobileNav = document.getElementById('mobileNav');
+            function next() { goTo(current + 1); }
+            function prev() { goTo(current - 1); }
 
-            hamburgerBtn.addEventListener('click', function () {
-                const isOpen = mobileNav.classList.toggle('open');
-                hamburgerBtn.classList.toggle('open', isOpen);
-                hamburgerBtn.setAttribute('aria-expanded', isOpen);
-            });
+            function startAuto() { timer = setInterval(next, 6500); }
+            function stopAuto() { clearInterval(timer); }
 
-            // Close menu when a mobile nav link is clicked
-            mobileNav.querySelectorAll('a').forEach(function (link) {
-                link.addEventListener('click', function () {
-                    mobileNav.classList.remove('open');
-                    hamburgerBtn.classList.remove('open');
-                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+            document.getElementById('heroNext').addEventListener('click', function () { stopAuto(); next(); startAuto(); });
+            document.getElementById('heroPrev').addEventListener('click', function () { stopAuto(); prev(); startAuto(); });
+
+            dots.forEach(function (d) {
+                d.addEventListener('click', function () {
+                    stopAuto();
+                    goTo(parseInt(this.dataset.index));
+                    startAuto();
                 });
             });
 
-            // Close menu on outside click
+            // Pause on hover
+            document.getElementById('heroSlider').addEventListener('mouseenter', stopAuto);
+            document.getElementById('heroSlider').addEventListener('mouseleave', startAuto);
+
+            startAuto();
+        })();
+
+        // ─── User dropdown toggle ───
+        const userDropdownBtn = document.getElementById('userDropdownBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownWrap = document.getElementById('userDropdownWrap');
+
+        if (userDropdownBtn && userDropdown) {
+            userDropdownBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('open');
+            });
             document.addEventListener('click', function (e) {
-                if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
-                    mobileNav.classList.remove('open');
-                    hamburgerBtn.classList.remove('open');
-                    hamburgerBtn.setAttribute('aria-expanded', 'false');
+                if (!userDropdownWrap.contains(e.target)) {
+                    userDropdown.classList.remove('open');
                 }
             });
+        }
 
-            // Smooth scroll for categories on mobile
-            function scrollCats(dir) {
-                const el = document.getElementById('catsScroll');
-                el.scrollBy({ left: dir * 240, behavior: 'smooth' });
+        // ─── Mobile nav toggle ───
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
+
+        hamburgerBtn.addEventListener('click', function () {
+            const isOpen = mobileNav.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open', isOpen);
+            hamburgerBtn.setAttribute('aria-expanded', isOpen);
+        });
+
+        // Close menu when a mobile nav link is clicked
+        mobileNav.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                mobileNav.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Close menu on outside click
+        document.addEventListener('click', function (e) {
+            if (!hamburgerBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                mobileNav.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
             }
+        });
 
-            // Intersection observer for subtle entrance animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => {
-                    if (e.isIntersecting) {
-                        e.target.style.opacity = '1';
-                        e.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
+        // Smooth scroll for categories on mobile
+        function scrollCats(dir) {
+            const el = document.getElementById('catsScroll');
+            el.scrollBy({ left: dir * 240, behavior: 'smooth' });
+        }
 
-            document.querySelectorAll('.service-card, .cat-card, .about-feat, .why-feat').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity .5s ease, transform .5s ease';
-                observer.observe(el);
+        // Intersection observer for subtle entrance animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.style.opacity = '1';
+                    e.target.style.transform = 'translateY(0)';
+                }
             });
+        }, { threshold: 0.1 });
 
-            // Stagger service cards
-            document.querySelectorAll('.service-card').forEach((el, i) => {
-                el.style.transitionDelay = `${i * 0.08}s`;
-            });
-            document.querySelectorAll('.cat-card').forEach((el, i) => {
-                el.style.transitionDelay = `${i * 0.05}s`;
-            });
-</script>
+        document.querySelectorAll('.service-card, .cat-card, .about-feat, .why-feat').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity .5s ease, transform .5s ease';
+            observer.observe(el);
+        });
+
+        // Stagger service cards
+        document.querySelectorAll('.service-card').forEach((el, i) => {
+            el.style.transitionDelay = `${i * 0.08}s`;
+        });
+        document.querySelectorAll('.cat-card').forEach((el, i) => {
+            el.style.transitionDelay = `${i * 0.05}s`;
+        });
+    </script>
 </asp:Content>

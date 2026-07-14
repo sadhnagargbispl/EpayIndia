@@ -249,12 +249,19 @@
         </div>
 
         <!-- Contact -->
-        <div class="contact-box">
+        <%--<div class="contact-box">
             <h3>Grievance Officer — Contact Us</h3>
             <p>&#9993; Email: <a href="/cdn-cgi/l/email-protection#1c75727a735c796c7d65757278757d327572"><span class="__cf_email__" data-cfemail="eb82858d84ab8e9b8a9282858f828ac58285">[email&#160;protected]</span></a></p>
             <p>&#128222; Phone: <a href="#">+91 XXX-XXX-XXXX</a></p>
-        </div>
-
+        </div>--%>
+          <div class="contact-box">
+      <h3>Grievance Officer — Contact Us</h3>
+      <p>&#9993; Email: <a href="mailto:support.epayindia@gmail.com">support.epayindia@gmail.com</a>
+      </p>
+      <p>&#128722; eCommerce Support: <a href="tel:+919684029323">+91 96840 29323</a></p>
+      <p>&#128295; Technical Support: <a href="tel:+919684029313">+91 96840 29313</a></p>
+   <%--   <p>Working Hours: Monday to Saturday | 10:00 AM – 6:00 PM</p>--%>
+  </div>
     </div>
     <script>
 
