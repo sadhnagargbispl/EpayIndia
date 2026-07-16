@@ -186,6 +186,35 @@
     </asp:Repeater>
 
     <!-- ===== TRUST / STATS (dynamic) ===== -->
+    <style>
+        
+        .trust-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .trust-card {
+            flex: 0 1 calc(33.333% - 10px);
+            min-width: 90px; /* chhota kiya taaki 320px width pe bhi 3 fit ho */
+            box-sizing: border-box;
+            padding: 14px 8px; /* mobile ke hisaab se padding bhi kam kar do */
+        }
+
+        .tc-icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .tc-val {
+            font-size: 1rem;
+        }
+
+        .tc-lab {
+            font-size: 0.72rem;
+        }
+    </style>
     <div class="sec-head">
         <h2><span class="sh-icon" style="background: linear-gradient(135deg,#059669,#34d399); color: #fff;"><i class="fa fa-shield-alt"></i></span>Why Choose ePay</h2>
     </div>
@@ -193,7 +222,9 @@
         <asp:Repeater ID="rptTrust" runat="server">
             <ItemTemplate>
                 <div class="trust-card">
-                    <div class="tc-icon" style='background: <%# Eval("icon_bg") %>;'><i class='<%# Eval("icon") %>' style='color: <%# Eval("icon_color") %>; font-size: 1.1rem;'></i></div>
+                    <div class="tc-icon" style='background: <%# Eval("icon_bg") %>;'>
+                        <i class='<%# Eval("icon") %>' style='color: <%# Eval("icon_color") %>; font-size: 1.1rem;'></i>
+                    </div>
                     <div class="tc-val"><%# Eval("value") %></div>
                     <div class="tc-lab"><%# Eval("label") %></div>
                 </div>
