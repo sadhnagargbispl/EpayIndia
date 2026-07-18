@@ -291,11 +291,18 @@
             function openDrawer() {
                 document.getElementById('drawer').classList.add('open');
                 document.getElementById('overlay').classList.add('show');
+                /* FIX: drawer khula ho to peeche ka content scroll na ho */
+                document.getElementById('appShell').classList.add('drawer-open');
             }
             function closeDrawer() {
                 document.getElementById('drawer').classList.remove('open');
                 document.getElementById('overlay').classList.remove('show');
+                document.getElementById('appShell').classList.remove('drawer-open');
             }
+            /* FIX: Escape se bhi drawer band ho */
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeDrawer();
+            });
 
             /* ── TABS ── */
             function setTab(id) {
