@@ -185,7 +185,13 @@
                 <p>Earn and redeem monthly activation points on every activity.</p>
                 <a href="monthly-activation-points.aspx" class="service-link">View Points →</a>
             </div>
-
+            <div class="service-card-live">
+                <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+                <div class="service-icon">⭐</div>
+                <h3>Petro Card Points</h3>
+                <p>Earn and redeem Petro Card points on every activity.</p>
+                <a href="PETROCARDPurchase.aspx" class="service-link">View Points →</a>
+            </div>
         </div>
 
     </section>
@@ -218,7 +224,7 @@
                 <div class="service-icon">📅</div>
                 <h3>Booking Solutions</h3>
                 <p>Fast and easy booking systems for travel, events & more.</p>
-               <%-- <a href="#" class="service-link">Explore Now →</a>--%>
+                <%-- <a href="#" class="service-link">Explore Now →</a>--%>
             </div>
 
             <div class="service-card-upcoming upc-amber">
@@ -226,7 +232,7 @@
                 <div class="service-icon">🌐</div>
                 <h3>ePay International</h3>
                 <p>Seamless cross-border payments and international money transfer solutions.</p>
-              <%--  <a href="#" class="service-link">Explore Now →</a>--%>
+                <%--  <a href="#" class="service-link">Explore Now →</a>--%>
             </div>
 
             <div class="service-card-upcoming upc-rose">

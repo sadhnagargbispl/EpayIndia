@@ -100,7 +100,7 @@ public partial class Appsubscription_now : System.Web.UI.Page
                             KitName,
                             JoinAmount
                      FROM m_kitmaster
-                     WHERE KitId IN (4,6,7)";
+                     WHERE KitId IN (4,6,7,11)";
 
         DataTable dt = SqlHelper.ExecuteDataset(constr.ToString(), CommandType.Text, query).Tables[0];
 

@@ -454,7 +454,7 @@
                 </div>
 
                 <!-- 5 -->
-                <div class="mt-card">
+     <%--           <div class="mt-card">
                     <div class="mt-photo-wrap">
                         <img src="demoepay/images/management-team/5.%20Mr.%20Veekkas%20Purii.jpeg" alt="Mr. Veekkas Purii">
                     </div>
@@ -462,7 +462,7 @@
                         <h3>Mr. Veekkas Purii</h3>
                         <span class="mt-role-badge">&#9733; Management</span>
                     </div>
-                </div>
+                </div>--%>
 
                 <!-- 6 -->
                 <div class="mt-card">
@@ -498,7 +498,7 @@
                 </div>
 
                 <!-- 12 -->
-                <div class="mt-card">
+               <%-- <div class="mt-card">
                     <div class="mt-photo-wrap">
                         <img src="demoepay/images/management-team/12.%20Mr.%20Dinkar%20khot.png" alt="Mr. Dinkar Khot">
                     </div>
@@ -506,7 +506,7 @@
                         <h3>Mr. Dinkar Khot</h3>
                         <span class="mt-role-badge">&#9733; Management</span>
                     </div>
-                </div>
+                </div>--%>
 
                 <!-- 15 -->
                 <div class="mt-card">
