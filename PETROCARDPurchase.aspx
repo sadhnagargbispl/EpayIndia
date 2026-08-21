@@ -743,14 +743,14 @@
         }
 
         // Balance kam hai
-        function PetroLowBalance(kitAmt, bal, shortfall) {
-            alert('Insufficient Balance!\n\n'
-                + 'Kit Amount        : Rs. ' + kitAmt + '\n'
-                + 'Available Balance : Rs. ' + bal + '\n'
-                + 'Shortfall         : Rs. ' + shortfall + '\n\n'
-                + 'Please add funds to your wallet and try again.');
-            return false;
-        }
+        // function PetroLowBalance(kitAmt, bal, shortfall) {
+        //     alert('Insufficient Balance!\n\n'
+        //         + 'Kit Amount        : Rs. ' + kitAmt + '\n'
+        //         + 'Available Balance : Rs. ' + bal + '\n'
+        //         + 'Shortfall         : Rs. ' + shortfall + '\n\n'
+        //         + 'Please add funds to your wallet and try again.');
+        //     return false;
+        // }
 
         // Doosra kit pehle se liya hua hai
         function PetroKitLocked() {

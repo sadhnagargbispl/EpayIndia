@@ -1,0 +1,48 @@
+=================================================
+DATE TIME : 06-08-2026 06.26.29 PM
+PAGE NAME : PetroCardPaymentGatewayPurchase
+FULL URL : http://localhost:62188/PetroCardPaymentGatewayPurchase.aspx?tr=adf642841cb13fa4329b7ed254d1e7f5&tid=3933280&amount=5000.00&requestedId=20260806182050884&status=pending
+HTTP METHOD : GET
+USER IP : ::1
+USER AGENT : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0
+RAW requestedId : 20260806182050884
+---------------- QUERY STRING ----------------
+tr = adf642841cb13fa4329b7ed254d1e7f5
+tid = 3933280
+amount = 5000.00
+requestedId = 20260806182050884
+status = pending
+---------------- FORM DATA ----------------
+---------------- RAW BODY ----------------
+=================================================
+
+FINAL requestedId : 20260806182050884
+
+=================================================
+DATE TIME : 06-08-2026 07.16.04 PM
+PAGE NAME : PetroCardPaymentGatewayPurchase
+FULL URL : http://localhost:62188/PetroCardPaymentGatewayPurchase.aspx?tr=2e80f64353d28eb9a6f78a8e10dce106&tid=3934358&amount=1.00&requestedId=20260806191506423&status=SUCCESS&utr=16299537821120260807110538&paymentApp=CRED&payerVPA=8955817887%40yescred&payerName=HDFC&payerPhone=9684029319&merchantName=&globalPaymentId=&logo=
+HTTP METHOD : GET
+USER IP : ::1
+USER AGENT : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0
+RAW requestedId : 20260806191506423
+---------------- QUERY STRING ----------------
+tr = 2e80f64353d28eb9a6f78a8e10dce106
+tid = 3934358
+amount = 1.00
+requestedId = 20260806191506423
+status = SUCCESS
+utr = 16299537821120260807110538
+paymentApp = CRED
+payerVPA = 8955817887@yescred
+payerName = HDFC
+payerPhone = 9684029319
+merchantName = 
+globalPaymentId = 
+logo = 
+---------------- FORM DATA ----------------
+---------------- RAW BODY ----------------
+=================================================
+
+FINAL requestedId : 20260806191506423
+

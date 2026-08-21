@@ -335,20 +335,21 @@ public partial class PETROCARDPurchase : System.Web.UI.Page
             lnkBuy.Attributes["onclick"] = "return PetroKitLocked();";
         }
         // ══ STATE 3 : Balance kam hai ══
-        else if (_walletBalance < kitAmount)
-        {
-            decimal shortfall = kitAmount - _walletBalance;
+        //else if (_walletBalance < kitAmount)
+        //{
+        //    decimal shortfall = kitAmount - _walletBalance;
 
-            lnkBuy.CssClass = "map-card-btn";
-            lnkBuy.Text = "Buy Now &#8594;";
-            lnkBuy.NavigateUrl = "javascript:void(0);";
-            lnkBuy.Attributes["onclick"] =
-                string.Format("return PetroLowBalance('{0}','{1}','{2}');",
-                              kitAmount.ToString("N2"),
-                              _walletBalance.ToString("N2"),
-                              shortfall.ToString("N2"));
-        }
-        // ══ STATE 4 : Sab theek ══
+        //    lnkBuy.CssClass = "map-card-btn";
+        //    lnkBuy.Text = "Buy Now &#8594;";
+        //    lnkBuy.NavigateUrl = "javascript:void(0);";
+        //    lnkBuy.Attributes["onclick"] = "return PetroBuyNow(this);";
+        //    //lnkBuy.Attributes["onclick"] =
+        //    //    string.Format("return PetroLowBalance('{0}','{1}','{2}');",
+        //    //                  kitAmount.ToString("N2"),
+        //    //                  _walletBalance.ToString("N2"),
+        //    //                  shortfall.ToString("N2"));
+        //}
+        //// ══ STATE 4 : Sab theek ══
         else
         {
             lnkBuy.CssClass = "map-card-btn";

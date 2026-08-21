@@ -694,8 +694,43 @@
                                 <div class="map-notch-line"></div>
                                 <div class="map-notch-circle"></div>
                             </div>
+                           <%-- <asp:UpdatePanel ID="UpdPnlPayMode" runat="server">
+                                <ContentTemplate>--%>
 
-                            <div class="map-field" style="display: none;">
+                                    <div class="map-field" id="DivPaymentMode" runat="server">
+                                        <label class="map-label">Payment Mode <span class="req">*</span></label>
+                                        <asp:DropDownList ID="ddlPaymentMode" runat="server" CssClass="form-control"
+                                            AutoPostBack="true" OnSelectedIndexChanged="ddlPaymentMode_SelectedIndexChanged">
+                                            <asp:ListItem Text="--Select--" Value="Z" />
+                                            <asp:ListItem Text="Wallet" Value="WALLET" />
+                                            <asp:ListItem Text="Payment Gateway" Value="PG" />
+                                        </asp:DropDownList>
+                                    </div>
+
+                                    <div class="map-field" id="DivWalletType" runat="server" visible="false" style="display: none;">
+                                        <label class="map-label">Select Wallet <span class="req">*</span></label>
+                                        <asp:DropDownList ID="ddlWalletType" runat="server" CssClass="form-control"
+                                            AutoPostBack="true" OnSelectedIndexChanged="ddlWalletType_SelectedIndexChanged">
+                                        </asp:DropDownList>
+                                    </div>
+
+                                    <div class="map-field" id="Div1" runat="server" visible="false">
+                                        <label class="map-label">Available Balance</label>
+                                        <asp:TextBox ID="AvailableBal" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
+                                    </div>
+
+                                    <%-- Payment Gateway wala UI yaha add kar lena, jab ddlPaymentMode == "PG" ho --%>
+                                    <div class="map-field" id="DivPaymentGateway" runat="server" visible="false">
+                                        <%-- aapka payment gateway UI / control yahan --%>
+                                    </div>
+
+                              <%--  </ContentTemplate>
+                                <Triggers>
+                                    <asp:AsyncPostBackTrigger ControlID="ddlPaymentMode" EventName="SelectedIndexChanged" />
+                                    <asp:AsyncPostBackTrigger ControlID="ddlWalletType" EventName="SelectedIndexChanged" />
+                                </Triggers>
+                            </asp:UpdatePanel>--%>
+                            <%-- <div class="map-field" style="display: none;">
                                 <label class="map-label">Select Wallet <span class="req">*</span></label>
                                 <asp:DropDownList ID="ddlWalletType" runat="server" CssClass="form-control"
                                     AutoPostBack="true" OnSelectedIndexChanged="ddlWalletType_SelectedIndexChanged">
@@ -705,7 +740,7 @@
                             <div class="map-field" id="Div1" runat="server">
                                 <label class="map-label">Available Balance</label>
                                 <asp:TextBox ID="AvailableBal" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
-                            </div>
+                            </div>--%>
 
                             <%--   <div class="map-sum-row balance">
                                 <div class="map-sum-label">⛽ Validity</div>
@@ -728,7 +763,7 @@
             </div>
         </div>
     </section>
-    
+
     <script>
 
         // ─────────────────────────────

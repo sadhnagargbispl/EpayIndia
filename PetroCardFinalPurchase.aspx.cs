@@ -1,16 +1,21 @@
 using DocumentFormat.OpenXml.Bibliography;
+using Newtonsoft.Json;
+
 //using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Xml;
 
 public partial class PetroCardFinalPurchase : System.Web.UI.Page
 {
@@ -104,25 +109,28 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
             Hdnkitid.Value = kitid_;
             FillKit(Hdnkitid.Value);          // txtAmount + lblCardAmount set
 
+            DivWalletType.Visible = false;
+            Div1.Visible = false;
+            ddlPaymentMode.SelectedValue = "Z";
             FundWalletGetBalance();
             AvailableBal.Text = Amount().ToString("N2");
 
             // ══ STEP 5 : Ab balance check (amount load hone ke BAAD) ══
-            if (!GetAmountStatus())
-            {
-                decimal bal = Amount();
-                decimal amt = SafeAmount();
-                decimal shortfall = amt - bal;
+            //if (!GetAmountStatus())
+            //{
+            //    decimal bal = Amount();
+            //    decimal amt = SafeAmount();
+            //    decimal shortfall = amt - bal;
 
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key",
-                    "alert('Insufficient Balance!\\n\\n"
-                    + "Kit Amount        : Rs. " + amt.ToString("N2") + "\\n"
-                    + "Available Balance : Rs. " + bal.ToString("N2") + "\\n"
-                    + "Shortfall         : Rs. " + shortfall.ToString("N2") + "\\n\\n"
-                    + "Please add funds to your wallet and try again.');"
-                    + "location.replace('PETROCARDPurchase.aspx');", true);
-                return;
-            }
+            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "Key",
+            //        "alert('Insufficient Balance!\\n\\n"
+            //        + "Kit Amount        : Rs. " + amt.ToString("N2") + "\\n"
+            //        + "Available Balance : Rs. " + bal.ToString("N2") + "\\n"
+            //        + "Shortfall         : Rs. " + shortfall.ToString("N2") + "\\n\\n"
+            //        + "Please add funds to your wallet and try again.');"
+            //        + "location.replace('PETROCARDPurchase.aspx');", true);
+            //    return;
+            //}
 
             // ══ STEP 6 : Form data ══
             txtMemberId.Text = Session["IdNo"] != null ? Session["IdNo"].ToString() : string.Empty;
@@ -159,6 +167,39 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
         }
     }
     /// <summary>Member ne pehle se koi Petro Kit (12/13/14) le rakha hai?</summary>
+    /// 
+    protected void ddlPaymentMode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ddlPaymentMode.SelectedValue == "WALLET")
+        {
+            DivWalletType.Visible = true;
+            Div1.Visible = true;
+            DivPaymentGateway.Visible = false;
+
+            if (ddlWalletType.Items.Count == 0)
+                FillWallettype();
+
+            if (ddlWalletType.Items.Count > 0)
+            {
+                FundWalletGetBalance();
+                AvailableBal.Text = Amount().ToString("N2");
+            }
+        }
+        else if (ddlPaymentMode.SelectedValue == "PG")
+        {
+            DivWalletType.Visible = false;
+            Div1.Visible = false;
+            DivPaymentGateway.Visible = true;
+
+            // ── Payment Gateway wala code yahan aapko likhna hai ──
+        }
+        else
+        {
+            DivWalletType.Visible = false;
+            Div1.Visible = false;
+            DivPaymentGateway.Visible = false;
+        }
+    }
     private bool IsPetroKitAlreadyPurchased()
     {
         try
@@ -184,66 +225,7 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
         decimal amt;
         return decimal.TryParse(txtAmount.Text, out amt) ? amt : 0;
     }
-    //protected void Page_Load(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
 
-    //        this.BtnSubmit.Attributes.Add("onclick", DisableTheButton(this.Page, this.BtnSubmit));
-    //        if (Session["Status"] != null && Session["Status"].ToString() == "OK")
-    //        {
-    //            if (!string.IsNullOrEmpty(Request["kitid"]))
-    //            {
-    //                kitid_ = Crypto.Decrypt(objModuleFun.EncodeBase64(Request["kitid"]));
-    //            }
-    //            if (!Page.IsPostBack)
-    //            {
-    //                FillWallettype();
-    //                if (!GetAmountStatus())
-    //                {
-    //                    ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You Are Not Authorised For Petro Card Purchase.Because Of Your Wallet Balance Is Low.!');location.replace('Index.aspx');", true);
-    //                    return;
-    //                }
-    //                FundWalletGetBalance();
-    //                AvailableBal.Text = Amount().ToString();
-    //                Hdnkitid.Value = kitid_;
-    //                FillKit(Hdnkitid.Value);
-    //                txtMemberId.Text = Session["IdNo"] != null ? Session["IdNo"].ToString() : string.Empty;
-    //                GetName();
-    //                FillState();
-    //                FillGender();
-    //                Session["FinalWithdrawAmount"] = null;
-    //                Session["ReqAmount"] = null;
-    //                Session["OtpCount"] = 0;
-    //                Session["OtpTime"] = null;
-    //                Session["Retry"] = null;
-    //                Session["OTP_"] = null;
-    //                HdnCheckTrnns.Value = GenerateRandomString(6);
-    //                string str = " select count(*) as Cnt from " + ObjDal.dBName + "..repurchincome where formno = '" + Convert.ToInt32(Session["Formno"]) + "' AND kitid in (12,13,14)";
-    //                DataTable dts = new DataTable();
-    //                dts = SqlHelper.ExecuteDataset(constr1, CommandType.Text, str).Tables[0];
-    //                if (dts.Rows.Count > 0)
-    //                {
-    //                    if (Convert.ToInt32(dts.Rows[0]["Cnt"]) > 0)
-    //                    {
-    //                        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Already Purchase Petro Card Kit.!');location.replace('Index.aspx');", true);
-    //                        return;
-    //                    }
-    //                }
-    //            }
-
-    //        }
-    //        else
-    //        {
-    //            Response.Redirect("login.aspx");
-    //        }
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-
-    //    }
-    //}
     private void FillWallettype()
     {
         try
@@ -251,7 +233,7 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
             DataTable dt = new DataTable();
 
             // Update query for stored procedure without formno parameter
-           string query = IsoStart + "Exec Sp_GetWalletTypePetroCardINR " + IsoEnd;
+            string query = IsoStart + "Exec Sp_GetWalletTypePetroCardINR " + IsoEnd;
 
             dt = SqlHelper.ExecuteDataset(constr1, CommandType.Text, query).Tables[0];
 
@@ -406,7 +388,7 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
                     MemberStatus.Value = dt.Rows[0]["ActiveStatus"].ToString();
                     hdnFormno.Value = dt.Rows[0]["Formno"].ToString();
                     TxtEmail.Text = dt.Rows[0]["Email"].ToString();
-                    
+
                     if (TxtEmail.Text == "")
                     {
                         TxtEmail.Enabled = true;
@@ -498,17 +480,27 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
     }
     protected void BtnSubmit_Click(object sender, EventArgs e)
     {
-        if (ddlWalletType.SelectedValue == "Z")
+        if (ddlPaymentMode.SelectedValue == "Z")
         {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Please Select Wallet Type.!');", true);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key",
+                "alert('Please Select Payment Mode.!');", true);
             return;
         }
 
-        if (!GetAmountStatus())
+        if (ddlPaymentMode.SelectedValue == "WALLET")
         {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You do not have enough balance for Purchasing.');location.replace('Index.aspx');", true);
-            return;
+            if (ddlWalletType.SelectedValue == "Z")
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Please Select Wallet Type.!');", true);
+                return;
+            }
+            if (!GetAmountStatus())
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('You do not have enough balance for Purchasing.');location.replace('Index.aspx');", true);
+                return;
+            }
         }
+
         if (DDlGender.SelectedValue == "Z")
         {
             ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Please Select Gender.!');", true);
@@ -598,13 +590,264 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
             }
             else
             {
-                FUNPETROCARDPurchase();
+
+                if (ddlPaymentMode.SelectedValue == "PG")
+                {
+                    string Strqueryquer = "Insert into Trnactive (Transid,Rectimestamp)values(" + HdnCheckTrnns.Value + ", GETDATE())";
+                    int isOk1 = 0;
+                    try
+                    {
+                        isOk1 = Convert.ToInt32(SqlHelper.ExecuteNonQuery(constr, CommandType.Text, Strqueryquer));
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    if (isOk1 > 0)
+                    {
+                        string OrderId = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                        string sql = "INSERT INTO PetroOnlineTransaction(Orderid,Orderdate,Amount,FormNo,Kitid,memberID,Name,Mobl,WhatsappNo,Email,Panno,dob,Address1,Pincode,City,District,Statename,StateCode,Gender) " +
+                                     "VALUES('" + OrderId + "', GETDATE(), '" + txtAmount.Text + "','" + Session["formno"] + "','" + Hdnkitid.Value + "','" + txtMemberId.Text + "'," +
+                                     "'" + TxtMemberName.Text + "','" + Txtmonileno.Text + "','" + TxtWhatsappNo.Text + "','" + TxtEmail.Text + "','" + Txtpanno.Text + "'," +
+                                     "'" + TxtDOB.Text + "','" + TxtAddress.Text + "','" + Txtpincode.Text + "','" + TxtCity.Text + "','" + TxtDistrict.Text + "'," +
+                                     "'" + ddlState.SelectedItem.Text + "','" + ddlState.SelectedValue + "','" + DDlGender.SelectedValue + "')";
+
+                        int i = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql);
+                        if (i > 0)
+                        {
+                            GenerateQrCode(OrderId, txtAmount.Text);
+                        }
+                    }
+                    else
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "Key", "alert('Try Again After Some Time.!');location.replace('PetroCardFinalPurchase.aspx');", true);
+                        return;
+                    }
+                }
+                else
+                {
+                    FUNPETROCARDPurchase();
+                }
             }
         }
         else
         {
             FUNPETROCARDPurchase();
         }
+    }
+    public string GenerateQrCode(string Orderid, string Amount)
+    {
+        string str = "";
+        string sResult = DateTime.Now.ToString("yyyyMMddHHmmssfff") +
+                         new Random().Next(100, 999);
+        string auth = "";
+        try
+        {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            string URL = "https://allupi.com/api/login";
+
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create(URL);
+
+            request.Method = "POST";
+            request.ContentType = "application/json";
+
+            string postData = "{\"merchantID\":\"29159c34-8f20-49d8-a867-4618325f2f74\",\"securityCode\":\"a0a1649a-a91c-4861-baed-38422f686d6f\"}";
+            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
+                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
+                             "('" + sResult + "', '0', '" + URL + "', '" + postData +
+                             "', 'AppLoginPetroCard', '" + Orderid + "','PetroCardFinalPurchase')";
+
+            int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
+            byte[] dataBytes = Encoding.UTF8.GetBytes(postData);
+            request.ContentLength = dataBytes.Length;
+
+            using (Stream stream = request.GetRequestStream())
+            {
+                stream.Write(dataBytes, 0, dataBytes.Length);
+            }
+
+            using (HttpWebResponse response =
+                (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader reader =
+                    new StreamReader(response.GetResponseStream()))
+                {
+                    str = reader.ReadToEnd();
+                }
+            }
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'AppLoginPetroCard'";
+
+            int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
+            DataSet ds = convertJsonStringToDataSet(str);
+
+            if (ds.Tables.Count < 2 || ds.Tables[1].Rows.Count == 0)
+            {
+                throw new Exception("Login API Response Invalid");
+            }
+
+            auth =
+               Convert.ToString(ds.Tables[1].Rows[0]["token"]);
+
+            string sql =
+                @"INSERT INTO LoginTransaction
+            (TId,Username,role,token,refreshToken,name,transactionid,amount,FormNo)
+            VALUES
+            (
+            '" + ds.Tables[1].Rows[0]["ID"] + @"',
+            '" + ds.Tables[1].Rows[0]["username"] + @"',
+            '" + ds.Tables[1].Rows[0]["role"] + @"',
+            '" + ds.Tables[1].Rows[0]["token"] + @"',
+            '" + ds.Tables[1].Rows[0]["refreshToken"] + @"',
+            '" + ds.Tables[1].Rows[0]["name"] + @"',
+            '" + Orderid + @"',
+            '" + Amount + @"','" + Session["formno"] + @"'
+            )";
+
+            SqlHelper.ExecuteNonQuery(
+                constr,
+                CommandType.Text,
+                sql);
+
+            return CheckLiveRateCoin(auth, Orderid, Amount);
+        }
+        catch (Exception ex)
+        {
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" + ex.Message +
+                             "' WHERE ReqID = '" + sResult +
+                             "' AND Req_From = 'AppLoginClaim'";
+            int x_res = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
+            File.AppendAllText(
+                Server.MapPath("~/Logs/PetroCardPaymentError.txt"),
+                DateTime.Now + " GenerateQrCode : " +
+                ex + Environment.NewLine);
+            //return CheckLiveRateCoin(auth, Orderid, Amount);
+            throw;
+        }
+    }
+    protected string CheckLiveRateCoin(string auth, string orderid, string amount)
+    {
+        string redirectUrl = "";
+        string sResult = DateTime.Now.ToString("yyyyMMddHHmmssfff") +
+                 new Random().Next(100, 999);
+
+        try
+        {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            string apiUrl =
+                "https://allupi.com/api/InitiateTransactionAsync";
+
+            HttpWebRequest request =
+                (HttpWebRequest)WebRequest.Create(apiUrl);
+
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers.Add("X-Auth", auth);
+
+            string postData =
+                "{"
+                + "\"requestedId\":\"" + orderid + "\","
+                + "\"amount\":" + amount + ","
+                + "\"upiId\":\"82215511\","
+                + "\"serverHookURL\":\"https://epayindia.in/Login.aspx\","
+                + "\"webHookURL\":\"https://epayindia.in/PetroCardPaymentGatewayPurchase.aspx\""
+                + "}";
+            string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
+                             "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
+                             "('" + sResult + "', '" + Session["formno"] + "', '" + apiUrl + "', '" +
+                             postData + "', 'AppInitiateTransactionAsyncPetroCard', '" + orderid + "','PetroCardFinalPurchase')";
+
+            int x_Req = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
+            byte[] bytes = Encoding.UTF8.GetBytes(postData);
+
+            request.ContentLength = bytes.Length;
+
+            using (Stream stream = request.GetRequestStream())
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
+
+            string responseText = "";
+
+            using (HttpWebResponse response =
+                (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader reader =
+                    new StreamReader(response.GetResponseStream()))
+                {
+                    responseText = reader.ReadToEnd();
+                }
+            }
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + responseText + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'AppInitiateTransactionAsyncPetroCard'";
+
+            int x_res = SqlHelper.ExecuteNonQuery(
+                constr,
+                CommandType.Text,
+                sql_res
+            );
+            File.AppendAllText(
+                Server.MapPath("~/Logs/PetroCardAllUPIResponse.txt"),
+                DateTime.Now +
+                " OrderId=" + orderid +
+                " Response=" + responseText +
+                Environment.NewLine);
+
+            DataSet ds =
+                convertJsonStringToDataSet(responseText);
+
+            if (ds.Tables.Count > 0 &&
+                ds.Tables[0].Rows.Count > 0 &&
+                ds.Tables[0].Columns.Contains("url"))
+            {
+                redirectUrl =
+                    Convert.ToString(ds.Tables[0].Rows[0]["url"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(redirectUrl))
+            {
+                Response.Redirect(redirectUrl);
+            }
+            //Response.Redirect(redirectUrl);
+            throw new Exception(
+                "Payment URL not found in API response.");
+
+        }
+        catch (Exception ex)
+        {
+
+            File.AppendAllText(
+                Server.MapPath("~/Logs/PetroCardRedirectError.txt"),
+                DateTime.Now + " " +
+                ex + Environment.NewLine);
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" + ex.Message + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'AppInitiateTransactionAsyncPetroCard'";
+            SqlHelper.ExecuteNonQuery(
+                constr,
+                CommandType.Text,
+                sql_res
+            );
+            //Response.Redirect(redirectUrl);
+            return "";
+        }
+
+    }
+    public DataSet convertJsonStringToDataSet(string jsonString)
+    {
+        XmlDocument xd = new XmlDocument();
+
+        jsonString = "{ \"rootNode\": {" +
+                     jsonString.Trim().TrimStart('{').TrimEnd('}') +
+                     "} }";
+
+        xd = JsonConvert.DeserializeXmlNode(jsonString);
+
+        DataSet ds = new DataSet();
+        ds.ReadXml(new XmlNodeReader(xd));
+
+        return ds;
     }
     public string GenerateRandomStringactive(int length)
     {

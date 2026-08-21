@@ -18,3 +18,27 @@ LoadPanKycStatus: Could not find stored procedure 'USP_GetPanKycStatus'.
 --------------------------------------------------------
 LoadPanKycStatus: Could not find stored procedure 'USP_GetPanKycStatus'.
 --------------------------------------------------------
+http://localhost:62188/PetroCardFinalPurchase.aspx?KitID=ulfvQLu70Ys%3d: 06-Aug-2026 05.53.05.807
+Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at PetroCardFinalPurchase.Page_Load(Object sender, EventArgs e) in E:\Sadhna Garg\SadhnaGithubC#\GithubC#\EpayIndia\PetroCardFinalPurchase.aspx.cs:line 49
+--------------------------------------------------------
+PetroPurchase Page_Load: Thread was being aborted.
+--------------------------------------------------------
+http://localhost:62188/PetroCardFinalPurchase.aspx?KitID=ulfvQLu70Ys%3d: 06-Aug-2026 07.13.58.924
+Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at PetroCardFinalPurchase.Page_Load(Object sender, EventArgs e) in E:\Sadhna Garg\SadhnaGithubC#\GithubC#\EpayIndia\PetroCardFinalPurchase.aspx.cs:line 54
+--------------------------------------------------------
+PetroPurchase Page_Load: Thread was being aborted.
+--------------------------------------------------------
+PetroPurchase Page_Load: Thread was being aborted.
+--------------------------------------------------------
+PetroPurchase Page_Load: Thread was being aborted.
+--------------------------------------------------------

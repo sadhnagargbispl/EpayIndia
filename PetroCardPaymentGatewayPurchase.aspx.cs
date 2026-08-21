@@ -13,7 +13,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 
-public partial class paymentsubscriptionpanel : System.Web.UI.Page
+public partial class PetroCardPaymentGatewayPurchase : System.Web.UI.Page
 {
     string constr = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
     protected void Page_Load(object sender, EventArgs e)
@@ -239,7 +239,7 @@ public partial class paymentsubscriptionpanel : System.Web.UI.Page
             string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
                              "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
                              "('" + sResult + "', '0', '" + URL + "', '" + postData +
-                             "', 'LoginClaimLogin', '" + Orderid + "','paymentsubscriptionpanel')";
+                             "', 'AppLoginClaimLoginPetroCard', '" + Orderid + "','PetroCardPaymentGatewayPurchase')";
 
             int x_Req = SqlHelper.ExecuteNonQuery(
                 constr,
@@ -264,7 +264,7 @@ public partial class paymentsubscriptionpanel : System.Web.UI.Page
 
             string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" + str +
                              "' WHERE ReqID = '" + sResult +
-                             "' AND Req_From = 'LoginClaimLogin'";
+                             "' AND Req_From = 'AppLoginClaimLoginPetroCard'";
 
             int x_res = SqlHelper.ExecuteNonQuery(
                 constr,
@@ -280,9 +280,7 @@ public partial class paymentsubscriptionpanel : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" +
-                             ex.Message + "' WHERE ReqID = '" + sResult +
-                             "' AND Req_From = 'LoginClaimLogin'";
+            string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" + ex.Message + "' WHERE ReqID = '" + sResult + "' AND Req_From = 'AppLoginClaimLoginPetroCard'";
 
             SqlHelper.ExecuteNonQuery(
                 constr,
@@ -358,12 +356,12 @@ public partial class paymentsubscriptionpanel : System.Web.UI.Page
                 int Nx = SqlHelper.ExecuteNonQuery(
                     constr,
                     CommandType.Text,
-                    "EXEC sp_Subscription '" + orderid + "'");
+                    "EXEC sp_PaymentPetroCardINRPayDis '" + orderid + "'");
 
                 if (Nx > 0)
                 {
                     Response.Clear();
-                    Response.Redirect("~/subscription-now.aspx", false);
+                    Response.Redirect("~/PETROCARDPurchase.aspx", false);
 
                     Context.ApplicationInstance
                         .CompleteRequest();
@@ -374,46 +372,25 @@ public partial class paymentsubscriptionpanel : System.Web.UI.Page
             Response.Clear();
 
             Response.Redirect(
-                "https://epayindia.in/Login.aspx",
+                "PETROCARDPurchase.aspx",
                 false);
 
             Context.ApplicationInstance
                 .CompleteRequest();
 
             return "";
-            //if (status.Equals("PENDING", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    Response.Clear();
 
-            //    Response.Redirect(
-            //        "https://epayindia.in/Login.aspx",
-            //        false);
-
-            //    Context.ApplicationInstance
-            //        .CompleteRequest();
-
-            //    return "";
-            //}
-
-            //Response.Clear();
-
-            //Response.Redirect( "~/PaymentgatewayMonthly.aspx?requestedId=" + orderid,false);
-
-            //Context.ApplicationInstance
-            //    .CompleteRequest();
-
-            //return "";
         }
         catch (Exception ex)
         {
             File.AppendAllText(
-                Server.MapPath("~/Logs/SubscriptionStatusError.txt"),
+                Server.MapPath("~/Logs/PetroCardStatusError.txt"),
                 DateTime.Now +
                 Environment.NewLine +
                 ex.ToString() +
                 Environment.NewLine);
             Response.Clear();
-            Response.Redirect("~/paymentsubscriptionpanel.aspx?requestedId=" + orderid, false);
+            Response.Redirect("~/PetroCardPaymentGatewayPurchase.aspx?requestedId=" + orderid, false);
 
             Context.ApplicationInstance
                 .CompleteRequest();
@@ -421,103 +398,6 @@ public partial class paymentsubscriptionpanel : System.Web.UI.Page
             return "";
         }
     }
-    //private string CheckLiveRateCoin(string auth, string orderid)
-    //{
-    //    string url = "";
-    //    string sResult = string.Empty;
-
-    //    string current_datetime = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-    //    int random_number = new Random().Next(0, 999);
-    //    string formatted_datetime = current_datetime + random_number.ToString().PadLeft(3, '0');
-    //    sResult = formatted_datetime;
-
-    //    try
-    //    {
-    //        DataSet data;
-    //        string UrlR = "https://allupi.com/api/Status?RequestedId=" + orderid;
-
-    //        string sql_req = "INSERT INTO Tbl_ApiRequest_ResponsePaymentGateway " +
-    //                         "(ReqID, Formno, Request, postdata, Req_From, OrderID,PageName) VALUES " +
-    //                         "('" + sResult + "', '0', '" + UrlR + "', '" + UrlR +
-    //                         "', 'StatusCheckClaim', '" + orderid + "','paymentsubscriptionpanel')";
-
-    //        SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_req);
-
-    //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(UrlR);
-    //        request.Headers.Add("X-Auth", auth);
-    //        request.Method = "POST";
-    //        request.ContentType = "application/json";
-    //        request.ContentLength = 0;
-
-    //        HttpWebResponse response1 = (HttpWebResponse)request.GetResponse();
-    //        string responseBody = "";
-
-    //        using (Stream receiveStream = response1.GetResponseStream())
-    //        using (StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8))
-    //        {
-    //            responseBody = readStream.ReadToEnd();
-    //        }
-
-    //        string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET Response = '" +
-    //                         responseBody + "' WHERE ReqID = '" + sResult +
-    //                         "' AND Req_From = 'StatusCheckClaim'";
-
-    //        SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
-
-    //        data = convertJsonStringToDataSet(responseBody);
-
-    //        string status = "";
-
-    //        if (string.IsNullOrEmpty(data.Tables[1].Rows[0]["status"].ToString()))
-    //        {
-    //            status = "FAILED";
-    //        }
-    //        else
-    //        {
-    //            status = data.Tables[1].Rows[0]["status"].ToString();
-    //        }
-
-    //        string str = "UPDATE LoginTransaction SET Status='" + status +
-    //                     "', response='" + responseBody +
-    //                     "', Responsedate=GETDATE() WHERE TransactionId='" + orderid + "'";
-
-    //        SqlHelper.ExecuteNonQuery(constr, CommandType.Text, str);
-
-    //        if (status.ToUpper() == "SUCCESS")
-    //        {
-    //            str = "EXEC sp_Subscription '" + orderid + "'";
-    //            int Nx = SqlHelper.ExecuteNonQuery(constr, CommandType.Text, str);
-
-    //            if (Nx > 0)
-    //            {
-    //               // SendWalletTransactionEmail(Session["email"].ToString(), Session["MemName"].ToString(), txtAmount.Text, "Debit", 0, orderid);
-    //                Response.Redirect("subscription-now.aspx", false);
-    //            }
-    //        }
-    //        Response.Clear();
-
-    //        Response.Redirect(
-    //            "https://epayindia.in/Login.aspx",
-    //            false);
-
-    //        Context.ApplicationInstance
-    //            .CompleteRequest();
-
-    //        return "";
-    //        //Response.Redirect("https://epayindia.in/Login.aspx", false);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        string sql_res = "UPDATE Tbl_ApiRequest_ResponsePaymentGateway SET ErrorMsg = '" +
-    //                         ex.Message + "' WHERE ReqID = '" + sResult +
-    //                         "' AND Req_From = 'StatusCheckClaim'";
-
-    //        SqlHelper.ExecuteNonQuery(constr, CommandType.Text, sql_res);
-    //    }
-
-    //    return url;
-    //}
-
     public DataSet convertJsonStringToDataSet(string jsonString)
     {
         XmlDocument xd = new XmlDocument();
