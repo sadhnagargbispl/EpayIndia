@@ -55,7 +55,7 @@
 
                             <li><a href="WebApp.aspx" class="d-active" onclick="closeDrawer()">
                                 <span class="d-icon"><i class="fa fa-home"></i></span>Home</a></li>
-                            <li>
+                           <%-- <li>
                                 <a href="StoreRedirect.aspx" target="_blank" onclick="closeDrawer()">
                                     <span class="d-icon"><i class="fa fa-store"></i></span>Store Shopping</a>
 
@@ -84,7 +84,7 @@
                                 <a href="MovieBookingRedirect.aspx" target="_blank" onclick="closeDrawer()">
                                     <span class="d-icon"><i class="fa fa-film"></i></span>ePay Movie</a>
 
-                            </li>
+                            </li>--%>
                             <div class="d-hr"></div>
                             <li>
                                 <a href="Apppurchase-coupon.aspx" onclick="closeDrawer()">
@@ -163,126 +163,7 @@
                 <!-- /scroll-body -->
 
             </div>
-            <!-- /app-shell -->
-
-            <!-- TOAST -->
-
-
-            <%-- <div class="app-shell" id="appShell">
-
-                
-                <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-
-               
-                <div class="drawer" id="drawer">
-                    <button type="button" class="close-btn" onclick="closeDrawer()"><i class="fa fa-times"></i></button>
-
-                    <div class="drawer-header">
-                        <img src="demoepay/images/logo.png" alt="ePay" class="drawer-logo" onerror="this.style.display='none'" />
-                        <div class="drawer-brand">
-                            <h2 id="ddUserNameName" runat="server"></h2>
-                            <p>Smart Digital &amp; eCommerce Platform</p>
-                        </div>
-                    </div>
-
-                    <div class="drawer-user">
-                        <div class="d-avatar" id="ddUserNamenameee" runat="server"></div>
-                        <div>
-                            <div class="d-name" id="ddUserName" runat="server"></div>
-                            <div class="d-id">ID:
-                                <asp:Label ID="LblIDD" runat="server" Text=""></asp:Label></div>
-                        </div>
-                    </div>
-
-                    <nav class="drawer-nav">
-                        <ul>
-
-
-
-
-
-                            <li><a href="WebApp.aspx" class="d-active" onclick="closeDrawer()">
-                                <span class="d-icon"><i class="fa fa-home"></i></span>Home</a></li>
-                            <li>
-                                <a href="StoreRedirect.aspx" target="_blank" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-store"></i></span>Store Shopping</a>
-
-                            </li>
-                            <li>
-                                <a href="BrandRedirect.aspx" target="_blank" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-shopping-cart"></i></span>E-Commerce Solutions</a>
-
-                            </li>
-                            <li>
-                                <a href="UtilityServicesRedirect.aspx" target="_blank" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-bolt"></i></span>ePay Digital Services</a>
-
-                            </li>
-                            <li>
-                                <a href="GVRedirect.aspx" target="_blank" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-gift"></i></span>Gift Vouchers</a>
-
-                            </li>
-                            <li>
-                                <a href="FoodBookingRedirect.aspx" target="_blank" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-utensils"></i></span>ePay Food</a>
-
-                            </li>
-                            <li>
-                                <a href="MovieBookingRedirect.aspx" target="_blank" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-film"></i></span>ePay Movie</a>
-
-                            </li>
-                            <div class="d-hr"></div>
-                            <li>
-                                <a href="Apppurchase-coupon.aspx" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-ticket-alt"></i></span>Purchase Coupon</a>
-
-                            </li>
-                            <li>
-                                <a href="Appsubscription-now.aspx" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-crown"></i></span>Subscription Now</a>
-
-                            </li>
-                            <li>
-                                <a href="Appmonthly-activation-points.aspx" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-chart-bar"></i></span>Activation Points</a>
-
-                            </li>
-                            <div class="d-hr"></div>
-
-                            <li>
-                                <a href="DeleteAccount.aspx" onclick="closeDrawer()">
-                                    <span class="d-icon"><i class="fa fa-globe"></i></span>Account Delete</a>
-
-                            </li>
-                      
-
-                        </ul>
-                    </nav>
-
-                    <div class="drawer-footer-note">© 2026 ePay India. All rights reserved.</div>
-                </div>
-
-                <header class="app-header">
-                    <div class="h-left">
-                        <button type="button" class="hamburger" onclick="openDrawer()" aria-label="Menu">
-                            <span></span><span></span><span></span>
-                        </button>
-                        <img src="demoepay/images/logo_light.png" alt="ePay" class="h-logo" onerror="this.style.display='none'" />
-                    </div>
-                 
-                </header>
-
-               
-                <div class="scroll-body">--%>
-
-
-
-            <%--  <div style="height: 20px"></div>
-
-                </div>
-            --%>
+          
         </div>
         <div class="toast" id="toast"></div>
 
@@ -326,51 +207,51 @@
             var totalSlides = 4;
             var slideTimer;
 
-            function updateSlider() {
-                document.getElementById('bannerTrack').style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
-                var dots = document.querySelectorAll('.bn-dot');
-                dots.forEach(function (d, i) { d.classList.toggle('active', i === currentSlide); });
-            }
+            // function updateSlider() {
+            //     document.getElementById('bannerTrack').style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+            //     var dots = document.querySelectorAll('.bn-dot');
+            //     dots.forEach(function (d, i) { d.classList.toggle('active', i === currentSlide); });
+            // }
 
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % totalSlides;
-                updateSlider();
-                resetAutoSlide();
-            }
+            // function nextSlide() {
+            //     currentSlide = (currentSlide + 1) % totalSlides;
+            //     updateSlider();
+            //     resetAutoSlide();
+            // }
 
-            function prevSlide() {
-                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-                updateSlider();
-                resetAutoSlide();
-            }
+            // function prevSlide() {
+            //     currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            //     updateSlider();
+            //     resetAutoSlide();
+            // }
 
-            function goToSlide(n) {
-                currentSlide = n;
-                updateSlider();
-                resetAutoSlide();
-            }
+            // function goToSlide(n) {
+            //     currentSlide = n;
+            //     updateSlider();
+            //     resetAutoSlide();
+            // }
 
-            function startAutoSlide() {
-                slideTimer = setInterval(nextSlide, 4000);
-            }
+            // function startAutoSlide() {
+            //     slideTimer = setInterval(nextSlide, 4000);
+            // }
 
-            function resetAutoSlide() {
-                clearInterval(slideTimer);
-                startAutoSlide();
-            }
+            // function resetAutoSlide() {
+            //     clearInterval(slideTimer);
+            //     startAutoSlide();
+            // }
 
-            startAutoSlide();
+            // startAutoSlide();
 
-            /* Swipe support */
-            (function () {
-                var slider = document.getElementById('bannerSlider');
-                var startX = 0;
-                slider.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
-                slider.addEventListener('touchend', function (e) {
-                    var diff = startX - e.changedTouches[0].clientX;
-                    if (Math.abs(diff) > 40) { diff > 0 ? nextSlide() : prevSlide(); }
-                }, { passive: true });
-            })();
+            // /* Swipe support */
+            // (function () {
+            //     var slider = document.getElementById('bannerSlider');
+            //     var startX = 0;
+            //     slider.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+            //     slider.addEventListener('touchend', function (e) {
+            //         var diff = startX - e.changedTouches[0].clientX;
+            //         if (Math.abs(diff) > 40) { diff > 0 ? nextSlide() : prevSlide(); }
+            //     }, { passive: true });
+            // })();
 
             /* ── SEARCH ── */
             function handleSearch(val) {

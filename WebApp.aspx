@@ -38,13 +38,13 @@
                 </asp:Repeater>
             </div>
 
-            <button type="button" class="banner-arr bn-prev" onclick="prevSlide()"><i class="fa fa-chevron-left"></i></button>
-            <button type="button" class="banner-arr bn-next" onclick="nextSlide()"><i class="fa fa-chevron-right"></i></button>
+            <%--<button type="button" class="banner-arr bn-prev" onclick="prevSlide()"><i class="fa fa-chevron-left"></i></button>
+            <button type="button" class="banner-arr bn-next" onclick="nextSlide()"><i class="fa fa-chevron-right"></i></button>--%>
         </div>
     </div>
 
     <!-- ===== QUICK SHORTCUTS (dynamic) ===== -->
-    <div class="sec-head">
+   <%-- <div class="sec-head">
         <h2><span class="sh-icon" style="background: linear-gradient(135deg,#E84000,#ff8c42); color: #fff;"><i class="fa fa-bolt"></i></span>Quick Access</h2>
         <a href="#services-section">See All <i class="fa fa-angle-right"></i></a>
     </div>
@@ -57,10 +57,10 @@
                 </a>
             </ItemTemplate>
         </asp:Repeater>
-    </div>
+    </div>--%>
 
     <!-- ===== CATEGORY CHIPS (dynamic) ===== -->
-    <div class="sec-head">
+ <%--   <div class="sec-head">
         <h2><span class="sh-icon" style="background: linear-gradient(135deg,#7c3aed,#a78bfa); color: #fff;"><i class="fa fa-th-large"></i></span>Categories</h2>
     </div>
     <div class="chips-row">
@@ -69,10 +69,9 @@
                 <a class="chip <%# ActiveChip(Eval("is_default")) %>" href='<%# Eval("url") %>' target='<%# Target(Eval("target")) %>'><i class='<%# Eval("icon") %>'></i><%# Eval("label") %></a>
             </ItemTemplate>
         </asp:Repeater>
-    </div>
+    </div>--%>
 
-    <!-- ===== FEATURED SERVICES (dynamic) ===== -->
-    <div class="sec-head">
+   <%-- <div class="sec-head">
         <h2><span class="sh-icon" style="background: linear-gradient(135deg,#d97706,#fcd34d); color: #fff;"><i class="fa fa-star"></i></span>Featured Services</h2>
         <a href="StoreRedirect.aspx" target="_blank">View All <i class="fa fa-angle-right"></i></a>
     </div>
@@ -89,10 +88,10 @@
                 </a>
             </ItemTemplate>
         </asp:Repeater>
-    </div>
+    </div>--%>
 
-    <!-- ===== SPECIAL OFFERS (dynamic) ===== -->
-    <div class="sec-head">
+ 
+<%--    <div class="sec-head">
         <h2><span class="sh-icon" style="background: linear-gradient(135deg,#dc2626,#f87171); color: #fff;"><i class="fa fa-percent"></i></span>Special Offers</h2>
     </div>
     <div class="offer-grid">
@@ -108,7 +107,7 @@
         </asp:Repeater>
     </div>
 
-    <!-- ===== WIDE PROMO (TOP – dynamic) ===== -->
+
     <div class="sec-head">
         <div></div>
     </div>
@@ -128,7 +127,7 @@
                 </div>
             </div>
         </ItemTemplate>
-    </asp:Repeater>
+    </asp:Repeater>--%>
 
     <!-- ===== ALL SERVICES GRID (dynamic) ===== -->
     <div class="sec-head" id="services-section">
@@ -232,82 +231,6 @@
         </asp:Repeater>
     </div>
 
-    <%--   <div class="hero">
-        <div class="hero-greeting" id="greeting"></div>
-        <div class="hero-name" id="ddUserName" runat="server"></div>
-        <div class="hero-sub">Digital Commerce &amp; Utility Platform</div>
-    </div>
-
-    <!-- SERVICES -->
-     <div class="sec-label">Our Services</div>
- <div class="svc-grid">
-
-   <a class="svc-card" href="AppStoreredirect.aspx" target="_blank">
-     <div class="svc-ico ic-or"><i class="fa fa-store"></i></div>
-     <div class="svc-name">Store Shopping</div>
-     <div class="svc-desc">Shop top brands</div>
-   </a>
-
-   <a class="svc-card" href="BrandRedirect.aspx" target="_blank">
-     <div class="svc-ico ic-bl"><i class="fa fa-shopping-cart"></i></div>
-     <div class="svc-name">E-Commerce Solutions</div>
-     <div class="svc-desc">Buy &amp; sell online</div>
-   </a>
-
-   <a class="svc-card" href="UtilityServicesRedirect.aspx" target="_blank">
-     <div class="svc-ico ic-pu"><i class="fa fa-bolt"></i></div>
-     <div class="svc-name">ePay Digital Services</div>
-     <div class="svc-desc">Bills &amp; utilities</div>
-   </a>
-
-   <a class="svc-card" href="GVRedirect.aspx" target="_blank">
-     <div class="svc-ico ic-gr"><i class="fa fa-gift"></i></div>
-     <div class="svc-name">Gift Vouchers</div>
-     <div class="svc-desc">Send &amp; receive gifts</div>
-   </a>
-
-   <a class="svc-card" href="FoodBookingRedirect.aspx" target="_blank">
-     <div class="svc-ico ic-re"><i class="fa fa-utensils"></i></div>
-     <div class="svc-name">ePay Food</div>
-     <div class="svc-desc">Order food online</div>
-   </a>
-
-   <a class="svc-card" href="MovieBookingRedirect.aspx" target="_blank">
-     <div class="svc-ico ic-ye"><i class="fa fa-film"></i></div>
-     <div class="svc-name">ePay Movie</div>
-     <div class="svc-desc">Book your tickets</div>
-   </a>
-
-   <a class="svc-card" href="MainAccountRedirect.ASPX" target="_blank">
-     <div class="svc-ico ic-te"><i class="fa fa-user-circle"></i></div>
-     <div class="svc-name">My Account</div>
-     <div class="svc-desc">Profile &amp; settings</div>
-   </a>
-
-   <a class="svc-card" href="Apppurchase-coupon.aspx">
-     <div class="svc-ico ic-pi"><i class="fa fa-ticket-alt"></i></div>
-     <div class="svc-name">Purchase Coupon</div>
-     <div class="svc-desc">Discount coupons</div>
-   </a>
-
-   <a class="svc-card" href="Appsubscription-now.aspx">
-     <div class="svc-ico ic-in"><i class="fa fa-crown"></i></div>
-     <div class="svc-name">Subscription Now</div>
-     <div class="svc-desc">Premium plans</div>
-   </a>
-
-   <a class="svc-card" href="Appmonthly-activation-points.aspx">
-     <div class="svc-ico ic-cy"><i class="fa fa-chart-bar"></i></div>
-     <div class="svc-name">Monthly Activation Points</div>
-     <div class="svc-desc">Earn rewards</div>
-   </a>
-
-   <a class="svc-card" href="MainWebsiteRedirect.aspx">
-     <div class="svc-ico ic-li"><i class="fa fa-globe"></i></div>
-     <div class="svc-name">View Website</div>
-     <div class="svc-desc">Main website</div>
-   </a>
-
- </div>--%>
+    
 </asp:Content>
 

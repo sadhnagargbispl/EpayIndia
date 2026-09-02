@@ -60,29 +60,29 @@ public partial class WebApp : System.Web.UI.Page
         rptBannerDots.DataBind();
 
         // 2. Quick access
-        rptQuick.DataSource = GetTable(
-            "SELECT label,icon,color,url,[target] FROM QuickAccess " +
-            "WHERE is_active = 1 ORDER BY sort_order");
-        rptQuick.DataBind();
+        //rptQuick.DataSource = GetTable(
+        //    "SELECT label,icon,color,url,[target] FROM QuickAccess " +
+        //    "WHERE is_active = 1 ORDER BY sort_order");
+        //rptQuick.DataBind();
 
-        // 3. Categories
-        rptCategories.DataSource = GetTable(
-            "SELECT label,icon,url,[target],is_default FROM Categories " +
-            "WHERE is_active = 1 ORDER BY sort_order");
-        rptCategories.DataBind();
+        //// 3. Categories
+        //rptCategories.DataSource = GetTable(
+        //    "SELECT label,icon,url,[target],is_default FROM Categories " +
+        //    "WHERE is_active = 1 ORDER BY sort_order");
+        //rptCategories.DataBind();
 
-        // 4. Featured services
-        rptFeatured.DataSource = GetTable(
-            "SELECT name,description,emoji,img_bg,badge,badge_icon,url,[target] FROM FeaturedServices " +
-            "WHERE is_active = 1 ORDER BY sort_order");
-        rptFeatured.DataBind();
+        //// 4. Featured services
+        //rptFeatured.DataSource = GetTable(
+        //    "SELECT name,description,emoji,img_bg,badge,badge_icon,url,[target] FROM FeaturedServices " +
+        //    "WHERE is_active = 1 ORDER BY sort_order");
+        //rptFeatured.DataBind();
 
         // 5. Special offers (sirf abhi valid)
-        rptOffers.DataSource = GetTable(
-            "SELECT bg_class,tag,title,subtitle,deco,url,[target] FROM SpecialOffers " +
-            "WHERE is_active = 1 AND (valid_upto IS NULL OR valid_upto >= CAST(GETDATE() AS DATE)) " +
-            "ORDER BY sort_order");
-        rptOffers.DataBind();
+        //rptOffers.DataSource = GetTable(
+        //    "SELECT bg_class,tag,title,subtitle,deco,url,[target] FROM SpecialOffers " +
+        //    "WHERE is_active = 1 AND (valid_upto IS NULL OR valid_upto >= CAST(GETDATE() AS DATE)) " +
+        //    "ORDER BY sort_order");
+        //rptOffers.DataBind();
 
         // 6. All services
         rptServices.DataSource = GetTable(
@@ -103,10 +103,10 @@ public partial class WebApp : System.Web.UI.Page
         rptTrust.DataBind();
 
         // 9. Promo banners (top + bottom alag alag)
-        rptPromoTop.DataSource = GetTable(
-            "SELECT bg_class,deco,tag,title,subtitle,cta,btn_inv,url,[target] FROM PromoBanner " +
-            "WHERE is_active = 1 AND position = 'top'");
-        rptPromoTop.DataBind();
+        //rptPromoTop.DataSource = GetTable(
+        //    "SELECT bg_class,deco,tag,title,subtitle,cta,btn_inv,url,[target] FROM PromoBanner " +
+        //    "WHERE is_active = 1 AND position = 'top'");
+        //rptPromoTop.DataBind();
 
         rptPromoBottom.DataSource = GetTable(
             "SELECT bg_class,deco,tag,title,subtitle,cta,btn_inv,url,[target] FROM PromoBanner " +
