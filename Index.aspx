@@ -161,7 +161,13 @@
                 <p>Book your favourite movies with exclusive deals and offers.</p>
                 <a href="MovieBookingRedirect.aspx" target="_blank" class="service-link">Book Ticket →</a>
             </div>
-
+                        <div class="service-card-live">
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <div class="service-icon">🛡️</div>
+    <h3>ePay Insurance</h3>
+    <p>Secure your future with easy insurance plans and instant renewals.</p>
+             <a href="DirectLoginUrl.aspx" target="_blank" class="service-link">Explore Now →</a>
+</div>
             <div class="service-card-live">
                 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
                 <div class="service-icon">🏷️</div>
@@ -692,4 +698,5 @@ ePay focuses on delivering a secure, user-friendly, and scalable digital experie
             el.style.transitionDelay = `${i * 0.05}s`;
         });
     </script>
+  
 </asp:Content>
