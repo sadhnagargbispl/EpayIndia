@@ -548,7 +548,7 @@ public partial class PetroCardFinalPurchase : System.Web.UI.Page
             ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "Login Error", scrname, false);
             return;
         }
-        else if ((IsValidPAN(Txtpanno.Text)) == false)
+        else if ((IsValidPAN(Txtpanno.Text.Trim())) == false)
         {
             string scrname = "<SCRIPT language='javascript'>alert('Please Enter valid Pan No.!');</SCRIPT>";
             ScriptManager.RegisterClientScriptBlock(this.Page, this.GetType(), "Login Error", scrname, false);
