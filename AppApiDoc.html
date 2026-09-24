@@ -104,7 +104,7 @@ ul.plain li{margin-bottom:4px}
     <ul>
       <li><a href="#basics"><span class="n">·</span>Request &amp; response</a></li>
       <li><a href="#codes"><span class="n">·</span>Codes &amp; errors</a></li>
-      <li><a href="#token"><span class="n">·</span>Token</a></li>
+      <li><a href="#token"><span class="n">·</span>userid &amp; passwd</a></li>
       <li><a href="#transid"><span class="n">·</span>transid (double tap)</a></li>
       <li><a href="#payment"><span class="n">·</span>Payment flow</a></li>
       <li><a href="#bridge"><span class="n">·</span>WebView bridge</a></li>
@@ -144,9 +144,10 @@ ul.plain li{margin-bottom:4px}
       <div class="tbl"><table>
         <thead><tr><th>Header / field</th><th>Kab</th><th>Detail</th></tr></thead>
         <tbody>
-          <tr><td>Authorization</td><td>login ke alawa sab</td><td><code>Bearer {token}</code>. Header na bhej sako to body mein <code>"token"</code> bhi chalega.</td></tr>
           <tr><td>reqtype</td><td>hamesha</td><td>Kaunsi API — neeche har screen par likha hai.</td></tr>
-          <tr><td>deviceid</td><td>optional (login par zaroor)</td><td>Device ki unique id. Same device se dobara login par purana token band ho jata hai.</td></tr>
+          <tr><td>userid</td><td>har API mein (common list chhod ke)</td><td>Member ID, jaise web login mein.</td></tr>
+          <tr><td>passwd</td><td>har API mein (common list chhod ke)</td><td>Member ka password. Server log mein <code>****</code> ho jata hai.</td></tr>
+          <tr><td>deviceid</td><td>optional</td><td>Device ki unique id. Log mein jati hai, support ke liye kaam aati hai.</td></tr>
           <tr><td>appversion</td><td>optional</td><td>Log mein jata hai, support ke liye kaam aata hai.</td></tr>
         </tbody>
       </table></div>
@@ -164,7 +165,7 @@ ul.plain li{margin-bottom:4px}
         <tbody>
           <tr><td>200</td><td>Success</td><td>—</td></tr>
           <tr><td>400</td><td>Galat input ya business rule (balance kam, package allowed nahi…)</td><td><code>msg</code> dikhao</td></tr>
-          <tr><td>401</td><td>Token invalid / expire</td><td>Token delete karo, Login screen par bhejo</td></tr>
+          <tr><td>401</td><td>userid / passwd galat (password badal gaya ho)</td><td>Saved ID-password delete karo, Login screen par bhejo</td></tr>
           <tr><td>403</td><td>ID block hai</td><td><code>msg</code> dikhao, logout karo</td></tr>
           <tr><td>404</td><td>Package / order / member nahi mila</td><td><code>msg</code> dikhao</td></tr>
           <tr><td>405</td><td>POST ke alawa method</td><td>POST use karo</td></tr>
@@ -175,12 +176,13 @@ ul.plain li{margin-bottom:4px}
     </section>
 
     <section class="block" id="token">
-      <h2>Token</h2>
+      <h2>userid &amp; passwd</h2>
       <ul class="plain">
-        <li><code>login</code> se <code>token</code> milta hai, 30 din valid. App ise secure storage mein rakhe.</li>
-        <li>Har request mein <code>Authorization: Bearer {token}</code> bhejo.</li>
-        <li><code>code: 401</code> aaye to user ko dobara login karao.</li>
-        <li><code>logout</code> par token server se band hota hai. <code>"alldevices":"1"</code> bhejoge to sab devices se logout ho jayega.</li>
+        <li>Har API mein <code>userid</code> aur <code>passwd</code> bhejna zaroori hai. Server har call par web login jaisa hi check karta hai (<code>sp_Login1</code>).</li>
+        <li>Sirf common lists mein nahi chahiye, jo sabke liye same hoti hain: <code>couponlist</code>, <code>monthlypackages</code>.</li>
+        <li><code>login</code> successful ho jaye to app ID-password secure storage mein rakhe (Android Keystore / iOS Keychain), plain SharedPreferences mein nahi.</li>
+        <li><code>code: 401</code> aaye (jaise password badal gaya) to saved details hata ke Login screen par bhejo.</li>
+        <li>Missing <code>userid</code> ya <code>passwd</code> par <code>code: 400</code> aata hai.</li>
       </ul>
     </section>
 
@@ -208,7 +210,7 @@ ul.plain li{margin-bottom:4px}
       <p>Home ke kuch links site ke web pages hain (jaise Store). Unke liye <code>home</code> response mein har item ke saath do fields aati hain:</p>
       <ul class="plain">
         <li><code>screen</code> — agar app ki apni screen hai (<code>couponlist</code>, <code>subscription</code>, <code>monthly</code>, <code>deleteaccount</code>, <code>home</code>) to wahi kholo.</li>
-        <li><code>openurl</code> — <code>screen</code> khali ho to yeh URL WebView mein kholo. Site ke pages ke liye yeh <code>AppWebBridge.aspx?page=…&amp;token=…</code> hota hai, jo user ko web par bhi login kar deta hai. <code>target</code> <code>_blank</code> ho to external browser bhi use kar sakte ho.</li>
+        <li><code>openurl</code> — <code>screen</code> khali ho to yeh URL WebView mein kholo. Site ke pages ke liye yeh <code>AppWebBridge.aspx?page=…&amp;token=…</code> hota hai, jo user ko web par bhi login kar deta hai. Yeh link 1 din chalta hai, aur <code>home</code> dobara call karne par naya link milta hai (purana band ho jata hai). Isliye link save mat karo, har baar <code>home</code> ke latest response se lo. <code>target</code> <code>_blank</code> ho to external browser bhi use kar sakte ho.</li>
       </ul>
     </section>
 
@@ -216,8 +218,8 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-login">
       <div class="screen-head"><h2>Login / Logout</h2><span class="step">Screen 1 · <span class="webpage">AppLogin.aspx · AppLogout.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">login</span><span class="pill open">No token</span></div>
-        <p>Web login jaisa hi hai (<code>sp_Login1</code>). Token aur member ki details milti hain.</p>
+        <div class="api-title"><span class="rt">login</span><span class="pill auth">ID + password</span></div>
+        <p>Web login jaisa hi hai (<code>sp_Login1</code>). Member ki details milti hain. Login ho jaye to yahi <code>userid</code>/<code>passwd</code> aage har API mein bhejo.</p>
         <div class="pair">
           <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{
   "reqtype": "login",
@@ -233,9 +235,6 @@ ul.plain li{margin-bottom:4px}
   "reqtype": "login",
   "reqid": "20260924101500123045",
   "data": {
-    "token": "9f2c7a0e5b1d4c3a8e6f0b2d4a6c8e0f1a3b5c7d9e1f2a4b6c8d0e2f4a6b8c0d",
-    "tokentype": "Bearer",
-    "expireson": "2026-10-24 10:15:00",
     "member": {
       "formno": 245,
       "idno": "EP100245",
@@ -255,12 +254,12 @@ ul.plain li{margin-bottom:4px}
   }
 }</pre></div>
         </div>
-        <p style="margin-top:10px">Galat ID/password par: <code>code 400</code>, msg <i>"Please Enter valid UserName or Password."</i></p>
+        <p style="margin-top:10px">Galat ID/password par: <code>code 401</code>, msg <i>"Please Enter valid UserName or Password."</i></p>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">logout</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">logout</span><span class="pill auth">ID + password</span></div>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"logout","alldevices":"0"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"logout","userid":"EP100245","passwd":"mypassword"}</pre></div>
           <div class="code"><div class="lbl">Response<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"Logout successful.","reqtype":"logout","reqid":"20260924183000456123","data":null}</pre></div>
         </div>
       </div>
@@ -269,10 +268,10 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-master">
       <div class="screen-head"><h2>Drawer — name, ID &amp; menu</h2><span class="step">Screen 2 · <span class="webpage">AppMaster.master</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">profile</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">profile</span><span class="pill auth">ID + password</span></div>
         <p>Drawer ka avatar letter, naam, ID, wallet balance aur menu. <code>menu[].reqtype</code> batata hai ki us screen par kaunsi API pehle call karni hai.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"profile"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"profile","userid":"EP100245","passwd":"mypassword"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "profile",
   "reqid": "20260924101502001122",
@@ -298,9 +297,9 @@ ul.plain li{margin-bottom:4px}
         </div>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">walletbalance</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">walletbalance</span><span class="pill auth">ID + password</span></div>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"walletbalance"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"walletbalance","userid":"EP100245","passwd":"mypassword"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"walletbalance","reqid":"20260924101503004455","data":{"walletbalance":1250.00}}</pre></div>
         </div>
       </div>
@@ -309,10 +308,10 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-home">
       <div class="screen-head"><h2>Home</h2><span class="step">Screen 3 · <span class="webpage">WebApp.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">home</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">home</span><span class="pill auth">ID + password</span></div>
         <p>Banner slider, All Services, Best Selling, Why Choose ePay aur bottom promo — sab admin tables se aate hain. <code>icon</code> Font Awesome class hai, app apne icon se map kar sakta hai. Har link wale item mein <code>screen</code> / <code>openurl</code> aata hai (<a href="#bridge">WebView bridge</a> dekho).</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"home"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"home","userid":"EP100245","passwd":"mypassword"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "home",
   "reqid": "20260924101504007788",
@@ -349,7 +348,7 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-coupon">
       <div class="screen-head"><h2>Purchase Coupon</h2><span class="step">Screen 4 · <span class="webpage">Apppurchase-coupon.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">couponlist</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">couponlist</span><span class="pill open">Common list</span></div>
         <p>Movie aur Food, do tabs. Card par tap karo to us <code>kitid</code> ke saath <code>coupondetail</code> call karo.</p>
         <div class="pair">
           <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponlist"}</pre></div>
@@ -374,10 +373,10 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-coupondetail">
       <div class="screen-head"><h2>Coupon Detail &amp; Buy</h2><span class="step">Screen 5 · <span class="webpage">Apppurchase-coupon-details.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">coupondetail</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">coupondetail</span><span class="pill auth">ID + password</span></div>
         <p>Price breakup, wallet balance, description, "how to use" aur terms. Agar <code>canpay</code> false hai to Pay button disable rakho.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"coupondetail","kitid":1005}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"coupondetail","userid":"EP100245","passwd":"mypassword","kitid":1005}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "coupondetail",
   "reqid": "20260924101506005678",
@@ -395,10 +394,10 @@ ul.plain li{margin-bottom:4px}
         </div>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">Token</span><span class="pill money">Wallet debit</span></div>
+        <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet debit</span></div>
         <p>Web page ke "Proceed to Pay" jaisa: balance check, package condition, utility wallet, phir voucher. Amount server DB se leta hai, isliye app amount nahi bhejta. Success par <code>billno</code> ke saath <a href="#s-thankyou">Thank You</a> screen kholo.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","kitid":1005,"transid":"583921"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005,"transid":"583921"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
   "msg": "Package Purchase Successfully!!",
@@ -425,9 +424,9 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-thankyou">
       <div class="screen-head"><h2>Thank You / Redeem</h2><span class="step">Screen 6 · <span class="webpage">AppThankYou.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">orderdetail</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">orderdetail</span><span class="pill auth">ID + password</span></div>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","billno":"482913","kitid":1005}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","userid":"EP100245","passwd":"mypassword","billno":"482913","kitid":1005}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "orderdetail",
   "reqid": "20260924101508003344",
@@ -440,10 +439,10 @@ ul.plain li{margin-bottom:4px}
         </div>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">redeemurl</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">redeemurl</span><span class="pill auth">ID + password</span></div>
         <p>"Redeem Now" button ke liye hai. Jo <code>url</code> mile use browser ya WebView mein kholo, user Food/Movie portal par auto-login ho jayega. <code>redeemtype</code> khali ho to Redeem button mat dikhao.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","type":"MOVIE"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","userid":"EP100245","passwd":"mypassword","type":"MOVIE"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "redeemurl",
   "reqid": "20260924101509006677",
@@ -460,10 +459,10 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-subscription">
       <div class="screen-head"><h2>Subscription Now</h2><span class="step">Screen 7 · <span class="webpage">Appsubscription-now.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">subscriptionpackages</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">subscriptionpackages</span><span class="pill auth">ID + password</span></div>
         <p>Chaar packages aate hain. Jin par <code>isallowed: false</code> hai unka button disable ya "Not available" dikhao (member ke current package ke hisaab se).</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages","userid":"EP100245","passwd":"mypassword"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "subscriptionpackages",
   "reqid": "20260924101510001199",
@@ -479,10 +478,10 @@ ul.plain li{margin-bottom:4px}
         </div>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">subscriptionpay</span><span class="pill auth">Token</span><span class="pill money">UPI payment</span></div>
+        <div class="api-title"><span class="rt">subscriptionpay</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
         <p>Order bana ke UPI payment URL deta hai. Aage ka flow <a href="#payment">Payment flow</a> mein hai.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","kitid":7,"transid":"771204"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7,"transid":"771204"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
   "reqtype": "subscriptionpay", "reqid": "20260924101511004422",
@@ -498,7 +497,7 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-monthly">
       <div class="screen-head"><h2>Activation Points</h2><span class="step">Screen 8 · <span class="webpage">Appmonthly-activation-points.aspx</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">monthlypackages</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">monthlypackages</span><span class="pill open">Common list</span></div>
         <div class="pair">
           <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlypackages"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
@@ -514,10 +513,10 @@ ul.plain li{margin-bottom:4px}
         </div>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">monthlyactivate</span><span class="pill auth">Token</span><span class="pill money">UPI payment</span></div>
+        <div class="api-title"><span class="rt">monthlyactivate</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
         <p>Pehle ID active hai ya nahi aur is mahine activation allowed hai ya nahi, yeh check hota hai. Phir payment URL milta hai (<a href="#payment">Payment flow</a>).</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","kitid":5,"transid":"640318"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5,"transid":"640318"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
   "reqtype": "monthlyactivate", "reqid": "20260924101513002288",
@@ -534,10 +533,10 @@ ul.plain li{margin-bottom:4px}
     <section class="screen" id="s-paystatus">
       <div class="screen-head"><h2>Payment Status</h2><span class="step">Screen 9 · <span class="webpage">Paymentgatewayapp.aspx · PaymentGatewayPurchase.aspx (webhooks)</span></span></div>
       <div class="api">
-        <div class="api-title"><span class="rt">paymentstatus</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">paymentstatus</span><span class="pill auth">ID + password</span></div>
         <p><code>status</code> ki values: <code>SUCCESS</code>, <code>PENDING</code>, <code>FAILED</code> (ya gateway ne jo bheja ho). Sirf apne orders dikhte hain.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"paymentstatus","orderid":"20260924101511120"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "paymentstatus",
   "reqid": "20260924101630009911",
@@ -555,18 +554,18 @@ ul.plain li{margin-bottom:4px}
       <div class="screen-head"><h2>Account Delete</h2><span class="step">Screen 10 · <span class="webpage">DeleteAccount.aspx</span></span></div>
       <div class="note"><b>App mein:</b> hamesha logged-in user ki apni ID ki request jati hai. Dusri ID enter karne ka option nahi hai.</div>
       <div class="api">
-        <div class="api-title"><span class="rt">deleteaccountcheck</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">deleteaccountcheck</span><span class="pill auth">ID + password</span></div>
         <p>Screen khulte hi call karo aur ID + naam dikhao. Agar <code>FAILED</code> aaye to <code>msg</code> dikhao aur submit button hata do.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccountcheck"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}</pre></div>
           <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"deleteaccountcheck","reqid":"20260924101700001100","data":{"idno":"EP100245","name":"Ravi Sharma"}}</pre></div>
         </div>
       </div>
       <div class="api">
-        <div class="api-title"><span class="rt">deleteaccount</span><span class="pill auth">Token</span></div>
+        <div class="api-title"><span class="rt">deleteaccount</span><span class="pill auth">ID + password</span></div>
         <p>User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.</p>
         <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","transid":"318845"}</pre></div>
+          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword","transid":"318845"}</pre></div>
           <div class="code"><div class="lbl">Response<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
   "msg": "Your account deletion request has been received. Our team will contact you if any further information is required.!",
@@ -581,25 +580,25 @@ ul.plain li{margin-bottom:4px}
     <section class="block" id="all">
       <h2>All reqtypes</h2>
       <div class="tbl"><table>
-        <thead><tr><th>reqtype</th><th>Fields</th><th>Web page</th></tr></thead>
+        <thead><tr><th>reqtype</th><th>userid + passwd</th><th>Aur fields</th><th>Web page</th></tr></thead>
         <tbody>
-          <tr><td>login</td><td>userid, passwd, deviceid</td><td>AppLogin.aspx</td></tr>
-          <tr><td>logout</td><td>alldevices (optional)</td><td>AppLogout.aspx</td></tr>
-          <tr><td>profile</td><td>—</td><td>AppMaster.master</td></tr>
-          <tr><td>walletbalance</td><td>—</td><td>(coupon detail)</td></tr>
-          <tr><td>home</td><td>—</td><td>WebApp.aspx</td></tr>
-          <tr><td>couponlist</td><td>—</td><td>Apppurchase-coupon.aspx</td></tr>
-          <tr><td>coupondetail</td><td>kitid</td><td>Apppurchase-coupon-details.aspx</td></tr>
-          <tr><td>couponpurchase</td><td>kitid, transid</td><td>Apppurchase-coupon-details.aspx</td></tr>
-          <tr><td>orderdetail</td><td>billno, kitid (optional)</td><td>AppThankYou.aspx</td></tr>
-          <tr><td>redeemurl</td><td>type or kitid</td><td>Food/MovieBookingRedirect.aspx</td></tr>
-          <tr><td>subscriptionpackages</td><td>—</td><td>Appsubscription-now.aspx</td></tr>
-          <tr><td>subscriptionpay</td><td>kitid, transid</td><td>Appsubscription-now.aspx</td></tr>
-          <tr><td>monthlypackages</td><td>—</td><td>Appmonthly-activation-points.aspx</td></tr>
-          <tr><td>monthlyactivate</td><td>kitid, transid</td><td>Appmonthly-activation-points.aspx</td></tr>
-          <tr><td>paymentstatus</td><td>orderid</td><td>Paymentgateway webhooks</td></tr>
-          <tr><td>deleteaccountcheck</td><td>—</td><td>DeleteAccount.aspx</td></tr>
-          <tr><td>deleteaccount</td><td>transid</td><td>DeleteAccount.aspx</td></tr>
+          <tr><td>login</td><td>Zaroori</td><td>deviceid (optional)</td><td>AppLogin.aspx</td></tr>
+          <tr><td>logout</td><td>Zaroori</td><td>—</td><td>AppLogout.aspx</td></tr>
+          <tr><td>profile</td><td>Zaroori</td><td>—</td><td>AppMaster.master</td></tr>
+          <tr><td>walletbalance</td><td>Zaroori</td><td>—</td><td>(coupon detail)</td></tr>
+          <tr><td>home</td><td>Zaroori</td><td>—</td><td>WebApp.aspx</td></tr>
+          <tr><td>couponlist</td><td>Nahi (common list)</td><td>—</td><td>Apppurchase-coupon.aspx</td></tr>
+          <tr><td>coupondetail</td><td>Zaroori</td><td>kitid</td><td>Apppurchase-coupon-details.aspx</td></tr>
+          <tr><td>couponpurchase</td><td>Zaroori</td><td>kitid, transid</td><td>Apppurchase-coupon-details.aspx</td></tr>
+          <tr><td>orderdetail</td><td>Zaroori</td><td>billno, kitid (optional)</td><td>AppThankYou.aspx</td></tr>
+          <tr><td>redeemurl</td><td>Zaroori</td><td>type or kitid</td><td>Food/MovieBookingRedirect.aspx</td></tr>
+          <tr><td>subscriptionpackages</td><td>Zaroori</td><td>—</td><td>Appsubscription-now.aspx</td></tr>
+          <tr><td>subscriptionpay</td><td>Zaroori</td><td>kitid, transid</td><td>Appsubscription-now.aspx</td></tr>
+          <tr><td>monthlypackages</td><td>Nahi (common list)</td><td>—</td><td>Appmonthly-activation-points.aspx</td></tr>
+          <tr><td>monthlyactivate</td><td>Zaroori</td><td>kitid, transid</td><td>Appmonthly-activation-points.aspx</td></tr>
+          <tr><td>paymentstatus</td><td>Zaroori</td><td>orderid</td><td>Paymentgateway webhooks</td></tr>
+          <tr><td>deleteaccountcheck</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
+          <tr><td>deleteaccount</td><td>Zaroori</td><td>transid</td><td>DeleteAccount.aspx</td></tr>
         </tbody>
       </table></div>
     </section>
