@@ -1,0 +1,633 @@
+﻿ePay India - Mobile App API Document
+
+URL : https://epayindia.in/AppApi.aspx
+Method : POST
+Header : Content-Type: application/json
+
+Note  har API mein userid aur passwd bhejna zaroori hai (website wala login).
+      Sirf couponlist aur monthlypackages mein userid / passwd nahi chahiye.
+
+Note  har response mein ye fields aati hain :
+      response = OK / FAILED
+      code     = 200 success, 400 galat input ya rule, 401 galat userid / passwd (Login screen par bhejo),
+                 403 ID block, 404 nahi mila, 409 same request 20 second mein dobara, 500 server error
+      msg      = user ko dikhane wala message
+      reqid    = problem aaye to support ko yahi number do
+      data     = result (FAILED par null)
+
+Note  amount number mein aata hai (string nahi), jaise 1250.00
+
+Failed Response Example :
+{"response":"FAILED","code":400,"msg":"Insufficient Balance!!","reqtype":"couponpurchase","reqid":"20260924153101874021","data":null}
+
+
+1.Login Api
+Request:
+{"reqtype":"login","userid":"EPI123456","passwd":"EPI@123456","deviceid":"a1b2c3d4-android","appversion":"1.0.0"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Login successful.",
+    "reqtype": "login",
+    "reqid": "20260924153849875931",
+    "data": {
+        "member": {
+            "formno": 123456,
+            "idno": "EPI123456",
+            "name": "EPay India",
+            "firstname": "EPay India",
+            "lastname": "",
+            "mobile": "1234567890",
+            "email": "sadhnagarg.bispl@gmail.com",
+            "kitid": 12,
+            "package": "PETRO CARD SILVER RS. 5000/-",
+            "doj": "17-Dec-2025",
+            "upgradedate": "18-Dec-2025",
+            "activationdate": "18-Dec-2025",
+            "activestatus": "Y",
+            "profilepic": "images/dollar.jpg"
+        }
+    }
+}
+Note : userid / passwd wahi jo website par login karte ho.
+Note : Login ho jaye to yahi userid / passwd aage har API mein bhejna hai.
+Note : Galat ID / password par code 401 aayega.
+
+2.Logout Api
+Request:
+{"reqtype":"logout","userid":"EP100245","passwd":"mypassword"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Logout successful.",
+    "reqtype": "logout",
+    "reqid": "20260924183000456123",
+    "data": null
+}
+Note : App apna saved userid / passwd delete kare aur Login screen par bheje.
+
+3.Get Profile Api (Drawer / Menu)
+Request:
+{"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "profile",
+    "reqid": "20260924154531260750",
+    "data": {
+        "profile": {
+            "formno": 123456,
+            "idno": "EPI123456",
+            "name": "EPay India",
+            "firstname": "EPay India",
+            "initial": "E",
+            "mobile": "1234567890",
+            "email": "sadhnagarg.bispl@gmail.com",
+            "profilepic": "",
+            "kitid": 12,
+            "package": "PETRO CARD SILVER RS. 5000/-",
+            "doj": "17-Dec-2025",
+            "activationdate": "18-Dec-2025",
+            "activestatus": "Y"
+        },
+        "walletbalance": 99598.5300,
+        "menu": [
+            {
+                "title": "Home",
+                "icon": "fa fa-home",
+                "screen": "home",
+                "reqtype": "home"
+            },
+            {
+                "title": "Purchase Coupon",
+                "icon": "fa fa-ticket-alt",
+                "screen": "couponlist",
+                "reqtype": "couponlist"
+            },
+            {
+                "title": "Subscription Now",
+                "icon": "fa fa-crown",
+                "screen": "subscription",
+                "reqtype": "subscriptionpackages"
+            },
+            {
+                "title": "Activation Points",
+                "icon": "fa fa-chart-bar",
+                "screen": "monthly",
+                "reqtype": "monthlypackages"
+            },
+            {
+                "title": "Account Delete",
+                "icon": "fa fa-globe",
+                "screen": "deleteaccount",
+                "reqtype": "deleteaccountcheck"
+            },
+            {
+                "title": "Logout",
+                "icon": "fa fa-sign-out-alt",
+                "screen": "logout",
+                "reqtype": "logout"
+            }
+        ]
+    }
+}
+Note : Drawer mein naam, ID, avatar letter (initial) aur wallet balance dikhane ke liye.
+Note : menu[] se drawer menu banao. Har menu ka reqtype us screen ki pehli API hai.
+
+4.Wallet Balance Api
+Request:
+{"reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "walletbalance",
+    "reqid": "20260924154701807795",
+    "data": {
+        "walletbalance": 99598.5300
+    }
+}
+
+5.Home Api
+Request:
+{"reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "home",
+    "reqid": "20260924154800052711",
+    "data": {
+        "banners": [
+            {
+                "bgclass": "bn-4",
+                "tag": "👑 PREMIUM",
+                "title": "Go PRO Today& Unlock Benefits",
+                "subtitle": "Unlimited access to all features",
+                "cta": "Subscribe",
+                "ctaicon": "fa fa-crown",
+                "ctadark": false,
+                "url": "Appsubscription-now.aspx",
+                "target": "_self",
+                "deco": "👑",
+                "screen": "subscription",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            }
+        ],
+        "services": [
+            {
+                "name": "Buy Coupons",
+                "icon": "fa fa-ticket-alt",
+                "color": "ico-g11",
+                "url": "Apppurchase-coupon.aspx",
+                "target": "_self",
+                "screen": "couponlist",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Apppurchase-coupon.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            },
+            {
+                "name": "Subscription",
+                "icon": "fa fa-crown",
+                "color": "ico-g12",
+                "url": "Appsubscription-now.aspx",
+                "target": "_self",
+                "screen": "subscription",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            },
+            {
+                "name": "Activation Points",
+                "icon": "fa fa-chart-bar",
+                "color": "ico-g1",
+                "url": "Appmonthly-activation-points.aspx",
+                "target": "_self",
+                "screen": "monthly",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appmonthly-activation-points.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            },
+            {
+                "name": "My Account",
+                "icon": "fa fa-user-circle",
+                "color": "ico-g2",
+                "url": "MainAccountRedirect.ASPX",
+                "target": "_self",
+                "screen": "",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=MainAccountRedirect.ASPX&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            }
+        ],
+        "bestselling": [
+            
+        ],
+        "trust": [
+            {
+                "value": "50K+",
+                "label": "Users",
+                "icon": "fa fa-users",
+                "iconcolor": "#E84000",
+                "iconbg": "linear-gradient(135deg,#fff3ec,#ffe5d4)"
+            },
+            {
+                "value": "100%",
+                "label": "Secure Pay",
+                "icon": "fa fa-shield-alt",
+                "iconcolor": "#059669",
+                "iconbg": "linear-gradient(135deg,#f0fdf4,#dcfce7)"
+            },
+            {
+                "value": "24/7",
+                "label": "Support",
+                "icon": "fa fa-bolt",
+                "iconcolor": "#2563eb",
+                "iconbg": "linear-gradient(135deg,#eff6ff,#dbeafe)"
+            },
+            {
+                "value": "Rated",
+                "label": "App",
+                "icon": "fa fa-star",
+                "iconcolor": "#d97706",
+                "iconbg": "linear-gradient(135deg,#fefce8,#fef9c3)"
+            },
+            {
+                "value": "200+",
+                "label": "Services",
+                "icon": "fa fa-tags",
+                "iconcolor": "#db2777",
+                "iconbg": "linear-gradient(135deg,#fdf2f8,#fce7f3)"
+            }
+        ],
+        "promos": [
+            {
+                "bgclass": "wp-bg-2",
+                "deco": "👑",
+                "tag": "✨ PREMIUM PLAN",
+                "title": "Upgrade to PRO& Unlock All Features",
+                "subtitle": "Starting at just ₹99/month",
+                "cta": "Get PRO",
+                "btninv": true,
+                "url": "Appsubscription-now.aspx",
+                "target": "_self",
+                "screen": "subscription",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            }
+        ]
+    }
+}
+Note : banners, services, bestselling, trust, promos - sab home screen ke liye.
+Note : screen blank nahi hai to app ki wahi screen kholo (couponlist, subscription, monthly, deleteaccount, home).
+Note : screen blank hai to openurl WebView mein kholo. openurl 1 din chalta hai, save mat karo - har baar home ke latest response se lo.
+
+6.Coupon List Api
+Request:
+{"reqtype":"couponlist"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "couponlist",
+    "reqid": "20260924154941445936",
+    "data": {
+        "movies": [
+            {
+                "kitid": 1005,
+                "kitname": "",
+                "category": "MOVIE",
+                "discount": 30.0,
+                "tickets": "10",
+                "couponprice": 3000.0,
+                "kitamount": 2100.0,
+                "saveamount": 900.0
+            },
+            {
+                "kitid": 1006,
+                "kitname": "",
+                "category": "MOVIE",
+                "discount": 40.0,
+                "tickets": "20",
+                "couponprice": 6000.0,
+                "kitamount": 3600.0,
+                "saveamount": 2400.0
+            },
+            {
+                "kitid": 1007,
+                "kitname": "",
+                "category": "MOVIE",
+                "discount": 50.0,
+                "tickets": "40",
+                "couponprice": 12000.0,
+                "kitamount": 6000.0,
+                "saveamount": 6000.0
+            }
+        ],
+        "food": [
+            {
+                "kitid": 1001,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 20.0,
+                "tickets": "5",
+                "couponprice": 2500.0,
+                "kitamount": 2000.0,
+                "saveamount": 500.0
+            },
+            {
+                "kitid": 1002,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 30.0,
+                "tickets": "10",
+                "couponprice": 5000.0,
+                "kitamount": 3500.0,
+                "saveamount": 1500.0
+            },
+            {
+                "kitid": 1003,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 40.0,
+                "tickets": "20",
+                "couponprice": 10000.0,
+                "kitamount": 6000.0,
+                "saveamount": 4000.0
+            },
+            {
+                "kitid": 1004,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 50.0,
+                "tickets": "50",
+                "couponprice": 25000.0,
+                "kitamount": 12500.0,
+                "saveamount": 12500.0
+            }
+        ]
+    }
+}
+Note : Isme userid / passwd nahi chahiye (common list).
+Note : movies aur food do tab. Card par click -> Coupon Detail Api (kitid ke saath).
+
+7.Coupon Detail Api
+Request:
+{"reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "coupondetail",
+    "reqid": "20260924155103147651",
+    "data": {
+        "kitid": 1005,
+        "kitname": "Movie Package (10 Ticket)",
+        "kitamount": 2100.0,
+        "couponprice": 3000.0,
+        "discount": 30.0,
+        "saveamount": 900.0,
+        "tickets": "10",
+        "walletcredit": 2100.0,
+        "youpay": 2100.0,
+        "walletbalance": 99598.5300,
+        "canpay": true,
+        "idno": "EPI123456",
+        "name": "EPay India",
+        "description": "*Use coupons to book movie.\r\n*Total 10 coupons will be given in a  year.\r\n*Book movies at Indias top theatres  like Inox, PVR, Big Cinema, Cinepolis.\r\n*Fastest bookings without much hassle. ",
+        "howtouse": "*Enter User ID & password to login.\r\n*Choose state and city.\r\n*Choose movie of your choice.\r\n*Choose theatre of your choice.\r\n*Choose the show of your choice.\r\n*Apply coupon and your movie.\r\n*You can use maximum two coupons at same time by comma separation.",
+        "terms": "*No. of coupons depends on the  package selected.\r\n*Only 2 coupons can be used in a  month.\r\n*The coupons left month will not be  carried forward.\r\n*Tickets have to be booked before 2 hrs of the  show."
+    }
+}
+Note : canpay = false ho to Pay button disable rakho (wallet balance kam hai).
+
+8.Coupon Purchase Api
+Request:
+{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Package Purchase Successfully!!",
+    "reqtype": "couponpurchase",
+    "reqid": "20260924101507009012",
+    "data": {
+        "billno": "482913",
+        "kitid": 1005,
+        "kitname": "Movie Pack 2",
+        "amount": 300.00,
+        "walletbalance": 950.00,
+        "redeemtype": "MOVIE"
+    }
+}
+Note : Amount server khud DB se leta hai, app amount nahi bhejta.
+Note : Success par billno ke saath Order Detail Api call karo (Thank You screen).
+Note : Button dabate hi disable karo. 20 second ke andar same request dobara aayi to code 409 aayega.
+
+9.Order Detail Api (Thank You)
+Request:
+{"reqtype":"orderdetail","userid":"EP100245","passwd":"mypassword","billno":"482913","kitid":1005}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "orderdetail",
+    "reqid": "20260924101508003344",
+    "data": {
+        "billno": "482913",
+        "ordernumber": "482913",
+        "kitid": 1005,
+        "kitname": "Movie Pack 2",
+        "orderdate": "24-Sep-2026",
+        "amount": 300.00,
+        "redeemtype": "MOVIE"
+    }
+}
+Note : redeemtype blank ho to Redeem Now button mat dikhao.
+
+10.Redeem Url Api
+Request:
+{"reqtype":"redeemurl","userid":"EP100245","passwd":"mypassword","type":"MOVIE"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "redeemurl",
+    "reqid": "20260924101509006677",
+    "data": {
+        "redeemtype": "MOVIE",
+        "url": "https://movie.epayindia.in/controller.aspx?user_info=...&log_key=..."
+    }
+}
+Note : type = FOOD ya MOVIE (ya kitid bhejo: 1001-1004 FOOD, 1005-1007 MOVIE).
+Note : url ko browser / WebView mein kholo, user Food / Movie portal par auto login ho jayega.
+
+11.Subscription Packages Api
+Request:
+{"reqtype":"subscriptionpackages","userid":"EP100245","passwd":"mypassword"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "subscriptionpackages",
+    "reqid": "20260924101510001199",
+    "data": {
+        "packages": [
+            {
+                "kitid": 11,
+                "kitname": "Diamond",
+                "amount": 4999.00,
+                "isallowed": true
+            },
+            {
+                "kitid": 7,
+                "kitname": "Platinum",
+                "amount": 2499.00,
+                "isallowed": true
+            },
+            {
+                "kitid": 6,
+                "kitname": "Gold",
+                "amount": 999.00,
+                "isallowed": false
+            },
+            {
+                "kitid": 4,
+                "kitname": "Silver",
+                "amount": 499.00,
+                "isallowed": false
+            }
+        ]
+    }
+}
+Note : isallowed = false wale package ka button disable karo.
+
+12.Subscription Pay Api
+Request:
+{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Payment initiated.",
+    "reqtype": "subscriptionpay",
+    "reqid": "20260924101511004422",
+    "data": {
+        "orderid": "20260924101511120",
+        "kitid": 7,
+        "kitname": "Platinum",
+        "amount": 2499.00,
+        "paymenturl": "https://allupi.com/pay/..."
+    }
+}
+Note : paymenturl WebView mein kholo (UPI payment).
+Note : WebView ka URL Appsubscription-now.aspx ya AppLogin.aspx par aaye to WebView band karo aur Payment Status Api call karo.
+Note : 20 second ke andar same request dobara aayi to code 409 aayega.
+
+13.Activation Points (Monthly) Packages Api
+Request:
+{"reqtype":"monthlypackages"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "monthlypackages",
+    "reqid": "20260924101512007755",
+    "data": {
+        "packages": [
+            {
+                "kitid": 5,
+                "kitname": "Monthly 299",
+                "amount": 299.00,
+                "validdays": 30,
+                "cashbackpoints": 300
+            },
+            {
+                "kitid": 8,
+                "kitname": "Monthly 599",
+                "amount": 599.00,
+                "validdays": 30,
+                "cashbackpoints": 650
+            }
+        ]
+    }
+}
+Note : Isme userid / passwd nahi chahiye (common list).
+
+14.Monthly Activate Api
+Request:
+{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Payment initiated.",
+    "reqtype": "monthlyactivate",
+    "reqid": "20260924101513002288",
+    "data": {
+        "orderid": "20260924101513350",
+        "kitid": 5,
+        "kitname": "Monthly 299",
+        "amount": 299.00,
+        "paymenturl": "https://allupi.com/pay/..."
+    }
+}
+Note : ID active nahi hai ya is mahine activation ho chuka hai to code 400 aur msg aayega.
+Note : paymenturl WebView mein kholo. WebView ka URL Appmonthly-activation-points.aspx ya AppLogin.aspx par aaye to band karo aur Payment Status Api call karo.
+
+15.Payment Status Api
+Request:
+{"reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "paymentstatus",
+    "reqid": "20260924101630009911",
+    "data": {
+        "orderid": "20260924101511120",
+        "kitid": 7,
+        "kitname": "Platinum",
+        "amount": 2499.00,
+        "orderdate": "2026-09-24 10:15:11",
+        "status": "SUCCESS",
+        "responsedate": "2026-09-24 10:16:02"
+    }
+}
+Note : status = SUCCESS / PENDING / FAILED.
+Note : PENDING aaye to 5-10 second ke gap par 3-4 baar dobara check karo.
+
+16.Delete Account Check Api
+Request:
+{"reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "deleteaccountcheck",
+    "reqid": "20260924101700001100",
+    "data": {
+        "idno": "EP100245",
+        "name": "Ravi Sharma"
+    }
+}
+Note : Screen khulte hi call karo. response FAILED aaye to msg dikhao aur Submit button hata do.
+
+17.Delete Account Api
+Request:
+{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Your account deletion request has been received. Our team will contact you if any further information is required.!",
+    "reqtype": "deleteaccount",
+    "reqid": "20260924101705004433",
+    "data": null
+}
+Note : User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.
