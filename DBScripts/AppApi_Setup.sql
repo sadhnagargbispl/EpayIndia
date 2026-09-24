@@ -88,7 +88,10 @@ END
 GO
 
 /* =====================================================================
-   3. TOKEN TABLE  -  login ke baad app ko token milta hai
+   3. TOKEN TABLE  -  sirf AppWebBridge.aspx ke liye (home ke web links
+      WebView mein bina login khulein). API khud har call par userid /
+      passwd se check hoti hai. "home" call par 1 din ka token banta hai
+      (DeviceId = 'WEBBRIDGE', member ka ek hi active).
       Token DB mein plain nahi, SHA-256 hash ke roop mein save hota hai.
    ===================================================================== */
 IF OBJECT_ID('dbo.Tbl_AppApiToken', 'U') IS NULL
@@ -284,19 +287,15 @@ GO
 IF OBJECT_ID('dbo.Sp_AppApi_TokenRevoke', 'P') IS NOT NULL DROP PROCEDURE dbo.Sp_AppApi_TokenRevoke;
 GO
 CREATE PROCEDURE dbo.Sp_AppApi_TokenRevoke
-    @TokenHash  CHAR(64),
-    @AllDevices BIT = 0
+    @FormNo INT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @FormNo INT;
-    SELECT @FormNo = FormNo FROM dbo.Tbl_AppApiToken WHERE TokenHash = @TokenHash;
-
+    -- Logout: member ke saare active token band
     UPDATE dbo.Tbl_AppApiToken
        SET IsActive = 0, RevokedOn = GETDATE()
-     WHERE IsActive = 1
-       AND (TokenHash = @TokenHash OR (@AllDevices = 1 AND FormNo = @FormNo));
+     WHERE FormNo = @FormNo AND IsActive = 1;
 
     SELECT @@ROWCOUNT AS Revoked;
 END

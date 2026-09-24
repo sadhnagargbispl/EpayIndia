@@ -16,8 +16,9 @@ using System.Web.UI;
 ///
 ///   POST  /AppApi.aspx
 ///   Header: Content-Type: application/json
-///           Authorization: Bearer {token}      (login ke alawa har reqtype mein)
-///   Body  : {"reqtype":"home", ...}
+///   Body  : {"reqtype":"home","userid":"...","passwd":"...", ...}
+///           userid + passwd har reqtype mein zaroori hain, sirf common list
+///           (PublicReqTypes) mein nahi. Har call par sp_Login1 se check hota hai.
 ///
 /// Response hamesha valid JSON (Newtonsoft se banta hai):
 ///   {"response":"OK|FAILED","code":200,"msg":"","reqtype":"","reqid":"","data":{}}
@@ -52,8 +53,8 @@ public partial class AppApi : System.Web.UI.Page
         { "DeleteAccount.aspx", "deleteaccount" }
     };
 
-    // Jin reqtype mein token nahi chahiye
-    private static readonly HashSet<string> PublicReqTypes = new HashSet<string> { "login" };
+    // Common list (sabke liye same) - inme userid / passwd nahi chahiye
+    private static readonly HashSet<string> PublicReqTypes = new HashSet<string> { "couponlist", "monthlypackages" };
 
     private static readonly HashSet<string> KnownReqTypes = new HashSet<string>
     {
@@ -68,7 +69,7 @@ public partial class AppApi : System.Web.UI.Page
     private JObject req;
     private AppMember member;
     private string reqType = "";
-    private string rawToken = "";
+    private string bridgeToken = "";   // home ke web links (AppWebBridge.aspx) ke liye
     private string refNo = "";   // OrderId / BillNo / Debit RefNo - log mein reconciliation ke liye
 
     protected void Page_Load(object sender, EventArgs e)
@@ -134,17 +135,23 @@ public partial class AppApi : System.Web.UI.Page
     {
         if (!PublicReqTypes.Contains(reqType))
         {
-            rawToken = ReadToken();
-            member = AppApiCore.ValidateToken(rawToken);
-            if (member == null)
-                return Fail(401, "Session expired. Please login again.");
+            if (ClearInject(Val("userid")) == "" || ClearInject(Val("passwd")) == "")
+                return Fail(400, "userid and passwd are required.");
+
+            DataRow loginRow = CheckLogin();
+            if (loginRow == null)
+                return Fail(401, "Please Enter valid UserName or Password.");
+
+            member = MemberFrom(loginRow);
             if (member.IsBlock.ToUpper() == "Y")
                 return Fail(403, "This ID is blocked. Please contact the Admin.");
+
+            if (reqType == "login")
+                return Login(loginRow);
         }
 
         switch (reqType)
         {
-            case "login": return Login();
             case "logout": return Logout();
             case "profile": return Profile();
             case "home": return Home();
@@ -169,38 +176,33 @@ public partial class AppApi : System.Web.UI.Page
        AppLogin.aspx  /  AppLogout.aspx
        ===================================================================== */
 
-    private ApiResult Login()
+    /// <summary>AppLogin.aspx -> enterHomePg() jaisa: sp_Login1. Galat ID / password = null.</summary>
+    private DataRow CheckLogin()
     {
-        string uid = ClearInject(Val("userid"));
-        string pwd = ClearInject(Val("passwd"));
-        if (uid == "" || pwd == "")
-            return Fail(400, "userid and passwd are required.");
-
         DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec sp_Login1 @Uid, @Pwd",
-            new SqlParameter("@Uid", SqlDbType.VarChar, 100) { Value = uid },
-            new SqlParameter("@Pwd", SqlDbType.VarChar, 100) { Value = pwd });
+            new SqlParameter("@Uid", SqlDbType.VarChar, 100) { Value = ClearInject(Val("userid")) },
+            new SqlParameter("@Pwd", SqlDbType.VarChar, 100) { Value = ClearInject(Val("passwd")) });
 
-        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            return Fail(400, "Please Enter valid UserName or Password.");
+        return ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0 ? ds.Tables[0].Rows[0] : null;
+    }
 
-        DataRow r = ds.Tables[0].Rows[0];
-        if (AppApiCore.Str(r, "IsBlock").ToUpper() == "Y")
-            return Fail(403, "This ID is blocked. Please contact the Admin.");
+    private static AppMember MemberFrom(DataRow r)
+    {
+        AppMember m = new AppMember();
+        m.FormNo = AppApiCore.Int(r, "Formno");
+        m.IdNo = AppApiCore.Str(r, "IDNo");
+        m.FirstName = AppApiCore.Str(r, "MemFirstName");
+        m.Name = (m.FirstName + " " + AppApiCore.Str(r, "MemLastName")).Trim();
+        m.Mobile = AppApiCore.Str(r, "Mobl");
+        m.Email = AppApiCore.Str(r, "Email");
+        m.Passw = AppApiCore.Str(r, "Passw");
+        m.IsBlock = AppApiCore.Str(r, "IsBlock");
+        m.ActiveStatus = AppApiCore.Str(r, "ActiveStatus");
+        return m;
+    }
 
-        member = new AppMember();
-        member.FormNo = AppApiCore.Int(r, "Formno");
-        member.IdNo = AppApiCore.Str(r, "IDNo");
-
-        string token = AppApiCore.NewToken();
-        DataSet dsTok = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text,
-            "EXEC Sp_AppApi_TokenCreate @FormNo, @IdNo, @TokenHash, @DeviceId, @IPAddress, @ValidDays",
-            new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo },
-            new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo },
-            new SqlParameter("@TokenHash", SqlDbType.Char, 64) { Value = AppApiCore.HashToken(token) },
-            new SqlParameter("@DeviceId", SqlDbType.NVarChar, 200) { Value = DbNull(Val("deviceid")) },
-            new SqlParameter("@IPAddress", SqlDbType.VarChar, 50) { Value = DbNull(AppApiCore.ClientIp(Request)) },
-            new SqlParameter("@ValidDays", SqlDbType.Int) { Value = AppApiCore.TokenValidDays });
-
+    private ApiResult Login(DataRow r)
+    {
         JObject m = new JObject();
         m["formno"] = member.FormNo;
         m["idno"] = member.IdNo;
@@ -218,20 +220,34 @@ public partial class AppApi : System.Web.UI.Page
         m["profilepic"] = AppApiCore.Str(r, "profilepic");
 
         JObject data = new JObject();
-        data["token"] = token;
-        data["tokentype"] = "Bearer";
-        data["expireson"] = AppApiCore.Str(dsTok.Tables[0].Rows[0], "ExpiresOn");
         data["member"] = m;
         return Success("Login successful.", data);
     }
 
+    /// <summary>App local data saaf kare; server par web links (bridge) ke token band.</summary>
     private ApiResult Logout()
     {
-        bool all = Val("alldevices") == "1" || Val("alldevices").ToLower() == "true";
-        SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text, "EXEC Sp_AppApi_TokenRevoke @TokenHash, @AllDevices",
-            new SqlParameter("@TokenHash", SqlDbType.Char, 64) { Value = AppApiCore.HashToken(rawToken) },
-            new SqlParameter("@AllDevices", SqlDbType.Bit) { Value = all });
+        SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text, "EXEC Sp_AppApi_TokenRevoke @FormNo",
+            new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo });
         return Success("Logout successful.", null);
+    }
+
+    /// <summary>
+    /// Home ke web links (AppWebBridge.aspx) ke liye 1 din ka token.
+    /// Har member ka ek hi active bridge token rehta hai (naya banne par purana band).
+    /// </summary>
+    private string CreateBridgeToken()
+    {
+        string token = AppApiCore.NewToken();
+        SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text,
+            "EXEC Sp_AppApi_TokenCreate @FormNo, @IdNo, @TokenHash, @DeviceId, @IPAddress, @ValidDays",
+            new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo },
+            new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo },
+            new SqlParameter("@TokenHash", SqlDbType.Char, 64) { Value = AppApiCore.HashToken(token) },
+            new SqlParameter("@DeviceId", SqlDbType.NVarChar, 200) { Value = "WEBBRIDGE" },
+            new SqlParameter("@IPAddress", SqlDbType.VarChar, 50) { Value = DbNull(AppApiCore.ClientIp(Request)) },
+            new SqlParameter("@ValidDays", SqlDbType.Int) { Value = AppApiCore.BridgeTokenValidDays });
+        return token;
     }
 
     /* =====================================================================
@@ -295,6 +311,7 @@ public partial class AppApi : System.Web.UI.Page
     private ApiResult Home()
     {
         DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text, "EXEC Sp_App_GetHomeData");
+        bridgeToken = CreateBridgeToken();
 
         JObject data = new JObject();
         data["banners"] = TableToArray(ds, 0);
@@ -368,7 +385,7 @@ public partial class AppApi : System.Web.UI.Page
         if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             return url;
         return SiteRoot() + "AppWebBridge.aspx?page=" + HttpUtility.UrlEncode(url.TrimStart('~', '/'))
-               + "&token=" + HttpUtility.UrlEncode(rawToken);
+               + "&token=" + HttpUtility.UrlEncode(bridgeToken);
     }
 
     private string SiteRoot()
@@ -1019,16 +1036,6 @@ public partial class AppApi : System.Web.UI.Page
     private bool TryInt(string key, out int value)
     {
         return int.TryParse(Val(key), NumberStyles.Integer, CultureInfo.InvariantCulture, out value) && value > 0;
-    }
-
-    private string ReadToken()
-    {
-        string auth = Request.Headers["Authorization"] ?? "";
-        if (auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-            return auth.Substring(7).Trim();
-        if (!string.IsNullOrWhiteSpace(Request.Headers["token"]))
-            return Request.Headers["token"].Trim();
-        return Val("token");
     }
 
     /// <summary>JSON mein (kisi bhi level par) pehla object jisme ye key ho.</summary>

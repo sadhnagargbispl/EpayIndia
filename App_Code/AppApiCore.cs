@@ -29,7 +29,8 @@ public static class AppApiCore
         get { return ConfigurationManager.ConnectionStrings["constr1"].ConnectionString; }
     }
 
-    public const int TokenValidDays = 30;
+    /// <summary>AppWebBridge.aspx wala token (home ke web links) kitne din chale.</summary>
+    public const int BridgeTokenValidDays = 1;
 
     /* ---------------- Token ---------------- */
 
