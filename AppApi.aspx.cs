@@ -153,7 +153,7 @@ public partial class AppApi : System.Web.UI.Page
         switch (reqType)
         {
             case "logout": return Logout();
-            case "profile": return Profile();
+            case "profile": return Profile_();
             case "home": return Home();
             case "walletbalance": return WalletBalance();
             case "couponlist": return CouponList();
@@ -254,7 +254,7 @@ public partial class AppApi : System.Web.UI.Page
        AppMaster.master  -  drawer (naam, ID, menu)
        ===================================================================== */
 
-    private ApiResult Profile()
+    private ApiResult Profile_()
     {
         DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text, "EXEC Sp_App_GetMemberProfile @FormNo",
             new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo });

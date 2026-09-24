@@ -1,0 +1,2 @@
+24-Sep-2026 15.08.56.401 | LOG START FAILED ReqID=20260924150855172012 ReqType= Err=Could not find stored procedure 'Sp_AppApiLog_Insert'. Request=
+24-Sep-2026 15.08.56.479 | LOG END FAILED ReqID=20260924150855172012 ReqType= Status=FAILED Code=405 RefNo= Err=Only POST method is allowed. LogErr=LogId missing (start log fail hua tha) Response={"response":"FAILED","code":405,"msg":"Only POST method is allowed.","reqtype":"","reqid":"20260924150855172012","data":null}

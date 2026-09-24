@@ -4,401 +4,1052 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 <style>
-:root{
-  --accent:#E84000; --accent-soft:#FDEBE3; --accent-ink:#B83300;
-  --bg:#F5F6F8; --surface:#FFFFFF; --ink:#171A20; --muted:#5A6170; --rule:#E2E5EA;
-  --code-bg:#11151D; --code-ink:#E4E7EC; --code-key:#FF9A6B; --code-str:#9FD8A8; --code-num:#8EC5FF;
-  --ok:#157F3D; --ok-soft:#E3F4E8; --warn:#9A5B00; --warn-soft:#FFF2DB; --bad:#B42318; --bad-soft:#FDE7E5;
-  --sans:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --accent:#FF6A2B; --accent-soft:#3A1F14; --accent-ink:#FF9A6B;
-    --bg:#0E1116; --surface:#161B22; --ink:#E7E9ED; --muted:#9AA3B2; --rule:#272E38;
-    --code-bg:#0A0D12; --ok:#5FD08A; --ok-soft:#12291B; --warn:#F2B35B; --warn-soft:#2E2210; --bad:#FF8A80; --bad-soft:#35161A;
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --accent:#FF6A2B; --accent-soft:#3A1F14; --accent-ink:#FF9A6B;
-  --bg:#0E1116; --surface:#161B22; --ink:#E7E9ED; --muted:#9AA3B2; --rule:#272E38;
-  --code-bg:#0A0D12; --ok:#5FD08A; --ok-soft:#12291B; --warn:#F2B35B; --warn-soft:#2E2210; --bad:#FF8A80; --bad-soft:#35161A;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.6;padding-inline:16px}
-a{color:var(--accent-ink)}
-code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);color:var(--accent-ink);padding:1px 5px;border-radius:4px}
-.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:230px minmax(0,1fr);gap:40px;padding-block:32px 64px}
-@media (max-width:860px){.wrap{grid-template-columns:1fr;gap:20px}}
+    :root {
+        --accent: #E84000;
+        --accent-soft: #FDEBE3;
+        --accent-ink: #B83300;
+        --bg: #F5F6F8;
+        --surface: #FFFFFF;
+        --ink: #171A20;
+        --muted: #5A6170;
+        --rule: #E2E5EA;
+        --code-bg: #11151D;
+        --code-ink: #E4E7EC;
+        --code-key: #FF9A6B;
+        --code-str: #9FD8A8;
+        --code-num: #8EC5FF;
+        --ok: #157F3D;
+        --ok-soft: #E3F4E8;
+        --warn: #9A5B00;
+        --warn-soft: #FFF2DB;
+        --bad: #B42318;
+        --bad-soft: #FDE7E5;
+        --sans: 'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+        --mono: 'JetBrains Mono',ui-monospace,Consolas,monospace;
+    }
 
-/* sidebar */
-nav.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);align-self:start;font-size:.9rem}
-@media (max-width:860px){nav.side{position:static}}
-.brand{font-weight:900;font-size:1.35rem;letter-spacing:-.01em;margin-bottom:4px}
-.brand span{color:var(--accent)}
-.side .sub{color:var(--muted);font-size:.82rem;margin-bottom:18px}
-.side h4{margin:18px 0 6px;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
-.side ol,.side ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.side a{display:flex;gap:8px;text-decoration:none;color:var(--ink);padding:4px 8px;border-radius:6px}
-.side a:hover,.side a:focus-visible{background:var(--accent-soft);color:var(--accent-ink);outline:none}
-.side .n{font-family:var(--mono);font-size:.75rem;color:var(--muted);min-width:18px;padding-top:2px}
-@media (max-width:860px){.side ol,.side ul{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+            color-scheme: dark;
+            --accent: #FF6A2B;
+            --accent-soft: #3A1F14;
+            --accent-ink: #FF9A6B;
+            --bg: #0E1116;
+            --surface: #161B22;
+            --ink: #E7E9ED;
+            --muted: #9AA3B2;
+            --rule: #272E38;
+            --code-bg: #0A0D12;
+            --ok: #5FD08A;
+            --ok-soft: #12291B;
+            --warn: #F2B35B;
+            --warn-soft: #2E2210;
+            --bad: #FF8A80;
+            --bad-soft: #35161A;
+        }
+    }
 
-/* main */
-main{min-width:0}
-header.hero{padding-bottom:22px;border-bottom:1px solid var(--rule);margin-bottom:28px}
-.eyebrow{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);font-weight:800}
-h1{font-size:2.1rem;line-height:1.15;margin:6px 0 10px;font-weight:900;text-wrap:balance;letter-spacing:-.015em}
-h2{font-size:1.45rem;margin:0 0 6px;font-weight:900;text-wrap:balance}
-h3{font-size:1.02rem;margin:22px 0 8px;font-weight:800}
-p{margin:0 0 12px;max-width:72ch}
-.lead{color:var(--muted);font-size:1.03rem}
-.endpoint{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px;font-family:var(--mono);font-size:.92rem;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:10px 14px}
-.method{background:var(--accent);color:#fff;font-weight:600;padding:2px 9px;border-radius:5px;font-size:.8rem}
+    :root[data-theme="dark"] {
+        color-scheme: dark;
+        --accent: #FF6A2B;
+        --accent-soft: #3A1F14;
+        --accent-ink: #FF9A6B;
+        --bg: #0E1116;
+        --surface: #161B22;
+        --ink: #E7E9ED;
+        --muted: #9AA3B2;
+        --rule: #272E38;
+        --code-bg: #0A0D12;
+        --ok: #5FD08A;
+        --ok-soft: #12291B;
+        --warn: #F2B35B;
+        --warn-soft: #2E2210;
+        --bad: #FF8A80;
+        --bad-soft: #35161A;
+    }
 
-section.block{margin-bottom:44px;scroll-margin-top:20px}
-.screen{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:22px 22px 8px;margin-bottom:26px;scroll-margin-top:20px}
-.screen-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline;border-bottom:1px dashed var(--rule);padding-bottom:12px;margin-bottom:14px}
-.screen-head .step{font-family:var(--mono);color:var(--accent-ink);font-size:.8rem;font-weight:600}
-.webpage{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
-.api{padding:10px 0 14px;border-top:1px solid var(--rule)}
-.api:first-of-type{border-top:0}
-.api-title{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 8px}
-.rt{font-family:var(--mono);font-weight:600;font-size:.95rem;background:var(--ink);color:var(--surface);padding:2px 10px;border-radius:6px}
-.pill{font-size:.72rem;font-weight:800;letter-spacing:.04em;padding:2px 8px;border-radius:99px;text-transform:uppercase}
-.pill.auth{background:var(--warn-soft);color:var(--warn)}
-.pill.open{background:var(--ok-soft);color:var(--ok)}
-.pill.money{background:var(--bad-soft);color:var(--bad)}
+    * {
+        box-sizing: border-box
+    }
 
-.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:12px}
-@media (max-width:980px){.pair{grid-template-columns:1fr}}
-.code{position:relative;background:var(--code-bg);border-radius:10px;overflow:hidden}
-.code .lbl{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:#98A2B3;padding:7px 12px;border-bottom:1px solid #222a36}
-.code button{font:inherit;font-size:.7rem;letter-spacing:.06em;background:transparent;color:#C8CFDA;border:1px solid #33404f;border-radius:5px;padding:2px 8px;cursor:pointer}
-.code button:hover,.code button:focus-visible{border-color:var(--accent);color:#fff;outline:none}
-pre{margin:0;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:.8rem;line-height:1.55;color:var(--code-ink)}
-.k{color:var(--code-key)}.s{color:var(--code-str)}.num{color:var(--code-num)}
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 15.5px;
+        line-height: 1.6;
+        padding-inline: 16px
+    }
 
-.tbl{overflow-x:auto;margin:6px 0 14px}
-table{border-collapse:collapse;width:100%;font-size:.88rem}
-th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
-th{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:800}
-td:first-child{font-family:var(--mono);font-size:.82rem;white-space:nowrap}
-.note{background:var(--accent-soft);border-radius:10px;padding:12px 14px;margin:10px 0 14px;font-size:.92rem}
-.note b{color:var(--accent-ink)}
-.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.88rem;margin:8px 0 14px}
-.flow span{background:var(--surface);border:1px solid var(--rule);padding:4px 10px;border-radius:7px;font-family:var(--mono);font-size:.8rem}
-.flow i{font-style:normal;color:var(--muted)}
-ul.plain{margin:0 0 12px;padding-left:20px;max-width:72ch}
-ul.plain li{margin-bottom:4px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+    a {
+        color: var(--accent-ink)
+    }
+
+    code {
+        font-family: var(--mono);
+        font-size: .86em;
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        padding: 1px 5px;
+        border-radius: 4px
+    }
+
+    .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 230px minmax(0,1fr);
+        gap: 40px;
+        padding-block: 32px 64px
+    }
+
+    @media (max-width:860px) {
+        .wrap {
+            grid-template-columns: 1fr;
+            gap: 20px
+        }
+    }
+
+    /* sidebar */
+    nav.side {
+        position: sticky;
+        top: calc(env(safe-area-inset-top,0px) + 20px);
+        align-self: start;
+        font-size: .9rem
+    }
+
+    @media (max-width:860px) {
+        nav.side {
+            position: static
+        }
+    }
+
+    .brand {
+        font-weight: 900;
+        font-size: 1.35rem;
+        letter-spacing: -.01em;
+        margin-bottom: 4px
+    }
+
+        .brand span {
+            color: var(--accent)
+        }
+
+    .side .sub {
+        color: var(--muted);
+        font-size: .82rem;
+        margin-bottom: 18px
+    }
+
+    .side h4 {
+        margin: 18px 0 6px;
+        font-size: .72rem;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: var(--muted)
+    }
+
+    .side ol, .side ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 2px
+    }
+
+    .side a {
+        display: flex;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--ink);
+        padding: 4px 8px;
+        border-radius: 6px
+    }
+
+        .side a:hover, .side a:focus-visible {
+            background: var(--accent-soft);
+            color: var(--accent-ink);
+            outline: none
+        }
+
+    .side .n {
+        font-family: var(--mono);
+        font-size: .75rem;
+        color: var(--muted);
+        min-width: 18px;
+        padding-top: 2px
+    }
+
+    @media (max-width:860px) {
+        .side ol, .side ul {
+            grid-template-columns: repeat(auto-fill,minmax(170px,1fr))
+        }
+    }
+
+    /* main */
+    main {
+        min-width: 0
+    }
+
+    header.hero {
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--rule);
+        margin-bottom: 28px
+    }
+
+    .eyebrow {
+        font-size: .74rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--accent-ink);
+        font-weight: 800
+    }
+
+    h1 {
+        font-size: 2.1rem;
+        line-height: 1.15;
+        margin: 6px 0 10px;
+        font-weight: 900;
+        text-wrap: balance;
+        letter-spacing: -.015em
+    }
+
+    h2 {
+        font-size: 1.45rem;
+        margin: 0 0 6px;
+        font-weight: 900;
+        text-wrap: balance
+    }
+
+    h3 {
+        font-size: 1.02rem;
+        margin: 22px 0 8px;
+        font-weight: 800
+    }
+
+    p {
+        margin: 0 0 12px;
+        max-width: 72ch
+    }
+
+    .lead {
+        color: var(--muted);
+        font-size: 1.03rem
+    }
+
+    .endpoint {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: .92rem;
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 10px;
+        padding: 10px 14px
+    }
+
+    .method {
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 5px;
+        font-size: .8rem
+    }
+
+    section.block {
+        margin-bottom: 44px;
+        scroll-margin-top: 20px
+    }
+
+    .screen {
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        border-radius: 14px;
+        padding: 22px 22px 8px;
+        margin-bottom: 26px;
+        scroll-margin-top: 20px
+    }
+
+    .screen-head {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 16px;
+        align-items: baseline;
+        border-bottom: 1px dashed var(--rule);
+        padding-bottom: 12px;
+        margin-bottom: 14px
+    }
+
+        .screen-head .step {
+            font-family: var(--mono);
+            color: var(--accent-ink);
+            font-size: .8rem;
+            font-weight: 600
+        }
+
+    .webpage {
+        font-family: var(--mono);
+        font-size: .8rem;
+        color: var(--muted)
+    }
+
+    .api {
+        padding: 10px 0 14px;
+        border-top: 1px solid var(--rule)
+    }
+
+        .api:first-of-type {
+            border-top: 0
+        }
+
+    .api-title {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin: 4px 0 8px
+    }
+
+    .rt {
+        font-family: var(--mono);
+        font-weight: 600;
+        font-size: .95rem;
+        background: var(--ink);
+        color: var(--surface);
+        padding: 2px 10px;
+        border-radius: 6px
+    }
+
+    .pill {
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .04em;
+        padding: 2px 8px;
+        border-radius: 99px;
+        text-transform: uppercase
+    }
+
+        .pill.auth {
+            background: var(--warn-soft);
+            color: var(--warn)
+        }
+
+        .pill.open {
+            background: var(--ok-soft);
+            color: var(--ok)
+        }
+
+        .pill.money {
+            background: var(--bad-soft);
+            color: var(--bad)
+        }
+
+    .pair {
+        display: grid;
+        grid-template-columns: minmax(0,1fr) minmax(0,1.35fr);
+        gap: 12px
+    }
+
+    @media (max-width:980px) {
+        .pair {
+            grid-template-columns: 1fr
+        }
+    }
+
+    .code {
+        position: relative;
+        background: var(--code-bg);
+        border-radius: 10px;
+        overflow: hidden
+    }
+
+        .code .lbl {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .7rem;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: #98A2B3;
+            padding: 7px 12px;
+            border-bottom: 1px solid #222a36
+        }
+
+        .code button {
+            font: inherit;
+            font-size: .7rem;
+            letter-spacing: .06em;
+            background: transparent;
+            color: #C8CFDA;
+            border: 1px solid #33404f;
+            border-radius: 5px;
+            padding: 2px 8px;
+            cursor: pointer
+        }
+
+            .code button:hover, .code button:focus-visible {
+                border-color: var(--accent);
+                color: #fff;
+                outline: none
+            }
+
+    pre {
+        margin: 0;
+        padding: 12px 14px;
+        overflow-x: auto;
+        font-family: var(--mono);
+        font-size: .8rem;
+        line-height: 1.55;
+        color: var(--code-ink)
+    }
+
+    .k {
+        color: var(--code-key)
+    }
+
+    .s {
+        color: var(--code-str)
+    }
+
+    .num {
+        color: var(--code-num)
+    }
+
+    .tbl {
+        overflow-x: auto;
+        margin: 6px 0 14px
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: .88rem
+    }
+
+    th, td {
+        text-align: left;
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top
+    }
+
+    th {
+        font-size: .72rem;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 800
+    }
+
+    td:first-child {
+        font-family: var(--mono);
+        font-size: .82rem;
+        white-space: nowrap
+    }
+
+    .note {
+        background: var(--accent-soft);
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin: 10px 0 14px;
+        font-size: .92rem
+    }
+
+        .note b {
+            color: var(--accent-ink)
+        }
+
+    .flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        font-size: .88rem;
+        margin: 8px 0 14px
+    }
+
+        .flow span {
+            background: var(--surface);
+            border: 1px solid var(--rule);
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-family: var(--mono);
+            font-size: .8rem
+        }
+
+        .flow i {
+            font-style: normal;
+            color: var(--muted)
+        }
+
+    ul.plain {
+        margin: 0 0 12px;
+        padding-left: 20px;
+        max-width: 72ch
+    }
+
+        ul.plain li {
+            margin-bottom: 4px
+        }
+
+    @media (prefers-reduced-motion:reduce) {
+        * {
+            transition: none !important
+        }
+    }
 </style>
 
 <div class="wrap">
-  <nav class="side" aria-label="Contents">
-    <div class="brand">ePay <span>App API</span></div>
-    <div class="sub">Webapp (AppLogin → sab pages) ki mobile API</div>
-    <h4>Common</h4>
-    <ul>
-      <li><a href="#basics"><span class="n">·</span>Request &amp; response</a></li>
-      <li><a href="#codes"><span class="n">·</span>Codes &amp; errors</a></li>
-      <li><a href="#token"><span class="n">·</span>userid &amp; passwd</a></li>
-      <li><a href="#transid"><span class="n">·</span>transid (double tap)</a></li>
-      <li><a href="#payment"><span class="n">·</span>Payment flow</a></li>
-      <li><a href="#bridge"><span class="n">·</span>WebView bridge</a></li>
-    </ul>
-    <h4>Screens (flow order)</h4>
-    <ol>
-      <li><a href="#s-login"><span class="n">1</span>Login / Logout</a></li>
-      <li><a href="#s-master"><span class="n">2</span>Drawer (Master)</a></li>
-      <li><a href="#s-home"><span class="n">3</span>Home</a></li>
-      <li><a href="#s-coupon"><span class="n">4</span>Purchase Coupon</a></li>
-      <li><a href="#s-coupondetail"><span class="n">5</span>Coupon Detail &amp; Buy</a></li>
-      <li><a href="#s-thankyou"><span class="n">6</span>Thank You / Redeem</a></li>
-      <li><a href="#s-subscription"><span class="n">7</span>Subscription Now</a></li>
-      <li><a href="#s-monthly"><span class="n">8</span>Activation Points</a></li>
-      <li><a href="#s-paystatus"><span class="n">9</span>Payment Status</a></li>
-      <li><a href="#s-delete"><span class="n">10</span>Account Delete</a></li>
-    </ol>
-    <h4>Reference</h4>
-    <ul>
-      <li><a href="#all"><span class="n">·</span>All reqtypes</a></li>
-      <li><a href="#logs"><span class="n">·</span>Logs (support)</a></li>
-    </ul>
-  </nav>
+    <nav class="side" aria-label="Contents">
+        <div class="brand">ePay <span>App API</span></div>
+        <div class="sub">Webapp (AppLogin → sab pages) ki mobile API</div>
+        <h4>Common</h4>
+        <ul>
+            <li><a href="#basics"><span class="n">·</span>Request &amp; response</a></li>
+            <li><a href="#codes"><span class="n">·</span>Codes &amp; errors</a></li>
+            <li><a href="#token"><span class="n">·</span>userid &amp; passwd</a></li>
+            <li><a href="#transid"><span class="n">·</span>transid (double tap)</a></li>
+            <li><a href="#payment"><span class="n">·</span>Payment flow</a></li>
+            <li><a href="#bridge"><span class="n">·</span>WebView bridge</a></li>
+        </ul>
+        <h4>Screens (flow order)</h4>
+        <ol>
+            <li><a href="#s-login"><span class="n">1</span>Login / Logout</a></li>
+            <li><a href="#s-master"><span class="n">2</span>Drawer (Master)</a></li>
+            <li><a href="#s-home"><span class="n">3</span>Home</a></li>
+            <li><a href="#s-coupon"><span class="n">4</span>Purchase Coupon</a></li>
+            <li><a href="#s-coupondetail"><span class="n">5</span>Coupon Detail &amp; Buy</a></li>
+            <li><a href="#s-thankyou"><span class="n">6</span>Thank You / Redeem</a></li>
+            <li><a href="#s-subscription"><span class="n">7</span>Subscription Now</a></li>
+            <li><a href="#s-monthly"><span class="n">8</span>Activation Points</a></li>
+            <li><a href="#s-paystatus"><span class="n">9</span>Payment Status</a></li>
+            <li><a href="#s-delete"><span class="n">10</span>Account Delete</a></li>
+        </ol>
+        <h4>Reference</h4>
+        <ul>
+            <li><a href="#all"><span class="n">·</span>All reqtypes</a></li>
+            <li><a href="#logs"><span class="n">·</span>Logs (support)</a></li>
+        </ul>
+    </nav>
 
-  <main>
-    <header class="hero">
-      <div class="eyebrow">For the mobile app developer</div>
-      <h1>ePay App API</h1>
-      <p class="lead">Webapp ke har page (AppLogin se Account Delete tak) ka ek API. Ek hi URL hai, <code>reqtype</code> se kaam badalta hai. Har response valid JSON hai, aur har call server par log hoti hai.</p>
-      <div class="endpoint"><span class="method">POST</span><span>https://epayindia.in/AppApi.aspx</span></div>
-    </header>
+    <main>
+        <header class="hero">
+            <div class="eyebrow">For the mobile app developer</div>
+            <h1>ePay App API</h1>
+            <p class="lead">Webapp ke har page (AppLogin se Account Delete tak) ka ek API. Ek hi URL hai, <code>reqtype</code> se kaam badalta hai. Har response valid JSON hai, aur har call server par log hoti hai.</p>
+            <div class="endpoint"><span class="method">POST</span><span>https://epayindia.in/AppApi.aspx</span></div>
+        </header>
 
-    <!-- ================= COMMON ================= -->
-    <section class="block" id="basics">
-      <h2>Request &amp; response</h2>
-      <p>Body raw JSON mein bhejo (<code>Content-Type: application/json</code>). Keys case-insensitive hain. Purani apps jaisa form field <code>MyJson</code> bhi chalega.</p>
-      <div class="tbl"><table>
-        <thead><tr><th>Header / field</th><th>Kab</th><th>Detail</th></tr></thead>
-        <tbody>
-          <tr><td>reqtype</td><td>hamesha</td><td>Kaunsi API — neeche har screen par likha hai.</td></tr>
-          <tr><td>userid</td><td>har API mein (common list chhod ke)</td><td>Member ID, jaise web login mein.</td></tr>
-          <tr><td>passwd</td><td>har API mein (common list chhod ke)</td><td>Member ka password. Server log mein <code>****</code> ho jata hai.</td></tr>
-          <tr><td>deviceid</td><td>optional</td><td>Device ki unique id. Log mein jati hai, support ke liye kaam aati hai.</td></tr>
-          <tr><td>appversion</td><td>optional</td><td>Log mein jata hai, support ke liye kaam aata hai.</td></tr>
-        </tbody>
-      </table></div>
-      <div class="pair">
-        <div class="code"><div class="lbl">Success<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"walletbalance","reqid":"20260924153012345482","data":{"walletbalance":1250.00}}</pre></div>
-        <div class="code"><div class="lbl">Failure<button type="button">Copy</button></div><pre>{"response":"FAILED","code":400,"msg":"Insufficient Balance!!","reqtype":"couponpurchase","reqid":"20260924153101874021","data":null}</pre></div>
-      </div>
-      <p style="margin-top:12px">HTTP status hamesha <b>200</b> aata hai. Result <code>response</code> aur <code>code</code> se check karo, aur user ko <code>msg</code> dikhao. <code>data</code> failure par <code>null</code> hota hai. Amount JSON number hain (string nahi).</p>
-    </section>
+        <!-- ================= COMMON ================= -->
+        <section class="block" id="basics">
+            <h2>Request &amp; response</h2>
+            <p>Body raw JSON mein bhejo (<code>Content-Type: application/json</code>). Keys case-insensitive hain. Purani apps jaisa form field <code>MyJson</code> bhi chalega.</p>
+            <div class="tbl">
+                <table>
+                    <thead><tr><th>Header / field</th><th>Kab</th><th>Detail</th></tr></thead>
+                    <tbody>
+                        <tr><td>reqtype</td><td>hamesha</td><td>Kaunsi API — neeche har screen par likha hai.</td></tr>
+                        <tr><td>userid</td><td>har API mein (common list chhod ke)</td><td>Member ID, jaise web login mein.</td></tr>
+                        <tr><td>passwd</td><td>har API mein (common list chhod ke)</td><td>Member ka password. Server log mein <code>****</code> ho jata hai.</td></tr>
+                        <tr><td>deviceid</td><td>optional</td><td>Device ki unique id. Log mein jati hai, support ke liye kaam aati hai.</td></tr>
+                        <tr><td>appversion</td><td>optional</td><td>Log mein jata hai, support ke liye kaam aata hai.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pair">
+                <div class="code"><div class="lbl">Success<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"walletbalance","reqid":"20260924153012345482","data":{"walletbalance":1250.00}}</pre></div>
+                <div class="code"><div class="lbl">Failure<button type="button">Copy</button></div><pre>{"response":"FAILED","code":400,"msg":"Insufficient Balance!!","reqtype":"couponpurchase","reqid":"20260924153101874021","data":null}</pre></div>
+            </div>
+            <p style="margin-top:12px">HTTP status hamesha <b>200</b> aata hai. Result <code>response</code> aur <code>code</code> se check karo, aur user ko <code>msg</code> dikhao. <code>data</code> failure par <code>null</code> hota hai. Amount JSON number hain (string nahi).</p>
+        </section>
 
-    <section class="block" id="codes">
-      <h2>Codes &amp; errors</h2>
-      <div class="tbl"><table>
-        <thead><tr><th>code</th><th>Matlab</th><th>App kya kare</th></tr></thead>
-        <tbody>
-          <tr><td>200</td><td>Success</td><td>—</td></tr>
-          <tr><td>400</td><td>Galat input ya business rule (balance kam, package allowed nahi…)</td><td><code>msg</code> dikhao</td></tr>
-          <tr><td>401</td><td>userid / passwd galat (password badal gaya ho)</td><td>Saved ID-password delete karo, Login screen par bhejo</td></tr>
-          <tr><td>403</td><td>ID block hai</td><td><code>msg</code> dikhao, logout karo</td></tr>
-          <tr><td>404</td><td>Package / order / member nahi mila</td><td><code>msg</code> dikhao</td></tr>
-          <tr><td>405</td><td>POST ke alawa method</td><td>POST use karo</td></tr>
-          <tr><td>409</td><td>Duplicate request (same <code>transid</code>)</td><td>Naya <code>transid</code> bana ke dobara try</td></tr>
-          <tr><td>500</td><td>Server error</td><td>Retry option; support ko <code>reqid</code> do</td></tr>
-        </tbody>
-      </table></div>
-    </section>
+        <section class="block" id="codes">
+            <h2>Codes &amp; errors</h2>
+            <div class="tbl">
+                <table>
+                    <thead><tr><th>code</th><th>Matlab</th><th>App kya kare</th></tr></thead>
+                    <tbody>
+                        <tr><td>200</td><td>Success</td><td>—</td></tr>
+                        <tr><td>400</td><td>Galat input ya business rule (balance kam, package allowed nahi…)</td><td><code>msg</code> dikhao</td></tr>
+                        <tr><td>401</td><td>userid / passwd galat (password badal gaya ho)</td><td>Saved ID-password delete karo, Login screen par bhejo</td></tr>
+                        <tr><td>403</td><td>ID block hai</td><td><code>msg</code> dikhao, logout karo</td></tr>
+                        <tr><td>404</td><td>Package / order / member nahi mila</td><td><code>msg</code> dikhao</td></tr>
+                        <tr><td>405</td><td>POST ke alawa method</td><td>POST use karo</td></tr>
+                        <tr><td>409</td><td>Duplicate request (same <code>transid</code>)</td><td>Naya <code>transid</code> bana ke dobara try</td></tr>
+                        <tr><td>500</td><td>Server error</td><td>Retry option; support ko <code>reqid</code> do</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <section class="block" id="token">
-      <h2>userid &amp; passwd</h2>
-      <ul class="plain">
-        <li>Har API mein <code>userid</code> aur <code>passwd</code> bhejna zaroori hai. Server har call par web login jaisa hi check karta hai (<code>sp_Login1</code>).</li>
-        <li>Sirf common lists mein nahi chahiye, jo sabke liye same hoti hain: <code>couponlist</code>, <code>monthlypackages</code>.</li>
-        <li><code>login</code> successful ho jaye to app ID-password secure storage mein rakhe (Android Keystore / iOS Keychain), plain SharedPreferences mein nahi.</li>
-        <li><code>code: 401</code> aaye (jaise password badal gaya) to saved details hata ke Login screen par bhejo.</li>
-        <li>Missing <code>userid</code> ya <code>passwd</code> par <code>code: 400</code> aata hai.</li>
-      </ul>
-    </section>
+        <section class="block" id="token">
+            <h2>userid &amp; passwd</h2>
+            <ul class="plain">
+                <li>Har API mein <code>userid</code> aur <code>passwd</code> bhejna zaroori hai. Server har call par web login jaisa hi check karta hai (<code>sp_Login1</code>).</li>
+                <li>Sirf common lists mein nahi chahiye, jo sabke liye same hoti hain: <code>couponlist</code>, <code>monthlypackages</code>.</li>
+                <li><code>login</code> successful ho jaye to app ID-password secure storage mein rakhe (Android Keystore / iOS Keychain), plain SharedPreferences mein nahi.</li>
+                <li><code>code: 401</code> aaye (jaise password badal gaya) to saved details hata ke Login screen par bhejo.</li>
+                <li>Missing <code>userid</code> ya <code>passwd</code> par <code>code: 400</code> aata hai.</li>
+            </ul>
+        </section>
 
-    <section class="block" id="transid">
-      <h2>transid — double tap se bachao</h2>
-      <p>Paisa ya request wali APIs (<code>couponpurchase</code>, <code>subscriptionpay</code>, <code>monthlyactivate</code>, <code>deleteaccount</code>) mein <code>transid</code> zaroori hai. Web page mein bhi yahi hota hai.</p>
-      <ul class="plain">
-        <li>Button dabate hi 6–9 digit ka random number banao (pehla digit 0 na ho). Network retry mein <b>wahi</b> number bhejo.</li>
-        <li>Naye attempt mein, ya <code>409</code> ke baad, naya number banao.</li>
-      </ul>
-    </section>
+        <section class="block" id="transid">
+            <h2>transid — double tap se bachao</h2>
+            <p>Paisa ya request wali APIs (<code>couponpurchase</code>, <code>subscriptionpay</code>, <code>monthlyactivate</code>, <code>deleteaccount</code>) mein <code>transid</code> zaroori hai. Web page mein bhi yahi hota hai.</p>
+            <ul class="plain">
+                <li>Button dabate hi 6–9 digit ka random number banao (pehla digit 0 na ho). Network retry mein <b>wahi</b> number bhejo.</li>
+                <li>Naye attempt mein, ya <code>409</code> ke baad, naya number banao.</li>
+            </ul>
+        </section>
 
-    <section class="block" id="payment">
-      <h2>Payment flow (Subscription &amp; Activation Points)</h2>
-      <div class="flow"><span>subscriptionpay / monthlyactivate</span><i>→</i><span>data.paymenturl WebView mein kholo</span><i>→</i><span>UPI payment</span><i>→</i><span>gateway webhook activation karta hai</span><i>→</i><span>paymentstatus</span></div>
-      <ul class="plain">
-        <li><code>paymenturl</code> ko WebView (ya Custom Tab) mein kholo.</li>
-        <li>WebView ka URL <code>Appsubscription-now.aspx</code>, <code>Appmonthly-activation-points.aspx</code> ya <code>AppLogin.aspx</code> par pahunche to WebView band kar do. Activation server par ho chuka hota hai.</li>
-        <li>Phir <code>paymentstatus</code> ko <code>orderid</code> ke saath call karo. Status <code>PENDING</code> ho to 5–10 second ke gap par 3–4 baar dobara check karo.</li>
-      </ul>
-    </section>
+        <section class="block" id="payment">
+            <h2>Payment flow (Subscription &amp; Activation Points)</h2>
+            <div class="flow"><span>subscriptionpay / monthlyactivate</span><i>→</i><span>data.paymenturl WebView mein kholo</span><i>→</i><span>UPI payment</span><i>→</i><span>gateway webhook activation karta hai</span><i>→</i><span>paymentstatus</span></div>
+            <ul class="plain">
+                <li><code>paymenturl</code> ko WebView (ya Custom Tab) mein kholo.</li>
+                <li>WebView ka URL <code>Appsubscription-now.aspx</code>, <code>Appmonthly-activation-points.aspx</code> ya <code>AppLogin.aspx</code> par pahunche to WebView band kar do. Activation server par ho chuka hota hai.</li>
+                <li>Phir <code>paymentstatus</code> ko <code>orderid</code> ke saath call karo. Status <code>PENDING</code> ho to 5–10 second ke gap par 3–4 baar dobara check karo.</li>
+            </ul>
+        </section>
 
-    <section class="block" id="bridge">
-      <h2>WebView bridge</h2>
-      <p>Home ke kuch links site ke web pages hain (jaise Store). Unke liye <code>home</code> response mein har item ke saath do fields aati hain:</p>
-      <ul class="plain">
-        <li><code>screen</code> — agar app ki apni screen hai (<code>couponlist</code>, <code>subscription</code>, <code>monthly</code>, <code>deleteaccount</code>, <code>home</code>) to wahi kholo.</li>
-        <li><code>openurl</code> — <code>screen</code> khali ho to yeh URL WebView mein kholo. Site ke pages ke liye yeh <code>AppWebBridge.aspx?page=…&amp;token=…</code> hota hai, jo user ko web par bhi login kar deta hai. Yeh link 1 din chalta hai, aur <code>home</code> dobara call karne par naya link milta hai (purana band ho jata hai). Isliye link save mat karo, har baar <code>home</code> ke latest response se lo. <code>target</code> <code>_blank</code> ho to external browser bhi use kar sakte ho.</li>
-      </ul>
-    </section>
+        <section class="block" id="bridge">
+            <h2>WebView bridge</h2>
+            <p>Home ke kuch links site ke web pages hain (jaise Store). Unke liye <code>home</code> response mein har item ke saath do fields aati hain:</p>
+            <ul class="plain">
+                <li><code>screen</code> — agar app ki apni screen hai (<code>couponlist</code>, <code>subscription</code>, <code>monthly</code>, <code>deleteaccount</code>, <code>home</code>) to wahi kholo.</li>
+                <li><code>openurl</code> — <code>screen</code> khali ho to yeh URL WebView mein kholo. Site ke pages ke liye yeh <code>AppWebBridge.aspx?page=…&amp;token=…</code> hota hai, jo user ko web par bhi login kar deta hai. Yeh link 1 din chalta hai, aur <code>home</code> dobara call karne par naya link milta hai (purana band ho jata hai). Isliye link save mat karo, har baar <code>home</code> ke latest response se lo. <code>target</code> <code>_blank</code> ho to external browser bhi use kar sakte ho.</li>
+            </ul>
+        </section>
 
-    <!-- ================= SCREENS ================= -->
-    <section class="screen" id="s-login">
-      <div class="screen-head"><h2>Login / Logout</h2><span class="step">Screen 1 · <span class="webpage">AppLogin.aspx · AppLogout.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">login</span><span class="pill auth">ID + password</span></div>
-        <p>Web login jaisa hi hai (<code>sp_Login1</code>). Member ki details milti hain. Login ho jaye to yahi <code>userid</code>/<code>passwd</code> aage har API mein bhejo.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{
+        <!-- ================= SCREENS ================= -->
+        <section class="screen" id="s-login">
+            <div class="screen-head"><h2>Login / Logout</h2><span class="step">Screen 1 · <span class="webpage">AppLogin.aspx · AppLogout.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">login</span><span class="pill auth">ID + password</span></div>
+                <p>Web login jaisa hi hai (<code>sp_Login1</code>). Member ki details milti hain. Login ho jaye to yahi <code>userid</code>/<code>passwd</code> aage har API mein bhejo.</p>
+                <div class="pair">
+                    <div class="code">
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{
   "reqtype": "login",
-  "userid": "EP100245",
-  "passwd": "mypassword",
+  "userid": "EPI123456",
+  "passwd": "EPI@123456",
   "deviceid": "a1b2c3d4-android",
   "appversion": "1.0.0"
-}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK",
-  "code": 200,
-  "msg": "Login successful.",
-  "reqtype": "login",
-  "reqid": "20260924101500123045",
-  "data": {
-    "member": {
-      "formno": 245,
-      "idno": "EP100245",
-      "name": "Ravi Sharma",
-      "firstname": "Ravi",
-      "lastname": "Sharma",
-      "mobile": "9876543210",
-      "email": "ravi@example.com",
-      "kitid": 6,
-      "package": "Gold",
-      "doj": "12-Jan-2026",
-      "upgradedate": "15-Jan-2026",
-      "activationdate": "15-Jan-2026",
-      "activestatus": "Y",
-      "profilepic": ""
+}</pre>
+                    </div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "Login successful.",
+    "reqtype": "login",
+    "reqid": "20260924153849875931",
+    "data": {
+        "member": {
+            "formno": 123456,
+            "idno": "EPI123456",
+            "name": "EPay India",
+            "firstname": "EPay India",
+            "lastname": "",
+            "mobile": "1234567890",
+            "email": "sadhnagarg.bispl@gmail.com",
+            "kitid": 12,
+            "package": "PETRO CARD SILVER RS. 5000/-",
+            "doj": "17-Dec-2025",
+            "upgradedate": "18-Dec-2025",
+            "activationdate": "18-Dec-2025",
+            "activestatus": "Y",
+            "profilepic": "images/dollar.jpg"
+        }
     }
-  }
-}</pre></div>
-        </div>
-        <p style="margin-top:10px">Galat ID/password par: <code>code 401</code>, msg <i>"Please Enter valid UserName or Password."</i></p>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">logout</span><span class="pill auth">ID + password</span></div>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"logout","userid":"EP100245","passwd":"mypassword"}</pre></div>
-          <div class="code"><div class="lbl">Response<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"Logout successful.","reqtype":"logout","reqid":"20260924183000456123","data":null}</pre></div>
-        </div>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+                <p style="margin-top:10px">Galat ID/password par: <code>code 401</code>, msg <i>"Please Enter valid UserName or Password."</i></p>
+            </div>
+            <!--<div class="api">
+                <div class="api-title"><span class="rt">logout</span><span class="pill auth">ID + password</span></div>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"logout","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code"><div class="lbl">Response<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"Logout successful.","reqtype":"logout","reqid":"20260924183000456123","data":null}</pre></div>
+                </div>
+            </div>-->
+        </section>
 
-    <section class="screen" id="s-master">
-      <div class="screen-head"><h2>Drawer — name, ID &amp; menu</h2><span class="step">Screen 2 · <span class="webpage">AppMaster.master</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">profile</span><span class="pill auth">ID + password</span></div>
-        <p>Drawer ka avatar letter, naam, ID, wallet balance aur menu. <code>menu[].reqtype</code> batata hai ki us screen par kaunsi API pehle call karni hai.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"profile","userid":"EP100245","passwd":"mypassword"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "profile",
-  "reqid": "20260924101502001122",
-  "data": {
-    "profile": {
-      "formno": 245, "idno": "EP100245", "name": "Ravi Sharma",
-      "firstname": "Ravi", "initial": "R", "mobile": "9876543210",
-      "email": "ravi@example.com", "profilepic": "", "kitid": 6,
-      "package": "Gold", "doj": "12-Jan-2026",
-      "activationdate": "15-Jan-2026", "activestatus": "Y"
-    },
-    "walletbalance": 1250.00,
-    "menu": [
-      {"title":"Home","icon":"fa fa-home","screen":"home","reqtype":"home"},
-      {"title":"Purchase Coupon","icon":"fa fa-ticket-alt","screen":"couponlist","reqtype":"couponlist"},
-      {"title":"Subscription Now","icon":"fa fa-crown","screen":"subscription","reqtype":"subscriptionpackages"},
-      {"title":"Activation Points","icon":"fa fa-chart-bar","screen":"monthly","reqtype":"monthlypackages"},
-      {"title":"Account Delete","icon":"fa fa-globe","screen":"deleteaccount","reqtype":"deleteaccountcheck"},
-      {"title":"Logout","icon":"fa fa-sign-out-alt","screen":"logout","reqtype":"logout"}
-    ]
-  }
-}</pre></div>
-        </div>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">walletbalance</span><span class="pill auth">ID + password</span></div>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"walletbalance","userid":"EP100245","passwd":"mypassword"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"walletbalance","reqid":"20260924101503004455","data":{"walletbalance":1250.00}}</pre></div>
-        </div>
-      </div>
-    </section>
+        <section class="screen" id="s-master">
+            <div class="screen-head"><h2>Drawer — name, ID &amp; menu</h2><span class="step">Screen 2 · <span class="webpage">AppMaster.master</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">profile</span><span class="pill auth">ID + password</span></div>
+                <p>Drawer ka avatar letter, naam, ID, wallet balance aur menu. <code>menu[].reqtype</code> batata hai ki us screen par kaunsi API pehle call karni hai.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "profile",
+    "reqid": "20260924154531260750",
+    "data": {
+        "profile": {
+            "formno": 123456,
+            "idno": "EPI123456",
+            "name": "EPay India",
+            "firstname": "EPay India",
+            "initial": "E",
+            "mobile": "1234567890",
+            "email": "sadhnagarg.bispl@gmail.com",
+            "profilepic": "",
+            "kitid": 12,
+            "package": "PETRO CARD SILVER RS. 5000/-",
+            "doj": "17-Dec-2025",
+            "activationdate": "18-Dec-2025",
+            "activestatus": "Y"
+        },
+        "walletbalance": 99598.5300,
+        "menu": [
+            {
+                "title": "Home",
+                "icon": "fa fa-home",
+                "screen": "home",
+                "reqtype": "home"
+            },
+            {
+                "title": "Purchase Coupon",
+                "icon": "fa fa-ticket-alt",
+                "screen": "couponlist",
+                "reqtype": "couponlist"
+            },
+            {
+                "title": "Subscription Now",
+                "icon": "fa fa-crown",
+                "screen": "subscription",
+                "reqtype": "subscriptionpackages"
+            },
+            {
+                "title": "Activation Points",
+                "icon": "fa fa-chart-bar",
+                "screen": "monthly",
+                "reqtype": "monthlypackages"
+            },
+            {
+                "title": "Account Delete",
+                "icon": "fa fa-globe",
+                "screen": "deleteaccount",
+                "reqtype": "deleteaccountcheck"
+            },
+            {
+                "title": "Logout",
+                "icon": "fa fa-sign-out-alt",
+                "screen": "logout",
+                "reqtype": "logout"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">walletbalance</span><span class="pill auth">ID + password</span></div>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "walletbalance",
+    "reqid": "20260924154701807795",
+    "data": {
+        "walletbalance": 99598.5300
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section class="screen" id="s-home">
-      <div class="screen-head"><h2>Home</h2><span class="step">Screen 3 · <span class="webpage">WebApp.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">home</span><span class="pill auth">ID + password</span></div>
-        <p>Banner slider, All Services, Best Selling, Why Choose ePay aur bottom promo — sab admin tables se aate hain. <code>icon</code> Font Awesome class hai, app apne icon se map kar sakta hai. Har link wale item mein <code>screen</code> / <code>openurl</code> aata hai (<a href="#bridge">WebView bridge</a> dekho).</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"home","userid":"EP100245","passwd":"mypassword"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "home",
-  "reqid": "20260924101504007788",
-  "data": {
-    "banners": [
-      {"bgclass":"bn-orange","tag":"New","title":"Movie Coupons","subtitle":"Up to 40% off",
-       "cta":"Buy Now","ctaicon":"fa fa-arrow-right","ctadark":false,
-       "url":"Apppurchase-coupon.aspx","target":"_self","deco":"🎬",
-       "screen":"couponlist","openurl":"https://epayindia.in/AppWebBridge.aspx?page=Apppurchase-coupon.aspx&token=..."}
-    ],
-    "services": [
-      {"name":"Store","icon":"fa fa-store","color":"c-orange","url":"StoreRedirect.aspx","target":"_blank",
-       "screen":"","openurl":"https://epayindia.in/AppWebBridge.aspx?page=StoreRedirect.aspx&token=..."}
-    ],
-    "bestselling": [
-      {"rank":1,"name":"Food Coupon","icon":"fa fa-utensils","iconbg":"#E84000","rankbg":"",
-       "users":"10K+ users","url":"Apppurchase-coupon.aspx","target":"_self",
-       "screen":"couponlist","openurl":"https://epayindia.in/AppWebBridge.aspx?page=Apppurchase-coupon.aspx&token=..."}
-    ],
-    "trust": [
-      {"value":"1L+","label":"Members","icon":"fa fa-users","iconcolor":"#157F3D","iconbg":"#E3F4E8"}
-    ],
-    "promos": [
-      {"bgclass":"wp-blue","deco":"👑","tag":"Offer","title":"Go Premium","subtitle":"Unlock more cashback",
-       "cta":"Subscribe","btninv":true,"url":"Appsubscription-now.aspx","target":"_self",
-       "screen":"subscription","openurl":"https://epayindia.in/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=..."}
-    ]
-  }
-}</pre></div>
-        </div>
-      </div>
-    </section>
+        <section class="screen" id="s-home">
+            <div class="screen-head"><h2>Home</h2><span class="step">Screen 3 · <span class="webpage">WebApp.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">home</span><span class="pill auth">ID + password</span></div>
+                <p>Banner slider, All Services, Best Selling, Why Choose ePay aur bottom promo — sab admin tables se aate hain. <code>icon</code> Font Awesome class hai, app apne icon se map kar sakta hai. Har link wale item mein <code>screen</code> / <code>openurl</code> aata hai (<a href="#bridge">WebView bridge</a> dekho).</p>
+                <div class="pair">
+                    <div class="code">
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
+</pre>
+                    </div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "home",
+    "reqid": "20260924154800052711",
+    "data": {
+        "banners": [
+            {
+                "bgclass": "bn-4",
+                "tag": "👑 PREMIUM",
+                "title": "Go PRO Today<br>& Unlock Benefits",
+                "subtitle": "Unlimited access to all features",
+                "cta": "Subscribe",
+                "ctaicon": "fa fa-crown",
+                "ctadark": false,
+                "url": "Appsubscription-now.aspx",
+                "target": "_self",
+                "deco": "👑",
+                "screen": "subscription",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            }
+        ],
+        "services": [
+            {
+                "name": "Buy Coupons",
+                "icon": "fa fa-ticket-alt",
+                "color": "ico-g11",
+                "url": "Apppurchase-coupon.aspx",
+                "target": "_self",
+                "screen": "couponlist",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Apppurchase-coupon.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            },
+            {
+                "name": "Subscription",
+                "icon": "fa fa-crown",
+                "color": "ico-g12",
+                "url": "Appsubscription-now.aspx",
+                "target": "_self",
+                "screen": "subscription",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            },
+            {
+                "name": "Activation Points",
+                "icon": "fa fa-chart-bar",
+                "color": "ico-g1",
+                "url": "Appmonthly-activation-points.aspx",
+                "target": "_self",
+                "screen": "monthly",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appmonthly-activation-points.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            },
+            {
+                "name": "My Account",
+                "icon": "fa fa-user-circle",
+                "color": "ico-g2",
+                "url": "MainAccountRedirect.ASPX",
+                "target": "_self",
+                "screen": "",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=MainAccountRedirect.ASPX&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            }
+        ],
+        "bestselling": [],
+        "trust": [
+            {
+                "value": "50K+",
+                "label": "Users",
+                "icon": "fa fa-users",
+                "iconcolor": "#E84000",
+                "iconbg": "linear-gradient(135deg,#fff3ec,#ffe5d4)"
+            },
+            {
+                "value": "100%",
+                "label": "Secure Pay",
+                "icon": "fa fa-shield-alt",
+                "iconcolor": "#059669",
+                "iconbg": "linear-gradient(135deg,#f0fdf4,#dcfce7)"
+            },
+            {
+                "value": "24/7",
+                "label": "Support",
+                "icon": "fa fa-bolt",
+                "iconcolor": "#2563eb",
+                "iconbg": "linear-gradient(135deg,#eff6ff,#dbeafe)"
+            },
+            {
+                "value": "Rated",
+                "label": "App",
+                "icon": "fa fa-star",
+                "iconcolor": "#d97706",
+                "iconbg": "linear-gradient(135deg,#fefce8,#fef9c3)"
+            },
+            {
+                "value": "200+",
+                "label": "Services",
+                "icon": "fa fa-tags",
+                "iconcolor": "#db2777",
+                "iconbg": "linear-gradient(135deg,#fdf2f8,#fce7f3)"
+            }
+        ],
+        "promos": [
+            {
+                "bgclass": "wp-bg-2",
+                "deco": "👑",
+                "tag": "✨ PREMIUM PLAN",
+                "title": "Upgrade to PRO<br>& Unlock All Features",
+                "subtitle": "Starting at just ₹99/month",
+                "cta": "Get PRO",
+                "btninv": true,
+                "url": "Appsubscription-now.aspx",
+                "target": "_self",
+                "screen": "subscription",
+                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section class="screen" id="s-coupon">
-      <div class="screen-head"><h2>Purchase Coupon</h2><span class="step">Screen 4 · <span class="webpage">Apppurchase-coupon.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">couponlist</span><span class="pill open">Common list</span></div>
-        <p>Movie aur Food, do tabs. Card par tap karo to us <code>kitid</code> ke saath <code>coupondetail</code> call karo.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponlist"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "couponlist",
-  "reqid": "20260924101505001234",
-  "data": {
-    "movies": [
-      {"kitid":1005,"kitname":"Movie Pack 2","category":"MOVIE","discount":40,
-       "tickets":"2","couponprice":500.00,"kitamount":300.00,"saveamount":200.00}
-    ],
-    "food": [
-      {"kitid":1001,"kitname":"Food Pack 500","category":"FOOD","discount":30,
-       "tickets":"1","couponprice":500.00,"kitamount":350.00,"saveamount":150.00}
-    ]
-  }
-}</pre></div>
-        </div>
-      </div>
-    </section>
+        <section class="screen" id="s-coupon">
+            <div class="screen-head"><h2>Purchase Coupon</h2><span class="step">Screen 4 · <span class="webpage">Apppurchase-coupon.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">couponlist</span><span class="pill open">Common list</span></div>
+                <p>Movie aur Food, do tabs. Card par tap karo to us <code>kitid</code> ke saath <code>coupondetail</code> call karo.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponlist"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "couponlist",
+    "reqid": "20260924154941445936",
+    "data": {
+        "movies": [
+            {
+                "kitid": 1005,
+                "kitname": "",
+                "category": "MOVIE",
+                "discount": 30.0,
+                "tickets": "10",
+                "couponprice": 3000.0,
+                "kitamount": 2100.0,
+                "saveamount": 900.0
+            },
+            {
+                "kitid": 1006,
+                "kitname": "",
+                "category": "MOVIE",
+                "discount": 40.0,
+                "tickets": "20",
+                "couponprice": 6000.0,
+                "kitamount": 3600.0,
+                "saveamount": 2400.0
+            },
+            {
+                "kitid": 1007,
+                "kitname": "",
+                "category": "MOVIE",
+                "discount": 50.0,
+                "tickets": "40",
+                "couponprice": 12000.0,
+                "kitamount": 6000.0,
+                "saveamount": 6000.0
+            }
+        ],
+        "food": [
+            {
+                "kitid": 1001,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 20.0,
+                "tickets": "5",
+                "couponprice": 2500.0,
+                "kitamount": 2000.0,
+                "saveamount": 500.0
+            },
+            {
+                "kitid": 1002,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 30.0,
+                "tickets": "10",
+                "couponprice": 5000.0,
+                "kitamount": 3500.0,
+                "saveamount": 1500.0
+            },
+            {
+                "kitid": 1003,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 40.0,
+                "tickets": "20",
+                "couponprice": 10000.0,
+                "kitamount": 6000.0,
+                "saveamount": 4000.0
+            },
+            {
+                "kitid": 1004,
+                "kitname": "",
+                "category": "FOOD",
+                "discount": 50.0,
+                "tickets": "50",
+                "couponprice": 25000.0,
+                "kitamount": 12500.0,
+                "saveamount": 12500.0
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section class="screen" id="s-coupondetail">
-      <div class="screen-head"><h2>Coupon Detail &amp; Buy</h2><span class="step">Screen 5 · <span class="webpage">Apppurchase-coupon-details.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">coupondetail</span><span class="pill auth">ID + password</span></div>
-        <p>Price breakup, wallet balance, description, "how to use" aur terms. Agar <code>canpay</code> false hai to Pay button disable rakho.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"coupondetail","userid":"EP100245","passwd":"mypassword","kitid":1005}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "coupondetail",
-  "reqid": "20260924101506005678",
-  "data": {
-    "kitid": 1005, "kitname": "Movie Pack 2", "kitamount": 300.00,
-    "couponprice": 500.00, "discount": 40, "saveamount": 200.00,
-    "tickets": "2", "walletcredit": 300.00, "youpay": 300.00,
-    "walletbalance": 1250.00, "canpay": true,
-    "idno": "EP100245", "name": "Ravi Sharma",
-    "description": "Valid on all partner theatres.",
-    "howtouse": "Redeem on movie.epayindia.in",
-    "terms": "Non refundable."
-  }
-}</pre></div>
-        </div>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet debit</span></div>
-        <p>Web page ke "Proceed to Pay" jaisa: balance check, package condition, utility wallet, phir voucher. Amount server DB se leta hai, isliye app amount nahi bhejta. Success par <code>billno</code> ke saath <a href="#s-thankyou">Thank You</a> screen kholo.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005,"transid":"583921"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+        <section class="screen" id="s-coupondetail">
+            <div class="screen-head"><h2>Coupon Detail &amp; Buy</h2><span class="step">Screen 5 · <span class="webpage">Apppurchase-coupon-details.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">coupondetail</span><span class="pill auth">ID + password</span></div>
+                <p>Price breakup, wallet balance, description, "how to use" aur terms. Agar <code>canpay</code> false hai to Pay button disable rakho.</p>
+                <div class="pair">
+                    <div class="code">
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
+</pre>
+                    </div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "coupondetail",
+    "reqid": "20260924155103147651",
+    "data": {
+        "kitid": 1005,
+        "kitname": "Movie Package (10 Ticket)",
+        "kitamount": 2100.0,
+        "couponprice": 3000.0,
+        "discount": 30.0,
+        "saveamount": 900.0,
+        "tickets": "10",
+        "walletcredit": 2100.0,
+        "youpay": 2100.0,
+        "walletbalance": 99598.5300,
+        "canpay": true,
+        "idno": "EPI123456",
+        "name": "EPay India",
+        "description": "*Use coupons to book movie.<br />\r\n*Total 10 coupons will be given in a  year.<br />\r\n*Book movies at Indias top theatres  like Inox, PVR, Big Cinema, Cinepolis.<br />\r\n*Fastest bookings without much hassle. <br />",
+        "howtouse": "*Enter User ID & password to login.<br />\r\n*Choose state and city.<br />\r\n*Choose movie of your choice.<br />\r\n*Choose theatre of your choice.<br />\r\n*Choose the show of your choice.<br />\r\n*Apply coupon and your movie.<br />\r\n*You can use maximum two coupons at same time by comma separation.<br />",
+        "terms": "*No. of coupons depends on the  package selected.<br />\r\n*Only 2 coupons can be used in a  month.<br />\r\n*The coupons left month will not be  carried forward.<br />\r\n*Tickets have to be booked before 2 hrs of the  show.<br />"
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet debit</span></div>
+                <p>Web page ke "Proceed to Pay" jaisa: balance check, package condition, utility wallet, phir voucher. Amount server DB se leta hai, isliye app amount nahi bhejta. Success par <code>billno</code> ke saath <a href="#s-thankyou">Thank You</a> screen kholo.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005,"transid":"583921"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
   "msg": "Package Purchase Successfully!!",
   "reqtype": "couponpurchase", "reqid": "20260924101507009012",
@@ -406,28 +1057,32 @@ ul.plain li{margin-bottom:4px}
     "billno": "482913", "kitid": 1005, "kitname": "Movie Pack 2",
     "amount": 300.00, "walletbalance": 950.00, "redeemtype": "MOVIE"
   }
-}</pre></div>
-        </div>
-        <div class="tbl"><table>
-          <thead><tr><th>code</th><th>msg (example)</th></tr></thead>
-          <tbody>
-            <tr><td>400</td><td>Insufficient Balance!!</td></tr>
-            <tr><td>400</td><td>Package condition ka message (Sp_GetPachageCondtion)</td></tr>
-            <tr><td>400</td><td>Insufficient Balance In Utility Wallet.Please Contact To Admin.!</td></tr>
-            <tr><td>409</td><td>Duplicate request. Please try again.</td></tr>
-            <tr><td>500</td><td>Purchase not successful. Please contact support with reqid.</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+                <div class="tbl">
+                    <table>
+                        <thead><tr><th>code</th><th>msg (example)</th></tr></thead>
+                        <tbody>
+                            <tr><td>400</td><td>Insufficient Balance!!</td></tr>
+                            <tr><td>400</td><td>Package condition ka message (Sp_GetPachageCondtion)</td></tr>
+                            <tr><td>400</td><td>Insufficient Balance In Utility Wallet.Please Contact To Admin.!</td></tr>
+                            <tr><td>409</td><td>Duplicate request. Please try again.</td></tr>
+                            <tr><td>500</td><td>Purchase not successful. Please contact support with reqid.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-    <section class="screen" id="s-thankyou">
-      <div class="screen-head"><h2>Thank You / Redeem</h2><span class="step">Screen 6 · <span class="webpage">AppThankYou.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">orderdetail</span><span class="pill auth">ID + password</span></div>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","userid":"EP100245","passwd":"mypassword","billno":"482913","kitid":1005}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+        <section class="screen" id="s-thankyou">
+            <div class="screen-head"><h2>Thank You / Redeem</h2><span class="step">Screen 6 · <span class="webpage">AppThankYou.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">orderdetail</span><span class="pill auth">ID + password</span></div>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","userid":"EP100245","passwd":"mypassword","billno":"482913","kitid":1005}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "orderdetail",
   "reqid": "20260924101508003344",
   "data": {
@@ -435,35 +1090,39 @@ ul.plain li{margin-bottom:4px}
     "kitname": "Movie Pack 2", "orderdate": "24-Sep-2026",
     "amount": 300.00, "redeemtype": "MOVIE"
   }
-}</pre></div>
-        </div>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">redeemurl</span><span class="pill auth">ID + password</span></div>
-        <p>"Redeem Now" button ke liye hai. Jo <code>url</code> mile use browser ya WebView mein kholo, user Food/Movie portal par auto-login ho jayega. <code>redeemtype</code> khali ho to Redeem button mat dikhao.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","userid":"EP100245","passwd":"mypassword","type":"MOVIE"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">redeemurl</span><span class="pill auth">ID + password</span></div>
+                <p>"Redeem Now" button ke liye hai. Jo <code>url</code> mile use browser ya WebView mein kholo, user Food/Movie portal par auto-login ho jayega. <code>redeemtype</code> khali ho to Redeem button mat dikhao.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","userid":"EP100245","passwd":"mypassword","type":"MOVIE"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "redeemurl",
   "reqid": "20260924101509006677",
   "data": {
     "redeemtype": "MOVIE",
     "url": "https://movie.epayindia.in/controller.aspx?user_info=...&log_key=..."
   }
-}</pre></div>
-        </div>
-        <p style="margin-top:10px"><code>type</code> ki jagah <code>kitid</code> bhi bhej sakte ho: 1001–1004 = FOOD, 1005–1007 = MOVIE.</p>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+                <p style="margin-top:10px"><code>type</code> ki jagah <code>kitid</code> bhi bhej sakte ho: 1001–1004 = FOOD, 1005–1007 = MOVIE.</p>
+            </div>
+        </section>
 
-    <section class="screen" id="s-subscription">
-      <div class="screen-head"><h2>Subscription Now</h2><span class="step">Screen 7 · <span class="webpage">Appsubscription-now.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">subscriptionpackages</span><span class="pill auth">ID + password</span></div>
-        <p>Chaar packages aate hain. Jin par <code>isallowed: false</code> hai unka button disable ya "Not available" dikhao (member ke current package ke hisaab se).</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages","userid":"EP100245","passwd":"mypassword"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+        <section class="screen" id="s-subscription">
+            <div class="screen-head"><h2>Subscription Now</h2><span class="step">Screen 7 · <span class="webpage">Appsubscription-now.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">subscriptionpackages</span><span class="pill auth">ID + password</span></div>
+                <p>Chaar packages aate hain. Jin par <code>isallowed: false</code> hai unka button disable ya "Not available" dikhao (member ke current package ke hisaab se).</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "subscriptionpackages",
   "reqid": "20260924101510001199",
   "data": {
@@ -474,33 +1133,37 @@ ul.plain li{margin-bottom:4px}
       {"kitid":4,"kitname":"Silver","amount":499.00,"isallowed":false}
     ]
   }
-}</pre></div>
-        </div>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">subscriptionpay</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
-        <p>Order bana ke UPI payment URL deta hai. Aage ka flow <a href="#payment">Payment flow</a> mein hai.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7,"transid":"771204"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">subscriptionpay</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
+                <p>Order bana ke UPI payment URL deta hai. Aage ka flow <a href="#payment">Payment flow</a> mein hai.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7,"transid":"771204"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
   "reqtype": "subscriptionpay", "reqid": "20260924101511004422",
   "data": {
     "orderid": "20260924101511120", "kitid": 7, "kitname": "Platinum",
     "amount": 2499.00, "paymenturl": "https://allupi.com/pay/..."
   }
-}</pre></div>
-        </div>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section class="screen" id="s-monthly">
-      <div class="screen-head"><h2>Activation Points</h2><span class="step">Screen 8 · <span class="webpage">Appmonthly-activation-points.aspx</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">monthlypackages</span><span class="pill open">Common list</span></div>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlypackages"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+        <section class="screen" id="s-monthly">
+            <div class="screen-head"><h2>Activation Points</h2><span class="step">Screen 8 · <span class="webpage">Appmonthly-activation-points.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">monthlypackages</span><span class="pill open">Common list</span></div>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlypackages"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "monthlypackages",
   "reqid": "20260924101512007755",
   "data": {
@@ -509,35 +1172,39 @@ ul.plain li{margin-bottom:4px}
       {"kitid":8,"kitname":"Monthly 599","amount":599.00,"validdays":30,"cashbackpoints":650}
     ]
   }
-}</pre></div>
-        </div>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">monthlyactivate</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
-        <p>Pehle ID active hai ya nahi aur is mahine activation allowed hai ya nahi, yeh check hota hai. Phir payment URL milta hai (<a href="#payment">Payment flow</a>).</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5,"transid":"640318"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">monthlyactivate</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
+                <p>Pehle ID active hai ya nahi aur is mahine activation allowed hai ya nahi, yeh check hota hai. Phir payment URL milta hai (<a href="#payment">Payment flow</a>).</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5,"transid":"640318"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
   "reqtype": "monthlyactivate", "reqid": "20260924101513002288",
   "data": {
     "orderid": "20260924101513350", "kitid": 5, "kitname": "Monthly 299",
     "amount": 299.00, "paymenturl": "https://allupi.com/pay/..."
   }
-}</pre></div>
-        </div>
-        <p style="margin-top:10px">Possible failures: <i>"This Id Not Active Please Active First.!"</i> (400), <code>sp_SetMonthlyActivation</code> ka message (400), block ID (403).</p>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+                <p style="margin-top:10px">Possible failures: <i>"This Id Not Active Please Active First.!"</i> (400), <code>sp_SetMonthlyActivation</code> ka message (400), block ID (403).</p>
+            </div>
+        </section>
 
-    <section class="screen" id="s-paystatus">
-      <div class="screen-head"><h2>Payment Status</h2><span class="step">Screen 9 · <span class="webpage">Paymentgatewayapp.aspx · PaymentGatewayPurchase.aspx (webhooks)</span></span></div>
-      <div class="api">
-        <div class="api-title"><span class="rt">paymentstatus</span><span class="pill auth">ID + password</span></div>
-        <p><code>status</code> ki values: <code>SUCCESS</code>, <code>PENDING</code>, <code>FAILED</code> (ya gateway ne jo bheja ho). Sirf apne orders dikhte hain.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+        <section class="screen" id="s-paystatus">
+            <div class="screen-head"><h2>Payment Status</h2><span class="step">Screen 9 · <span class="webpage">Paymentgatewayapp.aspx · PaymentGatewayPurchase.aspx (webhooks)</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">paymentstatus</span><span class="pill auth">ID + password</span></div>
+                <p><code>status</code> ki values: <code>SUCCESS</code>, <code>PENDING</code>, <code>FAILED</code> (ya gateway ne jo bheja ho). Sirf apne orders dikhte hain.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "paymentstatus",
   "reqid": "20260924101630009911",
   "data": {
@@ -545,102 +1212,109 @@ ul.plain li{margin-bottom:4px}
     "amount": 2499.00, "orderdate": "2026-09-24 10:15:11",
     "status": "SUCCESS", "responsedate": "2026-09-24 10:16:02"
   }
-}</pre></div>
-        </div>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section class="screen" id="s-delete">
-      <div class="screen-head"><h2>Account Delete</h2><span class="step">Screen 10 · <span class="webpage">DeleteAccount.aspx</span></span></div>
-      <div class="note"><b>App mein:</b> hamesha logged-in user ki apni ID ki request jati hai. Dusri ID enter karne ka option nahi hai.</div>
-      <div class="api">
-        <div class="api-title"><span class="rt">deleteaccountcheck</span><span class="pill auth">ID + password</span></div>
-        <p>Screen khulte hi call karo aur ID + naam dikhao. Agar <code>FAILED</code> aaye to <code>msg</code> dikhao aur submit button hata do.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}</pre></div>
-          <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"deleteaccountcheck","reqid":"20260924101700001100","data":{"idno":"EP100245","name":"Ravi Sharma"}}</pre></div>
-        </div>
-      </div>
-      <div class="api">
-        <div class="api-title"><span class="rt">deleteaccount</span><span class="pill auth">ID + password</span></div>
-        <p>User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.</p>
-        <div class="pair">
-          <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword","transid":"318845"}</pre></div>
-          <div class="code"><div class="lbl">Response<button type="button">Copy</button></div><pre>{
+        <section class="screen" id="s-delete">
+            <div class="screen-head"><h2>Account Delete</h2><span class="step">Screen 10 · <span class="webpage">DeleteAccount.aspx</span></span></div>
+            <div class="note"><b>App mein:</b> hamesha logged-in user ki apni ID ki request jati hai. Dusri ID enter karne ka option nahi hai.</div>
+            <div class="api">
+                <div class="api-title"><span class="rt">deleteaccountcheck</span><span class="pill auth">ID + password</span></div>
+                <p>Screen khulte hi call karo aur ID + naam dikhao. Agar <code>FAILED</code> aaye to <code>msg</code> dikhao aur submit button hata do.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"deleteaccountcheck","reqid":"20260924101700001100","data":{"idno":"EP100245","name":"Ravi Sharma"}}</pre></div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">deleteaccount</span><span class="pill auth">ID + password</span></div>
+                <p>User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword","transid":"318845"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
   "msg": "Your account deletion request has been received. Our team will contact you if any further information is required.!",
   "reqtype": "deleteaccount", "reqid": "20260924101705004433",
   "data": null
-}</pre></div>
-        </div>
-      </div>
-    </section>
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- ================= REFERENCE ================= -->
-    <section class="block" id="all">
-      <h2>All reqtypes</h2>
-      <div class="tbl"><table>
-        <thead><tr><th>reqtype</th><th>userid + passwd</th><th>Aur fields</th><th>Web page</th></tr></thead>
-        <tbody>
-          <tr><td>login</td><td>Zaroori</td><td>deviceid (optional)</td><td>AppLogin.aspx</td></tr>
-          <tr><td>logout</td><td>Zaroori</td><td>—</td><td>AppLogout.aspx</td></tr>
-          <tr><td>profile</td><td>Zaroori</td><td>—</td><td>AppMaster.master</td></tr>
-          <tr><td>walletbalance</td><td>Zaroori</td><td>—</td><td>(coupon detail)</td></tr>
-          <tr><td>home</td><td>Zaroori</td><td>—</td><td>WebApp.aspx</td></tr>
-          <tr><td>couponlist</td><td>Nahi (common list)</td><td>—</td><td>Apppurchase-coupon.aspx</td></tr>
-          <tr><td>coupondetail</td><td>Zaroori</td><td>kitid</td><td>Apppurchase-coupon-details.aspx</td></tr>
-          <tr><td>couponpurchase</td><td>Zaroori</td><td>kitid, transid</td><td>Apppurchase-coupon-details.aspx</td></tr>
-          <tr><td>orderdetail</td><td>Zaroori</td><td>billno, kitid (optional)</td><td>AppThankYou.aspx</td></tr>
-          <tr><td>redeemurl</td><td>Zaroori</td><td>type or kitid</td><td>Food/MovieBookingRedirect.aspx</td></tr>
-          <tr><td>subscriptionpackages</td><td>Zaroori</td><td>—</td><td>Appsubscription-now.aspx</td></tr>
-          <tr><td>subscriptionpay</td><td>Zaroori</td><td>kitid, transid</td><td>Appsubscription-now.aspx</td></tr>
-          <tr><td>monthlypackages</td><td>Nahi (common list)</td><td>—</td><td>Appmonthly-activation-points.aspx</td></tr>
-          <tr><td>monthlyactivate</td><td>Zaroori</td><td>kitid, transid</td><td>Appmonthly-activation-points.aspx</td></tr>
-          <tr><td>paymentstatus</td><td>Zaroori</td><td>orderid</td><td>Paymentgateway webhooks</td></tr>
-          <tr><td>deleteaccountcheck</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
-          <tr><td>deleteaccount</td><td>Zaroori</td><td>transid</td><td>DeleteAccount.aspx</td></tr>
-        </tbody>
-      </table></div>
-    </section>
+        <!-- ================= REFERENCE ================= -->
+        <section class="block" id="all">
+            <h2>All reqtypes</h2>
+            <div class="tbl">
+                <table>
+                    <thead><tr><th>reqtype</th><th>userid + passwd</th><th>Aur fields</th><th>Web page</th></tr></thead>
+                    <tbody>
+                        <tr><td>login</td><td>Zaroori</td><td>deviceid (optional)</td><td>AppLogin.aspx</td></tr>
+                        <tr><td>logout</td><td>Zaroori</td><td>—</td><td>AppLogout.aspx</td></tr>
+                        <tr><td>profile</td><td>Zaroori</td><td>—</td><td>AppMaster.master</td></tr>
+                        <tr><td>walletbalance</td><td>Zaroori</td><td>—</td><td>(coupon detail)</td></tr>
+                        <tr><td>home</td><td>Zaroori</td><td>—</td><td>WebApp.aspx</td></tr>
+                        <tr><td>couponlist</td><td>Nahi (common list)</td><td>—</td><td>Apppurchase-coupon.aspx</td></tr>
+                        <tr><td>coupondetail</td><td>Zaroori</td><td>kitid</td><td>Apppurchase-coupon-details.aspx</td></tr>
+                        <tr><td>couponpurchase</td><td>Zaroori</td><td>kitid, transid</td><td>Apppurchase-coupon-details.aspx</td></tr>
+                        <tr><td>orderdetail</td><td>Zaroori</td><td>billno, kitid (optional)</td><td>AppThankYou.aspx</td></tr>
+                        <tr><td>redeemurl</td><td>Zaroori</td><td>type or kitid</td><td>Food/MovieBookingRedirect.aspx</td></tr>
+                        <tr><td>subscriptionpackages</td><td>Zaroori</td><td>—</td><td>Appsubscription-now.aspx</td></tr>
+                        <tr><td>subscriptionpay</td><td>Zaroori</td><td>kitid, transid</td><td>Appsubscription-now.aspx</td></tr>
+                        <tr><td>monthlypackages</td><td>Nahi (common list)</td><td>—</td><td>Appmonthly-activation-points.aspx</td></tr>
+                        <tr><td>monthlyactivate</td><td>Zaroori</td><td>kitid, transid</td><td>Appmonthly-activation-points.aspx</td></tr>
+                        <tr><td>paymentstatus</td><td>Zaroori</td><td>orderid</td><td>Paymentgateway webhooks</td></tr>
+                        <tr><td>deleteaccountcheck</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
+                        <tr><td>deleteaccount</td><td>Zaroori</td><td>transid</td><td>DeleteAccount.aspx</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <section class="block" id="logs">
-      <h2>Logs (support)</h2>
-      <p>Har call ka ek row <code>Tbl_AppApiLog</code> mein banta hai. Isme request (password/token masked), response, status, time aur member hota hai. Gateway ya wallet ki bahar wali calls <code>Tbl_AppApiExtCallLog</code> mein jati hain. Agar DB log fail ho jaye to <code>Logs/AppApi_yyyyMMdd.txt</code> mein likha jata hai.</p>
-      <p>User problem bataye to app se <code>reqid</code> lo aur yeh query chalao:</p>
-      <div class="code"><div class="lbl">SQL<button type="button">Copy</button></div><pre>SELECT * FROM Tbl_AppApiLog WHERE ReqID = '20260924101507009012';
+        <section class="block" id="logs">
+            <h2>Logs (support)</h2>
+            <p>Har call ka ek row <code>Tbl_AppApiLog</code> mein banta hai. Isme request (password/token masked), response, status, time aur member hota hai. Gateway ya wallet ki bahar wali calls <code>Tbl_AppApiExtCallLog</code> mein jati hain. Agar DB log fail ho jaye to <code>Logs/AppApi_yyyyMMdd.txt</code> mein likha jata hai.</p>
+            <p>User problem bataye to app se <code>reqid</code> lo aur yeh query chalao:</p>
+            <div class="code">
+                <div class="lbl">SQL<button type="button">Copy</button></div><pre>SELECT * FROM Tbl_AppApiLog WHERE ReqID = '20260924101507009012';
 SELECT * FROM Tbl_AppApiExtCallLog WHERE ReqID = '20260924101507009012';
 
 -- Ek din ke saare errors
-EXEC Sp_AppApiLog_Search '2026-09-24', '2026-09-24', @Status = 'ERROR';</pre></div>
-      <p style="margin-top:12px"><code>Status = ERROR</code> aur ErrorMsg mein <i>"MASTER WALLET DEBITED BUT VOUCHER NOT CREATED"</i> dikhe to us case ko reconcile karna hai. Debit ka ref no <code>RefNo</code> column mein milega.</p>
-    </section>
-  </main>
+EXEC Sp_AppApiLog_Search '2026-09-24', '2026-09-24', @Status = 'ERROR';</pre>
+            </div>
+            <p style="margin-top:12px"><code>Status = ERROR</code> aur ErrorMsg mein <i>"MASTER WALLET DEBITED BUT VOUCHER NOT CREATED"</i> dikhe to us case ko reconcile karna hai. Debit ka ref no <code>RefNo</code> column mein milega.</p>
+        </section>
+    </main>
 </div>
 
 <script>
-document.querySelectorAll('.code button').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var pre = btn.closest('.code').querySelector('pre');
-    var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1400); };
-    var fallback = function () {
-      var r = document.createRange(); r.selectNodeContents(pre);
-      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      btn.textContent = 'Selected';
-      setTimeout(function () { btn.textContent = 'Copy'; }, 1400);
-    };
-    try {
-      navigator.clipboard.writeText(pre.textContent).then(done, fallback);
-    } catch (e) { fallback(); }
-  });
-});
-/* JSON ko halka color */
-document.querySelectorAll('pre').forEach(function (pre) {
-  var t = pre.textContent;
-  if (t.trim().charAt(0) !== '{') return;
-  var esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  pre.innerHTML = esc
-    .replace(/("(?:[^"\\]|\\.)*")(\s*:)/g, '<span class="k">$1</span>$2')
-    .replace(/(:\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="s">$2</span>')
-    .replace(/(:\s*)(-?\d+(?:\.\d+)?|true|false|null)/g, '$1<span class="num">$2</span>');
-});
+    document.querySelectorAll('.code button').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var pre = btn.closest('.code').querySelector('pre');
+            var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1400); };
+            var fallback = function () {
+                var r = document.createRange(); r.selectNodeContents(pre);
+                var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+                btn.textContent = 'Selected';
+                setTimeout(function () { btn.textContent = 'Copy'; }, 1400);
+            };
+            try {
+                navigator.clipboard.writeText(pre.textContent).then(done, fallback);
+            } catch (e) { fallback(); }
+        });
+    });
+    /* JSON ko halka color */
+    document.querySelectorAll('pre').forEach(function (pre) {
+        var t = pre.textContent;
+        if (t.trim().charAt(0) !== '{') return;
+        var esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        pre.innerHTML = esc
+            .replace(/("(?:[^"\\]|\\.)*")(\s*:)/g, '<span class="k">$1</span>$2')
+            .replace(/(:\s*)("(?:[^"\\]|\\.)*")/g, '$1<span class="s">$2</span>')
+            .replace(/(:\s*)(-?\d+(?:\.\d+)?|true|false|null)/g, '$1<span class="num">$2</span>');
+    });
 </script>
