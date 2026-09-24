@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -42,6 +43,11 @@ public partial class AppApi : System.Web.UI.Page
     private const string AllUpiServerHookUrl = "https://epayindia.in/Login.aspx";
     private const string SubscriptionWebHookUrl = "https://epayindia.in/PaymentGatewayPurchase.aspx";   // Appsubscription-now jaisa
     private const string MonthlyWebHookUrl = "https://epayindia.in/Paymentgatewayapp.aspx";             // Appmonthly-activation-points jaisa
+    private const string PetroWebHookUrl = "https://epayindia.in/PetroCardPaymentGatewayPurchase.aspx"; // PetroCardFinalPurchase jaisa
+
+    // PETROCARDPurchase.aspx: cpanel PAN KYC auto-login link ki key (TripleDES)
+    private const string CpanelLoginKey = "sg75b79-nj48dh02";
+    private static readonly int[] PetroKitIds = { 12, 13, 14 };
 
     // Web page -> app screen (home ke url aur drawer menu ke liye)
     private static readonly Dictionary<string, string> ScreenMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -62,7 +68,9 @@ public partial class AppApi : System.Web.UI.Page
         "couponlist", "coupondetail", "couponpurchase", "orderdetail", "redeemurl",
         "subscriptionpackages", "subscriptionpay",
         "monthlypackages", "monthlyactivate", "paymentstatus",
-        "deleteaccountcheck", "deleteaccount"
+        "deleteaccountcheck", "deleteaccount",
+        "purchasehistory", "petrocardreport",
+        "petrocardkits", "petrocardform", "petrocardpurchase"
     };
 
     private AppApiLogger log;
@@ -168,6 +176,11 @@ public partial class AppApi : System.Web.UI.Page
             case "paymentstatus": return PaymentStatus();
             case "deleteaccountcheck": return DeleteAccountCheck();
             case "deleteaccount": return DeleteAccount();
+            case "purchasehistory": return PurchaseHistory();
+            case "petrocardreport": return PetroCardReport();
+            case "petrocardkits": return PetroCardKits();
+            case "petrocardform": return PetroCardForm();
+            case "petrocardpurchase": return PetroCardPurchase();
         }
         return Fail(400, "Invalid reqtype.");
     }
@@ -777,6 +790,18 @@ public partial class AppApi : System.Web.UI.Page
             new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo },
             new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo });
 
+        return InitiateUpiPayment(orderId, amount, kitId, kitName, webHookUrl, pageName);
+    }
+
+    /// <summary>
+    /// allupi login -> LoginTransaction -> InitiateTransactionAsync -> payment url.
+    /// Order (OnlineTransaction / PetroOnlineTransaction) pehle ban chuka hona chahiye.
+    /// Webhook page LoginTransaction update karke activation / purchase karta hai.
+    /// </summary>
+    private ApiResult InitiateUpiPayment(string orderId, decimal amount, int kitId, string kitName, string webHookUrl, string pageName)
+    {
+        string amountStr = amount.ToString("0.00", CultureInfo.InvariantCulture);
+
         // 1. allupi login
         JObject loginBody = new JObject();
         loginBody["merchantID"] = AllUpiMerchantId;
@@ -852,6 +877,7 @@ public partial class AppApi : System.Web.UI.Page
         data["orderid"] = orderId;
         data["kitid"] = AppApiCore.Int(r, "KitId");
         data["kitname"] = AppApiCore.Str(r, "KitName");
+        data["ordertype"] = AppApiCore.Str(r, "OrderType");
         data["amount"] = AppApiCore.Dec(r, "Amount");
         data["orderdate"] = AppApiCore.Str(r, "OrderDate");
         data["status"] = AppApiCore.Str(r, "Status");
@@ -908,13 +934,573 @@ public partial class AppApi : System.Web.UI.Page
     }
 
     /* =====================================================================
+       MyPurchaseDetail.aspx  /  PetroCardPurchaseReport.aspx
+       ===================================================================== */
+
+    /// <summary>MyPurchaseDetail.aspx -> FillData(): coupon purchase records (naya pehle).</summary>
+    private ApiResult PurchaseHistory()
+    {
+        DataTable dt = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text,
+            "SELECT C.billno, C.Repurchincome, A.kitname, C.kitid, " +
+            "REPLACE(CONVERT(VARCHAR, C.billdate, 106), ' ', '-') AS billdate " +
+            "FROM MM_kitmaster AS A INNER JOIN Repurchincome_MM AS C ON A.kitid = C.kitid " +
+            "WHERE C.formno = @FormNo ORDER BY C.rid DESC",
+            new SqlParameter("@FormNo", SqlDbType.VarChar, 20) { Value = member.FormNo.ToString() }).Tables[0];
+
+        JArray arr = new JArray();
+        foreach (DataRow r in dt.Rows)
+        {
+            JObject o = new JObject();
+            o["billno"] = AppApiCore.Str(r, "billno");
+            o["amount"] = AppApiCore.Dec(r, "Repurchincome");
+            o["kitid"] = AppApiCore.Int(r, "kitid");
+            o["kitname"] = AppApiCore.Str(r, "kitname");
+            o["orderdate"] = AppApiCore.Str(r, "billdate");
+            o["redeemtype"] = RedeemTypeFor(AppApiCore.Int(r, "kitid"));
+            arr.Add(o);
+        }
+        return Success("", Paged(arr, "records"));
+    }
+
+    /// <summary>
+    /// PetroCardPurchaseReport.aspx -> FillDetail(): GetPetroCartReportINR.
+    /// Web grid SP ke saare columns dikhata hai (AutoGenerateColumns), isliye yahan bhi
+    /// "columns" (title + key) aur rows generic jaate hain.
+    /// </summary>
+    private ApiResult PetroCardReport()
+    {
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec GetPetroCartReportINR @FormNo",
+            new SqlParameter("@FormNo", SqlDbType.VarChar, 20) { Value = member.FormNo.ToString() });
+
+        JArray columns = new JArray();
+        JArray rows = new JArray();
+        if (ds.Tables.Count > 0)
+        {
+            DataTable dt = ds.Tables[0];
+            List<string> keys = new List<string>();
+            foreach (DataColumn c in dt.Columns)
+            {
+                string key = JsonKey(c.ColumnName);
+                string unique = key;
+                for (int n = 2; keys.Contains(unique); n++)
+                    unique = key + n;
+                keys.Add(unique);
+
+                JObject col = new JObject();
+                col["key"] = unique;
+                col["title"] = c.ColumnName;
+                columns.Add(col);
+            }
+            foreach (DataRow r in dt.Rows)
+            {
+                JObject o = new JObject();
+                for (int i = 0; i < dt.Columns.Count; i++)
+                    o[keys[i]] = ToJValue(r[i]);
+                rows.Add(o);
+            }
+        }
+
+        JObject data = Paged(rows, "records");
+        data.AddFirst(new JProperty("columns", columns));
+        return Success("", data);
+    }
+
+    /* =====================================================================
+       PETROCARDPurchase.aspx  /  PetroCardFinalPurchase.aspx
+       ===================================================================== */
+
+    /// <summary>PETROCARDPurchase.aspx: wallet balance, PAN KYC status aur kits (har kit ka status).</summary>
+    private ApiResult PetroCardKits()
+    {
+        PanKyc kyc = GetPanKyc();
+        int purchasedKitId = GetPurchasedPetroKitId();
+
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec Sp_getKitPetro @FormNo",
+            new SqlParameter("@FormNo", SqlDbType.VarChar, 20) { Value = member.FormNo.ToString() });
+
+        JArray kits = new JArray();
+        if (ds.Tables.Count > 0)
+        {
+            foreach (DataRow r in ds.Tables[0].Rows)
+            {
+                int kitId = AppApiCore.Int(r, "kitid");
+
+                // rptKitDetails_ItemDataBound wali states
+                string status;
+                string message;
+                if (!kyc.Verified)
+                {
+                    status = "KYC_REQUIRED";
+                    message = "PAN verification is mandatory before purchasing a Petro Card Package.";
+                }
+                else if (purchasedKitId > 0 && purchasedKitId == kitId)
+                {
+                    status = "PURCHASED";
+                    message = "Already Purchased";
+                }
+                else if (purchasedKitId > 0)
+                {
+                    status = "LOCKED";
+                    message = "You have already purchased a Petro Card Kit. Only one kit is allowed per member.";
+                }
+                else
+                {
+                    status = "AVAILABLE";
+                    message = "";
+                }
+
+                JObject o = new JObject();
+                o["kitid"] = kitId;
+                o["kitname"] = AppApiCore.Str(r, "kitdisplayname");
+                o["amount"] = AppApiCore.Dec(r, "kitamount");
+                o["amountdisplay"] = AppApiCore.Str(r, "kitamountdisp");
+                o["image"] = AbsoluteUrl(AppApiCore.Str(r, "img"));
+                o["icon"] = AppApiCore.Str(r, "Icon");
+                o["theme"] = AppApiCore.Str(r, "Theme");
+                o["themelabel"] = AppApiCore.Str(r, "ThemeLabel");
+                o["benefits"] = AppApiCore.Str(r, "Benf");
+                o["status"] = status;
+                o["canbuy"] = status == "AVAILABLE";
+                o["message"] = message;
+                kits.Add(o);
+            }
+        }
+
+        JObject data = new JObject();
+        data["walletbalance"] = GetBalance(member.FormNo, "S", AppApiCore.Constr);
+        data["pankyc"] = PanKycJson(kyc);
+        data["purchasedkitid"] = purchasedKitId;
+        data["kits"] = kits;
+        return Success("", data);
+    }
+
+    /// <summary>PetroCardFinalPurchase.aspx Page_Load: checks + form ka data.</summary>
+    private ApiResult PetroCardForm()
+    {
+        int kitId;
+        DataRow kit;
+        PanKyc kyc;
+        ApiResult check = PetroCardChecks(out kitId, out kit, out kyc);
+        if (check != null)
+            return check;
+
+        DataRow mem = GetPetroMember();
+        if (mem == null)
+            return Fail(404, "Invalid ID Does Not Exist");
+
+        string email = AppApiCore.Str(mem, "Email");
+        string mobile = AppApiCore.Str(mem, "mobl");
+        string pan = kyc.PanNo != "" ? kyc.PanNo : AppApiCore.Str(mem, "panno");
+
+        JObject m = new JObject();
+        m["idno"] = member.IdNo;
+        m["name"] = AppApiCore.Str(mem, "memname");
+        m["email"] = email;
+        m["emaileditable"] = email == "";
+        m["mobile"] = mobile == "0" ? "" : mobile;
+        m["mobileeditable"] = mobile == "" || mobile == "0";
+        m["panno"] = pan;
+        m["paneditable"] = pan == "";
+
+        JObject k = new JObject();
+        k["kitid"] = kitId;
+        k["kitname"] = AppApiCore.Str(kit, "KitName");
+        k["amount"] = AppApiCore.Dec(kit, "KitAmount");
+
+        JArray modes = new JArray();
+        modes.Add(new JObject { { "code", "WALLET" }, { "name", "Wallet" } });
+        modes.Add(new JObject { { "code", "PG" }, { "name", "Payment Gateway" } });
+
+        JArray wallets = new JArray();
+        DataSet dsW = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec Sp_GetWalletTypePetroCardINR");
+        if (dsW.Tables.Count > 0)
+        {
+            foreach (DataRow r in dsW.Tables[0].Rows)
+            {
+                string code = AppApiCore.Str(r, "Actype");
+                if (code == "" || code.ToUpper() == "Z")
+                    continue;
+                JObject w = new JObject();
+                w["code"] = code;
+                w["name"] = AppApiCore.Str(r, "WalletName");
+                w["balance"] = GetBalance(member.FormNo, code, AppApiCore.Constr1);
+                wallets.Add(w);
+            }
+        }
+
+        JObject data = new JObject();
+        data["kit"] = k;
+        data["member"] = m;
+        data["paymentmodes"] = modes;
+        data["wallettypes"] = wallets;
+        data["genders"] = CodeList(SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec Sp_getGender"),
+                                   "GenderCode", "GenderName");
+        data["states"] = CodeList(SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text,
+                                   "SELECT StateCode, StateName FROM epayind..M_STateDivMaster WHERE ActiveStatus = 'Y' AND RowStatus = 'Y' ORDER BY StateCode"),
+                                   "StateCode", "StateName");
+        return Success("", data);
+    }
+
+    /// <summary>PetroCardFinalPurchase.aspx -> BtnSubmit_Click: WALLET se seedha purchase, PG se UPI payment url.</summary>
+    private ApiResult PetroCardPurchase()
+    {
+        string mode = Val("paymentmode").ToUpper();
+        string walletType = Val("wallettype");
+        if (mode != "WALLET" && mode != "PG")
+            return Fail(400, "Please Select Payment Mode.!");
+        if (mode == "WALLET" && (walletType == "" || walletType.ToUpper() == "Z"))
+            return Fail(400, "Please Select Wallet Type.!");
+
+        if (IsDuplicateRequest())
+            return Fail(409, DuplicateMsg);
+
+        int kitId;
+        DataRow kit;
+        PanKyc kyc;
+        ApiResult check = PetroCardChecks(out kitId, out kit, out kyc);
+        if (check != null)
+            return check;
+
+        DataRow mem = GetPetroMember();
+        if (mem == null)
+            return Fail(404, "Invalid ID Does Not Exist");
+
+        // Web jaisa: DB mein value hai to wahi (field locked), warna app wali
+        string dbEmail = AppApiCore.Str(mem, "Email");
+        string dbMobile = AppApiCore.Str(mem, "mobl");
+        string dbPan = AppApiCore.Str(mem, "panno");
+        string name = AppApiCore.Str(mem, "memname");
+        string email = dbEmail != "" ? dbEmail : Val("email");
+        string mobile = dbMobile != "" && dbMobile != "0" ? dbMobile : Val("mobile");
+        string pan = (kyc.PanNo != "" ? kyc.PanNo : (dbPan != "" ? dbPan : Val("panno"))).ToUpper();
+        string whatsapp = Val("whatsappno");
+        string gender = Val("gender");
+        string dob = Val("dob");
+        string address = Val("address");
+        string pincode = Val("pincode");
+        string stateCode = Val("statecode");
+        string city = Val("city");
+        string district = Val("district");
+
+        DateTime dobDate;
+        if (gender == "" || gender.ToUpper() == "Z")
+            return Fail(400, "Please Select Gender.!");
+        if (email == "")
+            return Fail(400, "Please Enter Email Id.!");
+        if (!System.Text.RegularExpressions.Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+            return Fail(400, "Please Enter valid Email ID.!");
+        if (!System.Text.RegularExpressions.Regex.IsMatch(mobile, @"^[1-9]\d{9}$"))
+            return Fail(400, "Please Enter valid mobile Number.!");
+        if (!System.Text.RegularExpressions.Regex.IsMatch(whatsapp, @"^[1-9]\d{9}$"))
+            return Fail(400, "Please Enter valid Whatsapp Number.!");
+        if (!System.Text.RegularExpressions.Regex.IsMatch(pan, @"^[A-Z]{5}[0-9]{4}[A-Z]$"))
+            return Fail(400, "Please Enter valid Pan No.!");
+        if (!DateTime.TryParseExact(dob, "dd-MMM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dobDate))
+            return Fail(400, "Please Enter Date Of Birth (dd-MMM-yyyy).!");
+        if (city == "")
+            return Fail(400, "Please Enter City.!");
+        if (district == "")
+            return Fail(400, "Please Enter District.!");
+
+        DataSet dsState = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text,
+            "SELECT StateName FROM epayind..M_STateDivMaster WHERE StateCode = @StateCode AND ActiveStatus = 'Y' AND RowStatus = 'Y'",
+            new SqlParameter("@StateCode", SqlDbType.VarChar, 20) { Value = stateCode });
+        if (stateCode == "" || stateCode == "0" || dsState.Tables[0].Rows.Count == 0)
+            return Fail(400, "Please Select State.!");
+        string stateName = AppApiCore.Str(dsState.Tables[0].Rows[0], "StateName");
+
+        decimal amount = AppApiCore.Dec(kit, "KitAmount");
+        string kitName = AppApiCore.Str(kit, "KitName");
+        string amountStr = amount.ToString("0.00", CultureInfo.InvariantCulture);
+        if (amount <= 0)
+            return Fail(400, "Invalid package amount.");
+
+        if (mode == "WALLET" && GetBalance(member.FormNo, walletType, AppApiCore.Constr) < amount)
+            return Fail(400, "You do not have enough balance for Purchasing.");
+
+        if (InsertTrans("Insert into Trnactive (Transid, Rectimestamp) values(@Transid, getdate())") == 0)
+            return Fail(500, "Try Again After Some Time.!");
+
+        if (mode == "PG")
+        {
+            string orderId = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            refNo = orderId;
+            SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text,
+                "INSERT INTO PetroOnlineTransaction(Orderid, Orderdate, Amount, FormNo, Kitid, memberID, Name, Mobl, WhatsappNo, Email, Panno, dob, Address1, Pincode, City, District, Statename, StateCode, Gender) " +
+                "VALUES(@Orderid, GETDATE(), @Amount, @FormNo, @KitId, @MemberId, @Name, @Mobl, @Whatsapp, @Email, @Pan, @Dob, @Address, @Pincode, @City, @District, @StateName, @StateCode, @Gender)",
+                new SqlParameter("@Orderid", SqlDbType.VarChar, 50) { Value = orderId },
+                new SqlParameter("@Amount", SqlDbType.VarChar, 20) { Value = amountStr },
+                new SqlParameter("@FormNo", SqlDbType.VarChar, 20) { Value = member.FormNo.ToString() },
+                new SqlParameter("@KitId", SqlDbType.VarChar, 10) { Value = kitId.ToString() },
+                new SqlParameter("@MemberId", SqlDbType.VarChar, 50) { Value = member.IdNo },
+                new SqlParameter("@Name", SqlDbType.NVarChar, 200) { Value = name },
+                new SqlParameter("@Mobl", SqlDbType.VarChar, 20) { Value = mobile },
+                new SqlParameter("@Whatsapp", SqlDbType.VarChar, 20) { Value = whatsapp },
+                new SqlParameter("@Email", SqlDbType.VarChar, 200) { Value = email },
+                new SqlParameter("@Pan", SqlDbType.VarChar, 20) { Value = pan },
+                new SqlParameter("@Dob", SqlDbType.VarChar, 20) { Value = dob },
+                new SqlParameter("@Address", SqlDbType.NVarChar, 500) { Value = address },
+                new SqlParameter("@Pincode", SqlDbType.VarChar, 10) { Value = pincode },
+                new SqlParameter("@City", SqlDbType.NVarChar, 100) { Value = city },
+                new SqlParameter("@District", SqlDbType.NVarChar, 100) { Value = district },
+                new SqlParameter("@StateName", SqlDbType.NVarChar, 100) { Value = stateName },
+                new SqlParameter("@StateCode", SqlDbType.VarChar, 20) { Value = stateCode },
+                new SqlParameter("@Gender", SqlDbType.VarChar, 10) { Value = gender });
+
+            return InitiateUpiPayment(orderId, amount, kitId, kitName, PetroWebHookUrl, "PetroCardFinalPurchase");
+        }
+
+        // WALLET -> FUNPETROCARDPurchase()
+        string billNo = RandomDigits(6);
+        refNo = refNo + " | Bill:" + billNo;
+        string result;
+        try
+        {
+            DataSet dsBuy = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text,
+                "EXEC Sp_PaymentPetroCardINR @IdNo, @KitId, '', 'USDT', @FormNo, @Amount, @BillNo, @Name, @Email, @Mobl, @Pan, @Dob, @Address, @Pincode, @StateName, @City, @District, @Whatsapp, @WalletType, @Gender",
+                new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo },
+                new SqlParameter("@KitId", SqlDbType.VarChar, 10) { Value = kitId.ToString() },
+                new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo },
+                new SqlParameter("@Amount", SqlDbType.VarChar, 20) { Value = amountStr },
+                new SqlParameter("@BillNo", SqlDbType.VarChar, 50) { Value = billNo },
+                new SqlParameter("@Name", SqlDbType.NVarChar, 200) { Value = name },
+                new SqlParameter("@Email", SqlDbType.VarChar, 200) { Value = email },
+                new SqlParameter("@Mobl", SqlDbType.VarChar, 20) { Value = mobile },
+                new SqlParameter("@Pan", SqlDbType.VarChar, 20) { Value = pan },
+                new SqlParameter("@Dob", SqlDbType.VarChar, 20) { Value = dob },
+                new SqlParameter("@Address", SqlDbType.NVarChar, 500) { Value = address },
+                new SqlParameter("@Pincode", SqlDbType.VarChar, 10) { Value = pincode },
+                new SqlParameter("@StateName", SqlDbType.NVarChar, 100) { Value = stateName },
+                new SqlParameter("@City", SqlDbType.NVarChar, 100) { Value = city },
+                new SqlParameter("@District", SqlDbType.NVarChar, 100) { Value = district },
+                new SqlParameter("@Whatsapp", SqlDbType.VarChar, 20) { Value = whatsapp },
+                new SqlParameter("@WalletType", SqlDbType.VarChar, 10) { Value = walletType },
+                new SqlParameter("@Gender", SqlDbType.VarChar, 10) { Value = gender });
+            result = dsBuy.Tables.Count > 0 && dsBuy.Tables[0].Rows.Count > 0 ? AppApiCore.Str(dsBuy.Tables[0].Rows[0], "Result") : "";
+        }
+        catch (Exception ex)
+        {
+            result = "EXCEPTION: " + ex.Message;
+        }
+
+        if (result.ToUpper() != "SUCCESS")
+        {
+            ApiResult failed = Fail(400, "Petro Card Purchase Not Successfully!!");
+            failed.InternalError = "Sp_PaymentPetroCardINR=" + result + " BillNo=" + billNo + " KitId=" + kitId;
+            return failed;
+        }
+
+        JObject data = new JObject();
+        data["paymentmode"] = "WALLET";
+        data["billno"] = billNo;
+        data["kitid"] = kitId;
+        data["kitname"] = kitName;
+        data["amount"] = amount;
+        data["walletbalance"] = GetBalance(member.FormNo, walletType, AppApiCore.Constr);
+        return Success("Petro Card Purchase Successfully.!", data);
+    }
+
+    /// <summary>Kit valid (12/13/14), PAN verified, pehle koi petro kit nahi liya. Sab theek = null.</summary>
+    private ApiResult PetroCardChecks(out int kitId, out DataRow kit, out PanKyc kyc)
+    {
+        kit = null;
+        kyc = null;
+        if (!TryInt("kitid", out kitId) || !PetroKitIds.Contains(kitId))
+            return Fail(400, "Invalid Petro Card kit.");
+
+        kyc = GetPanKyc();
+        if (!kyc.Verified)
+            return Fail(400, "PAN verification is mandatory before purchasing a Petro Card Kit.");
+
+        if (GetPurchasedPetroKitId() > 0)
+            return Fail(400, "You have already purchased a Petro Card Kit. Only one kit is allowed per member.");
+
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text,
+            "SELECT KitAmount, KitName FROM epayind..M_kitmaster WHERE kitid = @KitId",
+            new SqlParameter("@KitId", SqlDbType.Int) { Value = kitId });
+        if (ds.Tables[0].Rows.Count == 0)
+            return Fail(404, "Package not found.");
+        kit = ds.Tables[0].Rows[0];
+        return null;
+    }
+
+    private class PanKyc
+    {
+        public string Status = "NOTSUBMITTED";
+        public bool Verified;
+        public string PanNo = "";
+    }
+
+    /// <summary>USP_GetPanKycStatus: VERIFIED / PENDING / REJECTED / NOTSUBMITTED.</summary>
+    private PanKyc GetPanKyc()
+    {
+        PanKyc kyc = new PanKyc();
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec USP_GetPanKycStatus @FormNo",
+            new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo });
+        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+        {
+            DataRow r = ds.Tables[0].Rows[0];
+            kyc.Status = AppApiCore.Str(r, "StatusText").ToUpper();
+            if (kyc.Status == "")
+                kyc.Status = "NOTSUBMITTED";
+            kyc.Verified = r.Table.Columns.Contains("IsVerified") ? AppApiCore.Int(r, "IsVerified") == 1 : kyc.Status == "VERIFIED";
+            kyc.PanNo = AppApiCore.Str(r, "PanNo").ToUpper();
+        }
+        return kyc;
+    }
+
+    /// <summary>PETROCARDPurchase.aspx -> LoadPanKycStatus() ke banner texts + cpanel KYC link.</summary>
+    private JObject PanKycJson(PanKyc kyc)
+    {
+        string title, message, button;
+        switch (kyc.Status)
+        {
+            case "VERIFIED":
+                title = "PAN Verified";
+                message = "Your PAN verification is complete. You can proceed with your Petro Card Package purchase.";
+                button = "";
+                break;
+            case "REJECTED":
+                title = "PAN Verification Rejected";
+                message = "Your PAN details were rejected during verification. Please re-submit correct PAN details from your account to continue.";
+                button = "Re-submit PAN";
+                break;
+            case "PENDING":
+                title = "PAN Verification Pending";
+                message = "Your PAN details have been submitted and are under review. You can purchase a Petro Card Package once the verification is approved.";
+                button = "View KYC Status";
+                break;
+            default:
+                title = "PAN Verification Required";
+                message = "PAN verification is mandatory before purchasing a Petro Card Package. Please complete your PAN KYC from your account.";
+                button = "Verify PAN Now";
+                break;
+        }
+
+        JObject o = new JObject();
+        o["status"] = kyc.Status;
+        o["verified"] = kyc.Verified;
+        o["title"] = title;
+        o["message"] = message;
+        o["buttontext"] = button;
+        o["kycurl"] = kyc.Verified ? "" : CpanelKycUrl();
+        return o;
+    }
+
+    /// <summary>Web jaisa cpanel auto-login link (PAN KYC page). ID mein ghante ka code hai, isliye har baar naya lo.</summary>
+    private string CpanelKycUrl()
+    {
+        string lgnT;
+        using (TripleDESCryptoServiceProvider des = new TripleDESCryptoServiceProvider())
+        using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
+        {
+            des.Key = md5.ComputeHash(Encoding.ASCII.GetBytes(CpanelLoginKey));
+            des.Mode = CipherMode.ECB;
+            byte[] buffer = Encoding.ASCII.GetBytes("uid=" + member.IdNo + "&pwd=" + member.Passw);
+            lgnT = Convert.ToBase64String(des.CreateEncryptor().TransformFinalBlock(buffer, 0, buffer.Length));
+        }
+
+        DateTime now = DateTime.Now;
+        string id = now.Day.ToString() + (now.Hour - 1).ToString() + now.Year.ToString() + (now.Month - 1).ToString();
+        return "https://cpanel.epayindia.in/Default.aspx?lgnT=" + lgnT + "&ID=" + id + "&RedirectTo=PANKYC";
+    }
+
+    /// <summary>Member ne pehle se koi Petro kit (12/13/14) liya hai to uska kitid, warna 0.</summary>
+    private int GetPurchasedPetroKitId()
+    {
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text,
+            "SELECT TOP 1 kitid FROM epayind..repurchincome WHERE formno = @FormNo AND kitid IN (12, 13, 14) ORDER BY kitid",
+            new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo });
+        return ds.Tables[0].Rows.Count > 0 ? AppApiCore.Int(ds.Tables[0].Rows[0], "kitid") : 0;
+    }
+
+    /// <summary>Sp_GetMemberNamer: naam, email, mobile, pan (form prefill).</summary>
+    private DataRow GetPetroMember()
+    {
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec Sp_GetMemberNamer @IdNo",
+            new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo });
+        return ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0 ? ds.Tables[0].Rows[0] : null;
+    }
+
+    /// <summary>Dropdown list -> [{code, name}], "--Select--" (Z / 0) hata ke.</summary>
+    private static JArray CodeList(DataSet ds, string codeCol, string nameCol)
+    {
+        JArray arr = new JArray();
+        if (ds.Tables.Count == 0)
+            return arr;
+        foreach (DataRow r in ds.Tables[0].Rows)
+        {
+            string code = AppApiCore.Str(r, codeCol);
+            if (code == "" || code == "0" || code.ToUpper() == "Z")
+                continue;
+            arr.Add(new JObject { { "code", code }, { "name", AppApiCore.Str(r, nameCol) } });
+        }
+        return arr;
+    }
+
+    private string AbsoluteUrl(string path)
+    {
+        if (string.IsNullOrEmpty(path) || path.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            return path;
+        return SiteRoot() + path.TrimStart('~', '/');
+    }
+
+    /// <summary>"Order No." -> "orderno" (sirf a-z 0-9).</summary>
+    private static string JsonKey(string columnName)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (char ch in (columnName ?? "").ToLowerInvariant())
+        {
+            if ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9'))
+                sb.Append(ch);
+        }
+        return sb.Length > 0 ? sb.ToString() : "col";
+    }
+
+    /// <summary>
+    /// Optional paging: "page" (1 se) aur "pagesize" (default 20, max 100).
+    /// page na bheja ho to saare records.
+    /// </summary>
+    private JObject Paged(JArray all, string name)
+    {
+        int page;
+        int pageSize;
+        if (!TryInt("pagesize", out pageSize))
+            pageSize = 20;
+        pageSize = Math.Min(pageSize, 100);
+
+        JObject data = new JObject();
+        data["total"] = all.Count;
+        if (TryInt("page", out page))
+        {
+            data["page"] = page;
+            data["pagesize"] = pageSize;
+            data["totalpages"] = (all.Count + pageSize - 1) / pageSize;
+            data[name] = new JArray(all.Skip((page - 1) * pageSize).Take(pageSize));
+        }
+        else
+        {
+            data[name] = all;
+        }
+        return data;
+    }
+
+    /* =====================================================================
        Wallet (member + master utility wallet)
        ===================================================================== */
 
     private static decimal GetBalance(int formNo)
     {
-        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Select Balance From dbo.ufnGetBalance(@FormNo, 'B')",
-            new SqlParameter("@FormNo", SqlDbType.Int) { Value = formNo });
+        return GetBalance(formNo, "B", AppApiCore.Constr1);
+    }
+
+    /// <summary>ufnGetBalance(formno, wallet type). Petro Card pages 'S' / Actype wallet use karte hain.</summary>
+    private static decimal GetBalance(int formNo, string walletType, string connection)
+    {
+        DataSet ds = SqlHelper.ExecuteDataset(connection, CommandType.Text, "Select Balance From dbo.ufnGetBalance(@FormNo, @Type)",
+            new SqlParameter("@FormNo", SqlDbType.Int) { Value = formNo },
+            new SqlParameter("@Type", SqlDbType.VarChar, 10) { Value = walletType });
         return ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0 ? AppApiCore.Dec(ds.Tables[0].Rows[0], "Balance") : 0;
     }
 

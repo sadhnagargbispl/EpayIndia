@@ -574,6 +574,7 @@ Response:
         "orderid": "20260924101511120",
         "kitid": 7,
         "kitname": "Platinum",
+        "ordertype": "SUBSCRIPTION",
         "amount": 2499.00,
         "orderdate": "2026-09-24 10:15:11",
         "status": "SUCCESS",
@@ -613,3 +614,224 @@ Response:
     "data": null
 }
 Note : Call this only after the user confirms. On success, log the user out and open the Login screen.
+
+18. Purchase History API (My Purchase Detail)
+Request:
+{"reqtype":"purchasehistory","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "purchasehistory",
+    "reqid": "20260924180105112233",
+    "data": {
+        "total": 2,
+        "page": 1,
+        "pagesize": 20,
+        "totalpages": 1,
+        "records": [
+            {
+                "billno": "482913",
+                "amount": 2100.00,
+                "kitid": 1005,
+                "kitname": "Movie Package (10 Ticket)",
+                "orderdate": "24-Sep-2026",
+                "redeemtype": "MOVIE"
+            },
+            {
+                "billno": "375108",
+                "amount": 2000.00,
+                "kitid": 1001,
+                "kitname": "Food Package (5 Coupon)",
+                "orderdate": "02-Sep-2026",
+                "redeemtype": "FOOD"
+            }
+        ]
+    }
+}
+Note : Returns the coupon purchase records of the member, newest first.
+Note : page and pagesize are optional (pagesize default 20, max 100). Without page, all records are returned.
+Note : redeemtype FOOD / MOVIE can be used to show a Redeem button (Redeem URL API).
+
+19. Petro Card Purchase Report API
+Request:
+{"reqtype":"petrocardreport","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "petrocardreport",
+    "reqid": "20260924180210445566",
+    "data": {
+        "columns": [
+            {
+                "key": "orderno",
+                "title": "Order No."
+            },
+            {
+                "key": "kitname",
+                "title": "Kit Name"
+            },
+            {
+                "key": "amount",
+                "title": "Amount"
+            },
+            {
+                "key": "purchasedate",
+                "title": "Purchase Date"
+            }
+        ],
+        "total": 1,
+        "page": 1,
+        "pagesize": 20,
+        "totalpages": 1,
+        "records": [
+            {
+                "orderno": "PC250912001",
+                "kitname": "PETRO CARD SILVER RS. 5000/-",
+                "amount": 5000.00,
+                "purchasedate": "18-Dec-2025"
+            }
+        ]
+    }
+}
+Note : Returns the Petro Card purchase history, with the same columns as the website report.
+Note : columns[] gives the heading (title) and key of every column. Build the table from columns[] and read each value from records[] with the same key.
+Note : The column names in the example may differ from the live report.
+Note : page and pagesize are optional (pagesize default 20, max 100). Without page, all records are returned.
+
+20. Petro Card Kits API
+Request:
+{"reqtype":"petrocardkits","userid":"EPI123456","passwd":"EPI@123456"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "petrocardkits",
+    "reqid": "20260924190101223344",
+    "data": {
+        "walletbalance": 12500.00,
+        "pankyc": {
+            "status": "VERIFIED",
+            "verified": true,
+            "title": "PAN Verified",
+            "message": "Your PAN verification is complete. You can proceed with your Petro Card Package purchase.",
+            "buttontext": "",
+            "kycurl": ""
+        },
+        "purchasedkitid": 0,
+        "kits": [
+            {
+                "kitid": 12,
+                "kitname": "PETRO CARD SILVER",
+                "amount": 5000.00,
+                "amountdisplay": "5,000",
+                "image": "https://epayindia.in/images/petro-silver.png",
+                "icon": "🥈",
+                "theme": "silver",
+                "themelabel": "Silver",
+                "benefits": "Fuel cashback on every refill",
+                "status": "AVAILABLE",
+                "canbuy": true,
+                "message": ""
+            }
+        ]
+    }
+}
+Note : Flow: petrocardkits (list) -> tap a kit -> petrocardform -> Submit -> petrocardpurchase.
+Note : Each kit has a status: AVAILABLE (Buy Now), PURCHASED (Already Purchased), LOCKED (another Petro Card kit is already purchased), KYC_REQUIRED (PAN not verified).
+Note : Allow Buy Now only when canbuy is true; otherwise show message. A member can buy only one Petro Card kit.
+Note : If pankyc.verified is false, show the banner (title, message) and a button (buttontext). The button opens kycurl in a browser. kycurl expires soon - do not store it.
+Note : benefits may contain HTML.
+
+21. Petro Card Form API
+Request:
+{"reqtype":"petrocardform","userid":"EPI123456","passwd":"EPI@123456","kitid":12}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "petrocardform",
+    "reqid": "20260924190205556677",
+    "data": {
+        "kit": {
+            "kitid": 12,
+            "kitname": "PETRO CARD SILVER RS. 5000/-",
+            "amount": 5000.00
+        },
+        "member": {
+            "idno": "EPI123456",
+            "name": "EPay India",
+            "email": "member@example.com",
+            "emaileditable": false,
+            "mobile": "",
+            "mobileeditable": true,
+            "panno": "ABCDE1234F",
+            "paneditable": false
+        },
+        "paymentmodes": [
+            {
+                "code": "WALLET",
+                "name": "Wallet"
+            },
+            {
+                "code": "PG",
+                "name": "Payment Gateway"
+            }
+        ],
+        "wallettypes": [
+            {
+                "code": "S",
+                "name": "Shopping Wallet",
+                "balance": 12500.00
+            }
+        ],
+        "genders": [
+            {
+                "code": "M",
+                "name": "Male"
+            },
+            {
+                "code": "F",
+                "name": "Female"
+            }
+        ],
+        "states": [
+            {
+                "code": "8",
+                "name": "Rajasthan"
+            }
+        ]
+    }
+}
+Note : Returns the purchase form data: kit amount, member details (pre-filled), payment modes, wallet types with balance, genders and states.
+Note : If an ...editable flag is false, show the value as read-only. The server always uses the saved value for that field.
+Note : Returns code 400 with msg if PAN KYC is not verified or a Petro Card kit is already purchased.
+
+22. Petro Card Purchase API
+Request:
+{"reqtype":"petrocardpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":12,"paymentmode":"WALLET","wallettype":"S","gender":"M","dob":"15-Aug-1990","email":"member@example.com","mobile":"9876543210","whatsappno":"9876543210","panno":"ABCDE1234F","address":"12, MG Road","pincode":"302001","statecode":"8","city":"Jaipur","district":"Jaipur"}
+Response:
+{
+    "response": "OK",
+    "code": 200,
+    "msg": "Petro Card Purchase Successfully.!",
+    "reqtype": "petrocardpurchase",
+    "reqid": "20260924190310889900",
+    "data": {
+        "paymentmode": "WALLET",
+        "billno": "518342",
+        "kitid": 12,
+        "kitname": "PETRO CARD SILVER RS. 5000/-",
+        "amount": 5000.00,
+        "walletbalance": 7500.00
+    }
+}
+Note : paymentmode = WALLET (instant purchase from wallet; wallettype is required) or PG (UPI payment gateway).
+Note : For PG, the response contains orderid and paymenturl. Open paymenturl in a WebView; when it reaches PETROCARDPurchase.aspx, close it and call the Payment Status API (ordertype = PETROCARD).
+Note : dob format is dd-MMM-yyyy (e.g. 15-Aug-1990). statecode and gender come from the Petro Card Form API.
+Note : The server takes the amount from the database. The same request again within 20 seconds returns code 409.

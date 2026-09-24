@@ -456,16 +456,25 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Subscription / Monthly = OnlineTransaction,  Petro Card (PG) = PetroOnlineTransaction
     SELECT TOP 1
-           O.Orderid, O.Amount, O.KitId, K.KitName,
-           CONVERT(VARCHAR(20), O.Orderdate, 120) AS OrderDate,
+           X.Orderid, X.Amount, X.KitId, K.KitName, X.OrderType,
+           CONVERT(VARCHAR(20), X.Orderdate, 120) AS OrderDate,
            UPPER(ISNULL(NULLIF(LTRIM(RTRIM(L.Status)), ''), 'PENDING')) AS Status,
            CONVERT(VARCHAR(20), L.Responsedate, 120) AS ResponseDate
-      FROM dbo.OnlineTransaction O
-      LEFT JOIN dbo.LoginTransaction L ON L.TransactionId = O.Orderid
-      LEFT JOIN dbo.M_KitMaster K ON K.KitId = O.KitId
-     WHERE O.Orderid = @OrderId
-       AND O.FormNo = @FormNo
+      FROM (
+            SELECT CAST(O.Orderid AS VARCHAR(50)) AS Orderid, CAST(O.Amount AS DECIMAL(18,2)) AS Amount,
+                   CAST(O.KitId AS INT) AS KitId, O.Orderdate, 'SUBSCRIPTION' AS OrderType
+              FROM dbo.OnlineTransaction O
+             WHERE O.Orderid = @OrderId AND O.FormNo = @FormNo
+            UNION ALL
+            SELECT CAST(P.Orderid AS VARCHAR(50)), CAST(P.Amount AS DECIMAL(18,2)),
+                   CAST(P.Kitid AS INT), P.Orderdate, 'PETROCARD'
+              FROM dbo.PetroOnlineTransaction P
+             WHERE P.Orderid = @OrderId AND P.FormNo = @FormNo
+           ) X
+      LEFT JOIN dbo.LoginTransaction L ON L.TransactionId = X.Orderid
+      LEFT JOIN dbo.M_KitMaster K ON K.KitId = X.KitId
      ORDER BY L.Responsedate DESC;
 END
 GO

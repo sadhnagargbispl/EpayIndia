@@ -530,6 +530,8 @@
             <li><a href="#s-monthly"><span class="n">8</span>Activation Points</a></li>
             <li><a href="#s-paystatus"><span class="n">9</span>Payment Status</a></li>
             <li><a href="#s-delete"><span class="n">10</span>Account Delete</a></li>
+            <li><a href="#s-reports"><span class="n">11</span>Purchase Reports</a></li>
+            <li><a href="#s-petro"><span class="n">12</span>Petro Card Purchase</a></li>
         </ol>
         <h4>Reference</h4>
         <ul>
@@ -1249,6 +1251,7 @@
   "reqid": "20260924101630009911",
   "data": {
     "orderid": "20260924101511120", "kitid": 7, "kitname": "Platinum",
+    "ordertype": "SUBSCRIPTION",
     "amount": 2499.00, "orderdate": "2026-09-24 10:15:11",
     "status": "SUCCESS", "responsedate": "2026-09-24 10:16:02"
   }
@@ -1286,6 +1289,217 @@
             </div>
         </section>
 
+        <section class="screen" id="s-reports">
+            <div class="screen-head"><h2>Purchase Reports</h2><span class="step">Screen 11 · <span class="webpage">MyPurchaseDetail.aspx · PetroCardPurchaseReport.aspx</span></span></div>
+            <div class="api">
+                <div class="api-title"><span class="rt">purchasehistory</span><span class="pill auth">ID + password</span></div>
+                <p>Member ke coupon purchase records, naya sabse pehle. <code>page</code> / <code>pagesize</code> optional hain — na bhejo to saare records aate hain.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"purchasehistory","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "purchasehistory",
+    "reqid": "20260924180105112233",
+    "data": {
+        "total": 2,
+        "page": 1,
+        "pagesize": 20,
+        "totalpages": 1,
+        "records": [
+            {
+                "billno": "482913",
+                "amount": 2100.00,
+                "kitid": 1005,
+                "kitname": "Movie Package (10 Ticket)",
+                "orderdate": "24-Sep-2026",
+                "redeemtype": "MOVIE"
+            },
+            {
+                "billno": "375108",
+                "amount": 2000.00,
+                "kitid": 1001,
+                "kitname": "Food Package (5 Coupon)",
+                "orderdate": "02-Sep-2026",
+                "redeemtype": "FOOD"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">petrocardreport</span><span class="pill auth">ID + password</span></div>
+                <p>Petro Card purchase history (<code>GetPetroCartReportINR</code>). Website jaise hi saare columns aate hain: <code>columns[]</code> mein har column ka <code>title</code> (heading) aur <code>key</code> hai, aur <code>records[]</code> ki har row mein wahi keys hain. Table isi se banao. Example ke column names asli SP ke hisaab se alag ho sakte hain.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardreport","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "petrocardreport",
+    "reqid": "20260924180210445566",
+    "data": {
+        "columns": [
+            {"key": "orderno", "title": "Order No."},
+            {"key": "kitname", "title": "Kit Name"},
+            {"key": "amount", "title": "Amount"},
+            {"key": "purchasedate", "title": "Purchase Date"}
+        ],
+        "total": 1,
+        "page": 1,
+        "pagesize": 20,
+        "totalpages": 1,
+        "records": [
+            {
+                "orderno": "PC250912001",
+                "kitname": "PETRO CARD SILVER RS. 5000/-",
+                "amount": 5000.00,
+                "purchasedate": "18-Dec-2025"
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="screen" id="s-petro">
+            <div class="screen-head"><h2>Petro Card Purchase</h2><span class="step">Screen 12 · <span class="webpage">PETROCARDPurchase.aspx · PetroCardFinalPurchase.aspx</span></span></div>
+            <div class="note"><b>Flow:</b> <code>petrocardkits</code> (list) → kit par tap → <code>petrocardform</code> (form) → Submit → <code>petrocardpurchase</code>. Purchase se pehle PAN KYC verified hona zaroori hai, aur ek member sirf ek hi Petro Card kit le sakta hai.</div>
+            <div class="api">
+                <div class="api-title"><span class="rt">petrocardkits</span><span class="pill auth">ID + password</span></div>
+                <p>Wallet balance, PAN KYC status aur saare Petro Card kits. Har kit ka <code>status</code>: <code>AVAILABLE</code> (Buy Now), <code>PURCHASED</code> (Already Purchased), <code>LOCKED</code> (dusra kit pehle se liya hai), <code>KYC_REQUIRED</code> (PAN verify nahi hai). <code>canbuy</code> true ho tabhi Buy Now chalao, warna <code>message</code> dikhao. <code>pankyc.verified</code> false ho to banner (<code>title</code>, <code>message</code>) aur button (<code>buttontext</code>) dikhao — button par <code>kycurl</code> browser mein kholo. <code>kycurl</code> thodi der hi chalta hai, isliye save mat karo. <code>benefits</code> mein HTML ho sakta hai.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardkits","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "petrocardkits",
+    "reqid": "20260924190101223344",
+    "data": {
+        "walletbalance": 12500.00,
+        "pankyc": {
+            "status": "VERIFIED",
+            "verified": true,
+            "title": "PAN Verified",
+            "message": "Your PAN verification is complete. You can proceed with your Petro Card Package purchase.",
+            "buttontext": "",
+            "kycurl": ""
+        },
+        "purchasedkitid": 0,
+        "kits": [
+            {
+                "kitid": 12,
+                "kitname": "PETRO CARD SILVER",
+                "amount": 5000.00,
+                "amountdisplay": "5,000",
+                "image": "https://epayindia.in/images/petro-silver.png",
+                "icon": "🥈",
+                "theme": "silver",
+                "themelabel": "Silver",
+                "benefits": "Fuel cashback on every refill",
+                "status": "AVAILABLE",
+                "canbuy": true,
+                "message": ""
+            }
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">petrocardform</span><span class="pill auth">ID + password</span></div>
+                <p>Purchase form ka data: kit amount, member ki details (pehle se bhari), payment modes, wallet types (balance ke saath), genders aur states. Jis field ka <code>...editable</code> false hai use sirf dikhao, edit mat karne do — server wahi value use karega. KYC verified na ho ya kit pehle se liya ho to <code>code 400</code> aur <code>msg</code>.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardform","userid":"EPI123456","passwd":"EPI@123456","kitid":12}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "petrocardform",
+    "reqid": "20260924190205556677",
+    "data": {
+        "kit": {
+            "kitid": 12,
+            "kitname": "PETRO CARD SILVER RS. 5000/-",
+            "amount": 5000.00
+        },
+        "member": {
+            "idno": "EPI123456",
+            "name": "EPay India",
+            "email": "member@example.com",
+            "emaileditable": false,
+            "mobile": "",
+            "mobileeditable": true,
+            "panno": "ABCDE1234F",
+            "paneditable": false
+        },
+        "paymentmodes": [
+            {"code": "WALLET", "name": "Wallet"},
+            {"code": "PG", "name": "Payment Gateway"}
+        ],
+        "wallettypes": [
+            {"code": "S", "name": "Shopping Wallet", "balance": 12500.00}
+        ],
+        "genders": [
+            {"code": "M", "name": "Male"},
+            {"code": "F", "name": "Female"}
+        ],
+        "states": [
+            {"code": "8", "name": "Rajasthan"}
+        ]
+    }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="api">
+                <div class="api-title"><span class="rt">petrocardpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet / UPI payment</span></div>
+                <p><code>paymentmode</code> = <code>WALLET</code> (wallet se turant purchase, <code>wallettype</code> zaroori) ya <code>PG</code> (UPI). <code>PG</code> par response mein <code>orderid</code> aur <code>paymenturl</code> aata hai — <code>paymenturl</code> WebView mein kholo, <code>PETROCARDPurchase.aspx</code> par pahunche to band karke <code>paymentstatus</code> call karo (<code>ordertype</code> = <code>PETROCARD</code>). <code>dob</code> ka format <code>dd-MMM-yyyy</code> hai. Amount server DB se leta hai. 20 second ke andar same request dobara aayi to <code>409</code>.</p>
+                <div class="pair">
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":12,"paymentmode":"WALLET","wallettype":"S","gender":"M","dob":"15-Aug-1990","email":"member@example.com","mobile":"9876543210","whatsappno":"9876543210","panno":"ABCDE1234F","address":"12, MG Road","pincode":"302001","statecode":"8","city":"Jaipur","district":"Jaipur"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Response · WALLET example<button type="button">Copy</button></div><pre>{
+    "response": "OK",
+    "code": 200,
+    "msg": "Petro Card Purchase Successfully.!",
+    "reqtype": "petrocardpurchase",
+    "reqid": "20260924190310889900",
+    "data": {
+        "paymentmode": "WALLET",
+        "billno": "518342",
+        "kitid": 12,
+        "kitname": "PETRO CARD SILVER RS. 5000/-",
+        "amount": 5000.00,
+        "walletbalance": 7500.00
+    }
+}</pre>
+                    </div>
+                </div>
+                <div class="tbl"><table>
+                    <thead><tr><th>code</th><th>msg (example)</th></tr></thead>
+                    <tbody>
+                        <tr><td>400</td><td>Please Select Payment Mode.! / Please Select Wallet Type.!</td></tr>
+                        <tr><td>400</td><td>PAN verification is mandatory before purchasing a Petro Card Kit.</td></tr>
+                        <tr><td>400</td><td>You have already purchased a Petro Card Kit. Only one kit is allowed per member.</td></tr>
+                        <tr><td>400</td><td>Please Enter valid Email ID.! / mobile / Whatsapp / Pan No / Date Of Birth / State / City / District</td></tr>
+                        <tr><td>400</td><td>You do not have enough balance for Purchasing.</td></tr>
+                        <tr><td>409</td><td>Your previous request is in process. Please wait a moment and try again.</td></tr>
+                    </tbody>
+                </table></div>
+            </div>
+        </section>
+
         <!-- ================= REFERENCE ================= -->
         <section class="block" id="all">
             <h2>All reqtypes</h2>
@@ -1310,6 +1524,11 @@
                         <tr><td>paymentstatus</td><td>Zaroori</td><td>orderid</td><td>Paymentgateway webhooks</td></tr>
                         <tr><td>deleteaccountcheck</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
                         <tr><td>deleteaccount</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
+                        <tr><td>purchasehistory</td><td>Zaroori</td><td>page, pagesize (optional)</td><td>MyPurchaseDetail.aspx</td></tr>
+                        <tr><td>petrocardreport</td><td>Zaroori</td><td>page, pagesize (optional)</td><td>PetroCardPurchaseReport.aspx</td></tr>
+                        <tr><td>petrocardkits</td><td>Zaroori</td><td>—</td><td>PETROCARDPurchase.aspx</td></tr>
+                        <tr><td>petrocardform</td><td>Zaroori</td><td>kitid</td><td>PetroCardFinalPurchase.aspx</td></tr>
+                        <tr><td>petrocardpurchase</td><td>Zaroori</td><td>kitid, paymentmode, wallettype, gender, dob, email, mobile, whatsappno, panno, address, pincode, statecode, city, district</td><td>PetroCardFinalPurchase.aspx</td></tr>
                     </tbody>
                 </table>
             </div>
