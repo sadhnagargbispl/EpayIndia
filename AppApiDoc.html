@@ -514,7 +514,7 @@
             <li><a href="#basics"><span class="n">·</span>Request &amp; response</a></li>
             <li><a href="#codes"><span class="n">·</span>Codes &amp; errors</a></li>
             <li><a href="#token"><span class="n">·</span>userid &amp; passwd</a></li>
-            <li><a href="#transid"><span class="n">·</span>transid (double tap)</a></li>
+            <li><a href="#transid"><span class="n">·</span>Double tap</a></li>
             <li><a href="#payment"><span class="n">·</span>Payment flow</a></li>
             <li><a href="#bridge"><span class="n">·</span>WebView bridge</a></li>
         </ul>
@@ -581,7 +581,7 @@
                         <tr><td>403</td><td>ID block hai</td><td><code>msg</code> dikhao, logout karo</td></tr>
                         <tr><td>404</td><td>Package / order / member nahi mila</td><td><code>msg</code> dikhao</td></tr>
                         <tr><td>405</td><td>POST ke alawa method</td><td>POST use karo</td></tr>
-                        <tr><td>409</td><td>Duplicate request (same <code>transid</code>)</td><td>Naya <code>transid</code> bana ke dobara try</td></tr>
+                        <tr><td>409</td><td>Same request 20 second ke andar dobara aayi (pichhli chal rahi hai ya ho chuki hai)</td><td><code>msg</code> dikhao, thodi der baad try karo</td></tr>
                         <tr><td>500</td><td>Server error</td><td>Retry option; support ko <code>reqid</code> do</td></tr>
                     </tbody>
                 </table>
@@ -600,11 +600,12 @@
         </section>
 
         <section class="block" id="transid">
-            <h2>transid — double tap se bachao</h2>
-            <p>Paisa ya request wali APIs (<code>couponpurchase</code>, <code>subscriptionpay</code>, <code>monthlyactivate</code>, <code>deleteaccount</code>) mein <code>transid</code> zaroori hai. Web page mein bhi yahi hota hai.</p>
+            <h2>Double tap se bachao</h2>
+            <p>App ko <code>transid</code> nahi bhejna hai. Paisa ya request wali APIs (<code>couponpurchase</code>, <code>subscriptionpay</code>, <code>monthlyactivate</code>, <code>deleteaccount</code>) mein server transaction number khud banata hai.</p>
             <ul class="plain">
-                <li>Button dabate hi 6–9 digit ka random number banao (pehla digit 0 na ho). Network retry mein <b>wahi</b> number bhejo.</li>
-                <li>Naye attempt mein, ya <code>409</code> ke baad, naya number banao.</li>
+                <li>Same user ki same API pichhli request ke 20 second ke andar dobara aaye to <code>code: 409</code> milta hai. Yeh tab hota hai jab pichhli request abhi chal rahi ho ya successful ho chuki ho. Isse double tap ya network retry par do baar paisa nahi katega.</li>
+                <li>Phir bhi button dabate hi use disable kar do, aur response aane tak "Please wait" dikhao.</li>
+                <li><code>409</code> aaye to user ko <code>msg</code> dikhao. Pichhla result dekhna ho to wallet balance ya order ki screen refresh karo.</li>
             </ul>
         </section>
 
@@ -1047,7 +1048,7 @@
                 <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet debit</span></div>
                 <p>Web page ke "Proceed to Pay" jaisa: balance check, package condition, utility wallet, phir voucher. Amount server DB se leta hai, isliye app amount nahi bhejta. Success par <code>billno</code> ke saath <a href="#s-thankyou">Thank You</a> screen kholo.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005,"transid":"583921"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
@@ -1067,7 +1068,7 @@
                             <tr><td>400</td><td>Insufficient Balance!!</td></tr>
                             <tr><td>400</td><td>Package condition ka message (Sp_GetPachageCondtion)</td></tr>
                             <tr><td>400</td><td>Insufficient Balance In Utility Wallet.Please Contact To Admin.!</td></tr>
-                            <tr><td>409</td><td>Duplicate request. Please try again.</td></tr>
+                            <tr><td>409</td><td>Your previous request is in process. Please wait a moment and try again.</td></tr>
                             <tr><td>500</td><td>Purchase not successful. Please contact support with reqid.</td></tr>
                         </tbody>
                     </table>
@@ -1141,7 +1142,7 @@
                 <div class="api-title"><span class="rt">subscriptionpay</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
                 <p>Order bana ke UPI payment URL deta hai. Aage ka flow <a href="#payment">Payment flow</a> mein hai.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7,"transid":"771204"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
@@ -1180,7 +1181,7 @@
                 <div class="api-title"><span class="rt">monthlyactivate</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
                 <p>Pehle ID active hai ya nahi aur is mahine activation allowed hai ya nahi, yeh check hota hai. Phir payment URL milta hai (<a href="#payment">Payment flow</a>).</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5,"transid":"640318"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
@@ -1233,7 +1234,7 @@
                 <div class="api-title"><span class="rt">deleteaccount</span><span class="pill auth">ID + password</span></div>
                 <p>User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword","transid":"318845"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
@@ -1260,16 +1261,16 @@
                         <tr><td>home</td><td>Zaroori</td><td>—</td><td>WebApp.aspx</td></tr>
                         <tr><td>couponlist</td><td>Nahi (common list)</td><td>—</td><td>Apppurchase-coupon.aspx</td></tr>
                         <tr><td>coupondetail</td><td>Zaroori</td><td>kitid</td><td>Apppurchase-coupon-details.aspx</td></tr>
-                        <tr><td>couponpurchase</td><td>Zaroori</td><td>kitid, transid</td><td>Apppurchase-coupon-details.aspx</td></tr>
+                        <tr><td>couponpurchase</td><td>Zaroori</td><td>kitid</td><td>Apppurchase-coupon-details.aspx</td></tr>
                         <tr><td>orderdetail</td><td>Zaroori</td><td>billno, kitid (optional)</td><td>AppThankYou.aspx</td></tr>
                         <tr><td>redeemurl</td><td>Zaroori</td><td>type or kitid</td><td>Food/MovieBookingRedirect.aspx</td></tr>
                         <tr><td>subscriptionpackages</td><td>Zaroori</td><td>—</td><td>Appsubscription-now.aspx</td></tr>
-                        <tr><td>subscriptionpay</td><td>Zaroori</td><td>kitid, transid</td><td>Appsubscription-now.aspx</td></tr>
+                        <tr><td>subscriptionpay</td><td>Zaroori</td><td>kitid</td><td>Appsubscription-now.aspx</td></tr>
                         <tr><td>monthlypackages</td><td>Nahi (common list)</td><td>—</td><td>Appmonthly-activation-points.aspx</td></tr>
-                        <tr><td>monthlyactivate</td><td>Zaroori</td><td>kitid, transid</td><td>Appmonthly-activation-points.aspx</td></tr>
+                        <tr><td>monthlyactivate</td><td>Zaroori</td><td>kitid</td><td>Appmonthly-activation-points.aspx</td></tr>
                         <tr><td>paymentstatus</td><td>Zaroori</td><td>orderid</td><td>Paymentgateway webhooks</td></tr>
                         <tr><td>deleteaccountcheck</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
-                        <tr><td>deleteaccount</td><td>Zaroori</td><td>transid</td><td>DeleteAccount.aspx</td></tr>
+                        <tr><td>deleteaccount</td><td>Zaroori</td><td>—</td><td>DeleteAccount.aspx</td></tr>
                     </tbody>
                 </table>
             </div>

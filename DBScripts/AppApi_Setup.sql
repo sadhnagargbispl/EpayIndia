@@ -9,7 +9,7 @@
    Naye objects:
      Tables : Tbl_AppApiLog, Tbl_AppApiExtCallLog, Tbl_AppApiToken
      SPs    : Sp_AppApiLog_Insert, Sp_AppApiLog_Update, Sp_AppApiExtLog_Insert,
-              Sp_AppApiLog_Search,
+              Sp_AppApiLog_Search, Sp_AppApi_DuplicateGuard,
               Sp_AppApi_TokenCreate, Sp_AppApi_TokenValidate, Sp_AppApi_TokenRevoke,
               Sp_App_GetMemberProfile, Sp_App_GetHomeData,
               Sp_App_GetSubscriptionPackages, Sp_App_GetPaymentStatus
@@ -193,6 +193,42 @@ BEGIN
 
     INSERT INTO dbo.Tbl_AppApiExtCallLog (LogId, ReqID, CallName, Url, RequestBody, ResponseBody, HttpStatus, ErrorMsg, DurationMs)
     VALUES (@LogId, @ReqID, @CallName, @Url, @RequestBody, @ResponseBody, @HttpStatus, LEFT(@ErrorMsg, 4000), @DurationMs);
+END
+GO
+
+/* Double tap / retry guard (couponpurchase, subscriptionpay, monthlyactivate, deleteaccount).
+   Apni log row mein FormNo bharta hai, phir dekhta hai ki same member ki same reqtype
+   pichhle @Seconds mein chal rahi hai (STARTED) ya ho chuki hai (OK).
+   Pending > 0 = nayi request rok do. sp_getapplock se ek member ki requests ek-ek karke check hoti hain. */
+IF OBJECT_ID('dbo.Sp_AppApi_DuplicateGuard', 'P') IS NOT NULL DROP PROCEDURE dbo.Sp_AppApi_DuplicateGuard;
+GO
+CREATE PROCEDURE dbo.Sp_AppApi_DuplicateGuard
+    @LogId   BIGINT,
+    @FormNo  INT,
+    @IdNo    VARCHAR(50),
+    @ReqType VARCHAR(50),
+    @Seconds INT = 20
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Pending INT, @Res VARCHAR(100) = 'AppApiGuard_' + CAST(@FormNo AS VARCHAR(20)) + '_' + @ReqType;
+
+    BEGIN TRAN;
+        EXEC sp_getapplock @Resource = @Res, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = 5000;
+
+        UPDATE dbo.Tbl_AppApiLog SET FormNo = @FormNo, IdNo = @IdNo WHERE LogId = @LogId;
+
+        SELECT @Pending = COUNT(1)
+          FROM dbo.Tbl_AppApiLog
+         WHERE FormNo  = @FormNo
+           AND ReqType = @ReqType
+           AND LogId  <> @LogId
+           AND ReqTime > DATEADD(SECOND, -@Seconds, GETDATE())
+           AND Status IN ('STARTED', 'OK');
+    COMMIT TRAN;
+
+    SELECT @Pending AS Pending;
 END
 GO
 

@@ -482,11 +482,10 @@ public partial class AppApi : System.Web.UI.Page
     private ApiResult CouponPurchase()
     {
         int kitId;
-        int transId;
         if (!TryInt("kitid", out kitId))
             return Fail(400, "kitid is required.");
-        if (!TryInt("transid", out transId))
-            return Fail(400, "transid (numeric, unique per attempt) is required.");
+        if (IsDuplicateRequest())
+            return Fail(409, DuplicateMsg);
 
         DataRow kit = GetCouponKit(kitId);
         if (kit == null)
@@ -509,9 +508,8 @@ public partial class AppApi : System.Web.UI.Page
             return Fail(400, AppApiCore.Str(dsCond.Tables[0].Rows[0], "Msg"));
         }
 
-        // Double click / duplicate request guard
-        if (!InsertTrans("Insert into Trnactive (Transid, Rectimestamp) values(@Transid, getdate())", transId))
-            return Fail(409, "Duplicate request. Please try again.");
+        if (InsertTrans("Insert into Trnactive (Transid, Rectimestamp) values(@Transid, getdate())") == 0)
+            return Fail(500, "Try later.");
 
         if (MasterWalletBalance() < amount)
             return Fail(400, "Insufficient Balance In Utility Wallet.Please Contact To Admin.!");
@@ -677,11 +675,10 @@ public partial class AppApi : System.Web.UI.Page
     private ApiResult SubscriptionPay()
     {
         int kitId;
-        int transId;
         if (!TryInt("kitid", out kitId))
             return Fail(400, "kitid is required.");
-        if (!TryInt("transid", out transId))
-            return Fail(400, "transid (numeric, unique per attempt) is required.");
+        if (IsDuplicateRequest())
+            return Fail(409, DuplicateMsg);
 
         DataSet ds = GetSubscriptionPackages();
         if (AppApiCore.Int(ds.Tables[0].Rows[0], "MemberOk") != 1)
@@ -692,7 +689,7 @@ public partial class AppApi : System.Web.UI.Page
             return Fail(400, "This package is not available for your ID.");
 
         decimal amount = AppApiCore.Dec(kit, "JoinAmount");
-        return StartGatewayPayment(kitId, AppApiCore.Str(kit, "KitName"), amount, transId, SubscriptionWebHookUrl, "Appsubscription_now");
+        return StartGatewayPayment(kitId, AppApiCore.Str(kit, "KitName"), amount, SubscriptionWebHookUrl, "Appsubscription_now");
     }
 
     private DataSet GetSubscriptionPackages()
@@ -732,11 +729,10 @@ public partial class AppApi : System.Web.UI.Page
     private ApiResult MonthlyActivate()
     {
         int kitId;
-        int transId;
         if (!TryInt("kitid", out kitId))
             return Fail(400, "kitid is required.");
-        if (!TryInt("transid", out transId))
-            return Fail(400, "transid (numeric, unique per attempt) is required.");
+        if (IsDuplicateRequest())
+            return Fail(409, DuplicateMsg);
 
         // GetName() - block / inactive check
         DataSet dsMem = SqlHelper.ExecuteDataset(AppApiCore.Constr1, CommandType.Text, "Exec Sp_GetMemberName @IdNo",
@@ -767,7 +763,7 @@ public partial class AppApi : System.Web.UI.Page
             return Fail(404, "Package not found.");
 
         decimal amount = AppApiCore.Dec(kit, "kitamount");
-        return StartGatewayPayment(kitId, AppApiCore.Str(kit, "KitName"), amount, transId, MonthlyWebHookUrl, "Appmonthly_activation_points");
+        return StartGatewayPayment(kitId, AppApiCore.Str(kit, "KitName"), amount, MonthlyWebHookUrl, "Appmonthly_activation_points");
     }
 
     /* =====================================================================
@@ -778,13 +774,13 @@ public partial class AppApi : System.Web.UI.Page
     /// Web page wala flow: Trnjoining -> OnlineTransaction -> allupi login -> LoginTransaction
     /// -> InitiateTransactionAsync -> payment url. Activation webhook page karta hai.
     /// </summary>
-    private ApiResult StartGatewayPayment(int kitId, string kitName, decimal amount, int transId, string webHookUrl, string pageName)
+    private ApiResult StartGatewayPayment(int kitId, string kitName, decimal amount, string webHookUrl, string pageName)
     {
         if (amount <= 0)
             return Fail(400, "Invalid package amount.");
 
-        if (!InsertTrans("Insert into Trnjoining(Transid) values(@Transid)", transId))
-            return Fail(409, "Try Again After Some Time.!");
+        if (InsertTrans("Insert into Trnjoining(Transid) values(@Transid)") == 0)
+            return Fail(500, "Try Again After Some Time.!");
 
         string orderId = DateTime.Now.ToString("yyyyMMddHHmmssfff");
         refNo = orderId;
@@ -901,17 +897,16 @@ public partial class AppApi : System.Web.UI.Page
 
     private ApiResult DeleteAccount()
     {
-        int transId;
-        if (!TryInt("transid", out transId))
-            return Fail(400, "transid (numeric, unique per attempt) is required.");
+        if (IsDuplicateRequest())
+            return Fail(409, DuplicateMsg);
 
         DataRow r = CheckDeleteAccount();
         string msg = AppApiCore.Str(r, "Msg");
         if (msg.ToUpper() != "OK")
             return Fail(400, msg != "" ? msg : "Account delete request not allowed.");
 
-        if (!InsertTrans("Insert into Trnactivecadmin (Transid, Rectimestamp) values(@Transid, getdate())", transId))
-            return Fail(409, "Try Later.!");
+        if (InsertTrans("Insert into Trnactivecadmin (Transid, Rectimestamp) values(@Transid, getdate())") == 0)
+            return Fail(500, "Try Later.!");
 
         refNo = "DeleteAccount/" + member.IdNo;
         SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text,
@@ -1076,18 +1071,51 @@ public partial class AppApi : System.Web.UI.Page
         return t == null || t.Type == JTokenType.Null ? "" : t.ToString().Trim();
     }
 
-    /// <summary>Duplicate guard table (Trnactive / Trnjoining / Trnactivecadmin) - insert fail = duplicate.</summary>
-    private static bool InsertTrans(string sql, int transId)
+    /// <summary>
+    /// Trnactive / Trnjoining / Trnactivecadmin mein server ka banaya Transid (9 digit random).
+    /// Purane record se takra jaye to naye number se dobara (3 baar). Transid lautata hai, fail = 0.
+    /// </summary>
+    private int InsertTrans(string sql)
     {
-        try
+        Random rdm = new Random();
+        for (int attempt = 0; attempt < 3; attempt++)
         {
-            return SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text, sql,
-                new SqlParameter("@Transid", SqlDbType.Int) { Value = transId }) > 0;
+            int transId = rdm.Next(100000000, 1000000000);
+            try
+            {
+                if (SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text, sql,
+                        new SqlParameter("@Transid", SqlDbType.Int) { Value = transId }) > 0)
+                {
+                    refNo = string.IsNullOrEmpty(refNo) ? "Trans:" + transId : refNo + " | Trans:" + transId;
+                    return transId;
+                }
+            }
+            catch (SqlException)
+            {
+            }
         }
-        catch (SqlException)
-        {
-            return false;
-        }
+        return 0;
+    }
+
+    private const string DuplicateMsg = "Your previous request is in process. Please wait a moment and try again.";
+
+    /// <summary>
+    /// Double tap / retry se bachav: same member ki same reqtype pichhle 20 second mein
+    /// chal rahi ho (STARTED) ya ho chuki ho (OK) to true. (Sp_AppApi_DuplicateGuard)
+    /// </summary>
+    private bool IsDuplicateRequest()
+    {
+        if (log.LogId <= 0)
+            return false;   // log row hi nahi bani to check nahi ho sakta
+
+        DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text,
+            "EXEC Sp_AppApi_DuplicateGuard @LogId, @FormNo, @IdNo, @ReqType, @Seconds",
+            new SqlParameter("@LogId", SqlDbType.BigInt) { Value = log.LogId },
+            new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo },
+            new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo },
+            new SqlParameter("@ReqType", SqlDbType.VarChar, 50) { Value = reqType },
+            new SqlParameter("@Seconds", SqlDbType.Int) { Value = 20 });
+        return ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0 && AppApiCore.Int(ds.Tables[0].Rows[0], "Pending") > 0;
     }
 
     private static string ClearInject(string s)
