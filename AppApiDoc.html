@@ -1048,16 +1048,22 @@
                 <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet debit</span></div>
                 <p>Web page ke "Proceed to Pay" jaisa: balance check, package condition, utility wallet, phir voucher. Amount server DB se leta hai, isliye app amount nahi bhejta. Success par <code>billno</code> ke saath <a href="#s-thankyou">Thank You</a> screen kholo.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200,
-  "msg": "Package Purchase Successfully!!",
-  "reqtype": "couponpurchase", "reqid": "20260924101507009012",
-  "data": {
-    "billno": "482913", "kitid": 1005, "kitname": "Movie Pack 2",
-    "amount": 300.00, "walletbalance": 950.00, "redeemtype": "MOVIE"
-  }
+    "response": "OK",
+    "code": 200,
+    "msg": "Package Purchase Successfully!!",
+    "reqtype": "couponpurchase",
+    "reqid": "20260924170200737013",
+    "data": {
+        "billno": "633846",
+        "kitid": 1005,
+        "kitname": "Movie Package (10 Ticket)",
+        "amount": 2100.0,
+        "walletbalance": 95398.5300,
+        "redeemtype": "MOVIE"
+    }
 }</pre>
                     </div>
                 </div>
@@ -1081,16 +1087,26 @@
             <div class="api">
                 <div class="api-title"><span class="rt">orderdetail</span><span class="pill auth">ID + password</span></div>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","userid":"EP100245","passwd":"mypassword","billno":"482913","kitid":1005}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","userid":"EPI123456","passwd":"EPI@123456","billno":"633846","kitid":1005}
+</pre>
+                    </div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "orderdetail",
-  "reqid": "20260924101508003344",
-  "data": {
-    "billno": "482913", "ordernumber": "482913", "kitid": 1005,
-    "kitname": "Movie Pack 2", "orderdate": "24-Sep-2026",
-    "amount": 300.00, "redeemtype": "MOVIE"
-  }
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "orderdetail",
+    "reqid": "20260924170326751948",
+    "data": {
+        "billno": "633846",
+        "ordernumber": "633846",
+        "kitid": 1005,
+        "kitname": "Movie Package (10 Ticket)",
+        "orderdate": "24-Sep-2026",
+        "amount": 2100.00,
+        "redeemtype": "MOVIE"
+    }
 }</pre>
                     </div>
                 </div>
@@ -1099,15 +1115,21 @@
                 <div class="api-title"><span class="rt">redeemurl</span><span class="pill auth">ID + password</span></div>
                 <p>"Redeem Now" button ke liye hai. Jo <code>url</code> mile use browser ya WebView mein kholo, user Food/Movie portal par auto-login ho jayega. <code>redeemtype</code> khali ho to Redeem button mat dikhao.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","userid":"EP100245","passwd":"mypassword","type":"MOVIE"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","userid":"EPI123456","passwd":"EPI@123456","type":"MOVIE"}
+</pre>
+                    </div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "redeemurl",
-  "reqid": "20260924101509006677",
-  "data": {
-    "redeemtype": "MOVIE",
-    "url": "https://movie.epayindia.in/controller.aspx?user_info=...&log_key=..."
-  }
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "redeemurl",
+    "reqid": "20260924170422410052",
+    "data": {
+        "redeemtype": "MOVIE",
+        "url": "https://movie.epayindia.in/controller.aspx?user_info=RVBJMTIzNDU2O0VQSUAxMjM0NTY=&log_key=14040576-4E2C-499B-A46B-7192579BA03E"
+    }
 }</pre>
                     </div>
                 </div>
@@ -1121,19 +1143,45 @@
                 <div class="api-title"><span class="rt">subscriptionpackages</span><span class="pill auth">ID + password</span></div>
                 <p>Chaar packages aate hain. Jin par <code>isallowed: false</code> hai unka button disable ya "Not available" dikhao (member ke current package ke hisaab se).</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code">
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages","userid":"EPI123456","passwd":"EPI@123456"}
+</pre>
+                    </div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "subscriptionpackages",
-  "reqid": "20260924101510001199",
-  "data": {
-    "packages": [
-      {"kitid":11,"kitname":"Diamond","amount":4999.00,"isallowed":true},
-      {"kitid":7,"kitname":"Platinum","amount":2499.00,"isallowed":true},
-      {"kitid":6,"kitname":"Gold","amount":999.00,"isallowed":false},
-      {"kitid":4,"kitname":"Silver","amount":499.00,"isallowed":false}
-    ]
-  }
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "subscriptionpackages",
+    "reqid": "20260924171403853817",
+    "data": {
+        "packages": [
+            {
+                "kitid": 7,
+                "kitname": "PREMIUM PACKAGE 9999/-",
+                "amount": 9999.00,
+                "isallowed": false
+            },
+            {
+                "kitid": 6,
+                "kitname": "PRO PACKAGE 4999/-",
+                "amount": 4999.00,
+                "isallowed": false
+            },
+            {
+                "kitid": 11,
+                "kitname": "GOLD PACKAGE 1899/-",
+                "amount": 1899.00,
+                "isallowed": false
+            },
+            {
+                "kitid": 4,
+                "kitname": "PRIME PACKAGE 999/-",
+                "amount": 999.00,
+                "isallowed": false
+            }
+        ]
+    }
 }</pre>
                     </div>
                 </div>
@@ -1165,14 +1213,43 @@
                     <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlypackages"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
-  "response": "OK", "code": 200, "msg": "", "reqtype": "monthlypackages",
-  "reqid": "20260924101512007755",
-  "data": {
-    "packages": [
-      {"kitid":5,"kitname":"Monthly 299","amount":299.00,"validdays":30,"cashbackpoints":300},
-      {"kitid":8,"kitname":"Monthly 599","amount":599.00,"validdays":30,"cashbackpoints":650}
-    ]
-  }
+    "response": "OK",
+    "code": 200,
+    "msg": "",
+    "reqtype": "monthlypackages",
+    "reqid": "20260924171520056716",
+    "data": {
+        "packages": [
+            {
+                "kitid": 10,
+                "kitname": "",
+                "amount": 3600.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
+            },
+            {
+                "kitid": 9,
+                "kitname": "",
+                "amount": 1800.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
+            },
+            {
+                "kitid": 8,
+                "kitname": "",
+                "amount": 900.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
+            },
+            {
+                "kitid": 5,
+                "kitname": "",
+                "amount": 300.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
+            }
+        ]
+    }
 }</pre>
                     </div>
                 </div>
