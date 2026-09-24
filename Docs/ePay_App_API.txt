@@ -75,7 +75,7 @@ Response:
 }
 Note : The app should delete the saved userid / passwd and take the user to the Login screen.
 
-3. Get Profile API (Drawer / Menu)
+3. Get Profile API
 Request:
 {"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
@@ -101,49 +101,10 @@ Response:
             "activationdate": "18-Dec-2025",
             "activestatus": "Y"
         },
-        "walletbalance": 99598.5300,
-        "menu": [
-            {
-                "title": "Home",
-                "icon": "fa fa-home",
-                "screen": "home",
-                "reqtype": "home"
-            },
-            {
-                "title": "Purchase Coupon",
-                "icon": "fa fa-ticket-alt",
-                "screen": "couponlist",
-                "reqtype": "couponlist"
-            },
-            {
-                "title": "Subscription Now",
-                "icon": "fa fa-crown",
-                "screen": "subscription",
-                "reqtype": "subscriptionpackages"
-            },
-            {
-                "title": "Activation Points",
-                "icon": "fa fa-chart-bar",
-                "screen": "monthly",
-                "reqtype": "monthlypackages"
-            },
-            {
-                "title": "Account Delete",
-                "icon": "fa fa-globe",
-                "screen": "deleteaccount",
-                "reqtype": "deleteaccountcheck"
-            },
-            {
-                "title": "Logout",
-                "icon": "fa fa-sign-out-alt",
-                "screen": "logout",
-                "reqtype": "logout"
-            }
-        ]
+        "walletbalance": 99598.5300
     }
 }
 Note : Use this to show the name, ID, avatar letter (initial) and wallet balance in the side drawer.
-Note : Build the drawer menu from menu[]. The reqtype of each menu item is the first API to call on that screen.
 
 4. Wallet Balance API
 Request:

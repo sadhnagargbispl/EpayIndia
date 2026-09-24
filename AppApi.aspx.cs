@@ -251,7 +251,7 @@ public partial class AppApi : System.Web.UI.Page
     }
 
     /* =====================================================================
-       AppMaster.master  -  drawer (naam, ID, menu)
+       AppMaster.master  -  drawer (naam, ID, balance)
        ===================================================================== */
 
     private ApiResult Profile_()
@@ -279,29 +279,10 @@ public partial class AppApi : System.Web.UI.Page
         p["activationdate"] = AppApiCore.Str(r, "ActivationDate");
         p["activestatus"] = AppApiCore.Str(r, "ActiveStatus");
 
-        JArray menu = new JArray();
-        menu.Add(MenuItem("Home", "fa fa-home", "home", "home"));
-        menu.Add(MenuItem("Purchase Coupon", "fa fa-ticket-alt", "couponlist", "couponlist"));
-        menu.Add(MenuItem("Subscription Now", "fa fa-crown", "subscription", "subscriptionpackages"));
-        menu.Add(MenuItem("Activation Points", "fa fa-chart-bar", "monthly", "monthlypackages"));
-        menu.Add(MenuItem("Account Delete", "fa fa-globe", "deleteaccount", "deleteaccountcheck"));
-        menu.Add(MenuItem("Logout", "fa fa-sign-out-alt", "logout", "logout"));
-
         JObject data = new JObject();
         data["profile"] = p;
         data["walletbalance"] = GetBalance(member.FormNo);
-        data["menu"] = menu;
         return Success("", data);
-    }
-
-    private static JObject MenuItem(string title, string icon, string screen, string reqtype)
-    {
-        JObject o = new JObject();
-        o["title"] = title;
-        o["icon"] = icon;
-        o["screen"] = screen;
-        o["reqtype"] = reqtype;
-        return o;
     }
 
     /* =====================================================================

@@ -684,10 +684,10 @@
         </section>
 
         <section class="screen" id="s-master">
-            <div class="screen-head"><h2>Drawer — name, ID &amp; menu</h2><span class="step">Screen 2 · <span class="webpage">AppMaster.master</span></span></div>
+            <div class="screen-head"><h2>Drawer — name, ID &amp; balance</h2><span class="step">Screen 2 · <span class="webpage">AppMaster.master</span></span></div>
             <div class="api">
                 <div class="api-title"><span class="rt">profile</span><span class="pill auth">ID + password</span></div>
-                <p>Drawer ka avatar letter, naam, ID, wallet balance aur menu. <code>menu[].reqtype</code> batata hai ki us screen par kaunsi API pehle call karni hai.</p>
+                <p>Drawer ka avatar letter (<code>initial</code>), naam, ID aur wallet balance. Drawer menu app khud banayega.</p>
                 <div class="pair">
                     <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
                     <div class="code">
@@ -713,45 +713,7 @@
             "activationdate": "18-Dec-2025",
             "activestatus": "Y"
         },
-        "walletbalance": 99598.5300,
-        "menu": [
-            {
-                "title": "Home",
-                "icon": "fa fa-home",
-                "screen": "home",
-                "reqtype": "home"
-            },
-            {
-                "title": "Purchase Coupon",
-                "icon": "fa fa-ticket-alt",
-                "screen": "couponlist",
-                "reqtype": "couponlist"
-            },
-            {
-                "title": "Subscription Now",
-                "icon": "fa fa-crown",
-                "screen": "subscription",
-                "reqtype": "subscriptionpackages"
-            },
-            {
-                "title": "Activation Points",
-                "icon": "fa fa-chart-bar",
-                "screen": "monthly",
-                "reqtype": "monthlypackages"
-            },
-            {
-                "title": "Account Delete",
-                "icon": "fa fa-globe",
-                "screen": "deleteaccount",
-                "reqtype": "deleteaccountcheck"
-            },
-            {
-                "title": "Logout",
-                "icon": "fa fa-sign-out-alt",
-                "screen": "logout",
-                "reqtype": "logout"
-            }
-        ]
+        "walletbalance": 99598.5300
     }
 }</pre>
                     </div>
