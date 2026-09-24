@@ -4,24 +4,31 @@ URL : https://epayindia.in/AppApi.aspx
 Method : POST
 Header : Content-Type: application/json
 
-Note  har API mein userid aur passwd bhejna zaroori hai (website wala login).
-      Sirf couponlist aur monthlypackages mein userid / passwd nahi chahiye.
+Note : Send userid and passwd (website login) in every API call.
+       Only couponlist and monthlypackages do not need userid / passwd.
 
-Note  har response mein ye fields aati hain :
-      response = OK / FAILED
-      code     = 200 success, 400 galat input ya rule, 401 galat userid / passwd (Login screen par bhejo),
-                 403 ID block, 404 nahi mila, 409 same request 20 second mein dobara, 500 server error
-      msg      = user ko dikhane wala message
-      reqid    = problem aaye to support ko yahi number do
-      data     = result (FAILED par null)
+Note : Every response contains these fields:
+       response = OK / FAILED
+       code     = See the code table below
+       msg      = Message to show to the user
+       reqtype  = The reqtype that was sent
+       reqid    = Unique ID of the call - share this with support if there is a problem
+       data     = Result object (null when FAILED). Amounts are numbers, e.g. 1250.00
 
-Note  amount number mein aata hai (string nahi), jaise 1250.00
+Response codes:
+       200 = Success
+       400 = Invalid input or business rule failed - show msg
+       401 = Wrong userid / passwd - clear the saved login and open the Login screen
+       403 = ID is blocked - show msg and log out
+       404 = Package / order not found - show msg
+       409 = Same request received again within 20 seconds - show msg, try again after a moment
+       500 = Server error - offer a retry and share reqid with support
 
-Failed Response Example :
+Failed Response Example:
 {"response":"FAILED","code":400,"msg":"Insufficient Balance!!","reqtype":"couponpurchase","reqid":"20260924153101874021","data":null}
 
 
-1.Login Api
+1. Login API
 Request:
 {"reqtype":"login","userid":"EPI123456","passwd":"EPI@123456","deviceid":"a1b2c3d4-android","appversion":"1.0.0"}
 Response:
@@ -50,13 +57,13 @@ Response:
         }
     }
 }
-Note : userid / passwd wahi jo website par login karte ho.
-Note : Login ho jaye to yahi userid / passwd aage har API mein bhejna hai.
-Note : Galat ID / password par code 401 aayega.
+Note : Use the same user ID and password that the member uses on the website.
+Note : After a successful login, send the same userid and passwd in every other API call.
+Note : A wrong user ID or password returns code 401.
 
-2.Logout Api
+2. Logout API
 Request:
-{"reqtype":"logout","userid":"EP100245","passwd":"mypassword"}
+{"reqtype":"logout","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -66,9 +73,9 @@ Response:
     "reqid": "20260924183000456123",
     "data": null
 }
-Note : App apna saved userid / passwd delete kare aur Login screen par bheje.
+Note : The app should delete the saved userid / passwd and take the user to the Login screen.
 
-3.Get Profile Api (Drawer / Menu)
+3. Get Profile API (Drawer / Menu)
 Request:
 {"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
@@ -135,10 +142,10 @@ Response:
         ]
     }
 }
-Note : Drawer mein naam, ID, avatar letter (initial) aur wallet balance dikhane ke liye.
-Note : menu[] se drawer menu banao. Har menu ka reqtype us screen ki pehli API hai.
+Note : Use this to show the name, ID, avatar letter (initial) and wallet balance in the side drawer.
+Note : Build the drawer menu from menu[]. The reqtype of each menu item is the first API to call on that screen.
 
-4.Wallet Balance Api
+4. Wallet Balance API
 Request:
 {"reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
@@ -152,8 +159,9 @@ Response:
         "walletbalance": 99598.5300
     }
 }
+Note : Returns the current wallet balance of the member.
 
-5.Home Api
+5. Home API
 Request:
 {"reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
@@ -177,7 +185,7 @@ Response:
                 "target": "_self",
                 "deco": "👑",
                 "screen": "subscription",
-                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+                "openurl": "https://epayindia.in/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=..."
             }
         ],
         "services": [
@@ -188,7 +196,7 @@ Response:
                 "url": "Apppurchase-coupon.aspx",
                 "target": "_self",
                 "screen": "couponlist",
-                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Apppurchase-coupon.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+                "openurl": "https://epayindia.in/AppWebBridge.aspx?page=Apppurchase-coupon.aspx&token=..."
             },
             {
                 "name": "Subscription",
@@ -197,7 +205,7 @@ Response:
                 "url": "Appsubscription-now.aspx",
                 "target": "_self",
                 "screen": "subscription",
-                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+                "openurl": "https://epayindia.in/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=..."
             },
             {
                 "name": "Activation Points",
@@ -206,7 +214,7 @@ Response:
                 "url": "Appmonthly-activation-points.aspx",
                 "target": "_self",
                 "screen": "monthly",
-                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appmonthly-activation-points.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+                "openurl": "https://epayindia.in/AppWebBridge.aspx?page=Appmonthly-activation-points.aspx&token=..."
             },
             {
                 "name": "My Account",
@@ -215,12 +223,10 @@ Response:
                 "url": "MainAccountRedirect.ASPX",
                 "target": "_self",
                 "screen": "",
-                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=MainAccountRedirect.ASPX&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+                "openurl": "https://epayindia.in/AppWebBridge.aspx?page=MainAccountRedirect.ASPX&token=..."
             }
         ],
-        "bestselling": [
-            
-        ],
+        "bestselling": [],
         "trust": [
             {
                 "value": "50K+",
@@ -270,16 +276,16 @@ Response:
                 "url": "Appsubscription-now.aspx",
                 "target": "_self",
                 "screen": "subscription",
-                "openurl": "http://localhost:64320/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=5680bcfc99679c3d637ee4998a5224db55f2344f2b7ea67a276d5c5f9d46842f"
+                "openurl": "https://epayindia.in/AppWebBridge.aspx?page=Appsubscription-now.aspx&token=..."
             }
         ]
     }
 }
-Note : banners, services, bestselling, trust, promos - sab home screen ke liye.
-Note : screen blank nahi hai to app ki wahi screen kholo (couponlist, subscription, monthly, deleteaccount, home).
-Note : screen blank hai to openurl WebView mein kholo. openurl 1 din chalta hai, save mat karo - har baar home ke latest response se lo.
+Note : Returns all home screen sections: banners, services, bestselling, trust and promos.
+Note : If screen is not blank, open that app screen (couponlist, subscription, monthly, deleteaccount, home).
+Note : If screen is blank, open openurl in a WebView. openurl is valid for 1 day - do not store it; always use the latest home response.
 
-6.Coupon List Api
+6. Coupon List API
 Request:
 {"reqtype":"couponlist"}
 Response:
@@ -366,10 +372,10 @@ Response:
         ]
     }
 }
-Note : Isme userid / passwd nahi chahiye (common list).
-Note : movies aur food do tab. Card par click -> Coupon Detail Api (kitid ke saath).
+Note : userid / passwd are not required (common list).
+Note : Show two tabs: movies and food. When a card is tapped, call the Coupon Detail API with its kitid.
 
-7.Coupon Detail Api
+7. Coupon Detail API
 Request:
 {"reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
 Response:
@@ -398,115 +404,115 @@ Response:
         "terms": "*No. of coupons depends on the  package selected.\r\n*Only 2 coupons can be used in a  month.\r\n*The coupons left month will not be  carried forward.\r\n*Tickets have to be booked before 2 hrs of the  show."
     }
 }
-Note : canpay = false ho to Pay button disable rakho (wallet balance kam hai).
+Note : If canpay is false, disable the Pay button (wallet balance is too low).
 
-8.Coupon Purchase Api
+8. Coupon Purchase API
 Request:
-{"reqtype":"couponpurchase","userid":"EP100245","passwd":"mypassword","kitid":1005}
+{"reqtype":"couponpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
 Response:
 {
     "response": "OK",
     "code": 200,
     "msg": "Package Purchase Successfully!!",
     "reqtype": "couponpurchase",
-    "reqid": "20260924101507009012",
+    "reqid": "20260924170200737013",
     "data": {
-        "billno": "482913",
+        "billno": "633846",
         "kitid": 1005,
-        "kitname": "Movie Pack 2",
-        "amount": 300.00,
-        "walletbalance": 950.00,
+        "kitname": "Movie Package (10 Ticket)",
+        "amount": 2100.0,
+        "walletbalance": 95398.5300,
         "redeemtype": "MOVIE"
     }
 }
-Note : Amount server khud DB se leta hai, app amount nahi bhejta.
-Note : Success par billno ke saath Order Detail Api call karo (Thank You screen).
-Note : Button dabate hi disable karo. 20 second ke andar same request dobara aayi to code 409 aayega.
+Note : The server takes the amount from the database; the app does not send the amount.
+Note : On success, call the Order Detail API with billno (Thank You screen).
+Note : Disable the button as soon as it is tapped. The same request again within 20 seconds returns code 409.
 
-9.Order Detail Api (Thank You)
+9. Order Detail API (Thank You)
 Request:
-{"reqtype":"orderdetail","userid":"EP100245","passwd":"mypassword","billno":"482913","kitid":1005}
+{"reqtype":"orderdetail","userid":"EPI123456","passwd":"EPI@123456","billno":"633846","kitid":1005}
 Response:
 {
     "response": "OK",
     "code": 200,
     "msg": "",
     "reqtype": "orderdetail",
-    "reqid": "20260924101508003344",
+    "reqid": "20260924170326751948",
     "data": {
-        "billno": "482913",
-        "ordernumber": "482913",
+        "billno": "633846",
+        "ordernumber": "633846",
         "kitid": 1005,
-        "kitname": "Movie Pack 2",
+        "kitname": "Movie Package (10 Ticket)",
         "orderdate": "24-Sep-2026",
-        "amount": 300.00,
+        "amount": 2100.00,
         "redeemtype": "MOVIE"
     }
 }
-Note : redeemtype blank ho to Redeem Now button mat dikhao.
+Note : If redeemtype is blank, do not show the Redeem Now button.
 
-10.Redeem Url Api
+10. Redeem URL API
 Request:
-{"reqtype":"redeemurl","userid":"EP100245","passwd":"mypassword","type":"MOVIE"}
+{"reqtype":"redeemurl","userid":"EPI123456","passwd":"EPI@123456","type":"MOVIE"}
 Response:
 {
     "response": "OK",
     "code": 200,
     "msg": "",
     "reqtype": "redeemurl",
-    "reqid": "20260924101509006677",
+    "reqid": "20260924170422410052",
     "data": {
         "redeemtype": "MOVIE",
-        "url": "https://movie.epayindia.in/controller.aspx?user_info=...&log_key=..."
+        "url": "https://movie.epayindia.in/controller.aspx?user_info=RVBJMTIzNDU2O0VQSUAxMjM0NTY=&log_key=14040576-4E2C-499B-A46B-7192579BA03E"
     }
 }
-Note : type = FOOD ya MOVIE (ya kitid bhejo: 1001-1004 FOOD, 1005-1007 MOVIE).
-Note : url ko browser / WebView mein kholo, user Food / Movie portal par auto login ho jayega.
+Note : type = FOOD or MOVIE. You can send kitid instead: 1001-1004 = FOOD, 1005-1007 = MOVIE.
+Note : Open url in a browser or WebView; the member is logged in to the Food / Movie portal automatically.
 
-11.Subscription Packages Api
+11. Subscription Packages API
 Request:
-{"reqtype":"subscriptionpackages","userid":"EP100245","passwd":"mypassword"}
+{"reqtype":"subscriptionpackages","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
     "code": 200,
     "msg": "",
     "reqtype": "subscriptionpackages",
-    "reqid": "20260924101510001199",
+    "reqid": "20260924171403853817",
     "data": {
         "packages": [
             {
-                "kitid": 11,
-                "kitname": "Diamond",
-                "amount": 4999.00,
-                "isallowed": true
-            },
-            {
                 "kitid": 7,
-                "kitname": "Platinum",
-                "amount": 2499.00,
-                "isallowed": true
+                "kitname": "PREMIUM PACKAGE 9999/-",
+                "amount": 9999.00,
+                "isallowed": false
             },
             {
                 "kitid": 6,
-                "kitname": "Gold",
-                "amount": 999.00,
+                "kitname": "PRO PACKAGE 4999/-",
+                "amount": 4999.00,
+                "isallowed": false
+            },
+            {
+                "kitid": 11,
+                "kitname": "GOLD PACKAGE 1899/-",
+                "amount": 1899.00,
                 "isallowed": false
             },
             {
                 "kitid": 4,
-                "kitname": "Silver",
-                "amount": 499.00,
+                "kitname": "PRIME PACKAGE 999/-",
+                "amount": 999.00,
                 "isallowed": false
             }
         ]
     }
 }
-Note : isallowed = false wale package ka button disable karo.
+Note : Disable the button of every package where isallowed is false.
 
-12.Subscription Pay Api
+12. Subscription Pay API
 Request:
-{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7}
+{"reqtype":"subscriptionpay","userid":"EPI123456","passwd":"EPI@123456","kitid":7}
 Response:
 {
     "response": "OK",
@@ -522,11 +528,11 @@ Response:
         "paymenturl": "https://allupi.com/pay/..."
     }
 }
-Note : paymenturl WebView mein kholo (UPI payment).
-Note : WebView ka URL Appsubscription-now.aspx ya AppLogin.aspx par aaye to WebView band karo aur Payment Status Api call karo.
-Note : 20 second ke andar same request dobara aayi to code 409 aayega.
+Note : Open paymenturl in a WebView for the UPI payment.
+Note : When the WebView reaches Appsubscription-now.aspx or AppLogin.aspx, close it and call the Payment Status API.
+Note : The same request again within 20 seconds returns code 409.
 
-13.Activation Points (Monthly) Packages Api
+13. Activation Points (Monthly) Packages API
 Request:
 {"reqtype":"monthlypackages"}
 Response:
@@ -535,31 +541,45 @@ Response:
     "code": 200,
     "msg": "",
     "reqtype": "monthlypackages",
-    "reqid": "20260924101512007755",
+    "reqid": "20260924171520056716",
     "data": {
         "packages": [
             {
-                "kitid": 5,
-                "kitname": "Monthly 299",
-                "amount": 299.00,
-                "validdays": 30,
-                "cashbackpoints": 300
+                "kitid": 10,
+                "kitname": "",
+                "amount": 3600.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
+            },
+            {
+                "kitid": 9,
+                "kitname": "",
+                "amount": 1800.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
             },
             {
                 "kitid": 8,
-                "kitname": "Monthly 599",
-                "amount": 599.00,
-                "validdays": 30,
-                "cashbackpoints": 650
+                "kitname": "",
+                "amount": 900.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
+            },
+            {
+                "kitid": 5,
+                "kitname": "",
+                "amount": 300.0,
+                "validdays": 0,
+                "cashbackpoints": 0.0
             }
         ]
     }
 }
-Note : Isme userid / passwd nahi chahiye (common list).
+Note : userid / passwd are not required (common list).
 
-14.Monthly Activate Api
+14. Monthly Activate API
 Request:
-{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5}
+{"reqtype":"monthlyactivate","userid":"EPI123456","passwd":"EPI@123456","kitid":5}
 Response:
 {
     "response": "OK",
@@ -575,12 +595,13 @@ Response:
         "paymenturl": "https://allupi.com/pay/..."
     }
 }
-Note : ID active nahi hai ya is mahine activation ho chuka hai to code 400 aur msg aayega.
-Note : paymenturl WebView mein kholo. WebView ka URL Appmonthly-activation-points.aspx ya AppLogin.aspx par aaye to band karo aur Payment Status Api call karo.
+Note : If the ID is not active, or activation is not allowed this month, the API returns code 400 with a message.
+Note : Open paymenturl in a WebView. When it reaches Appmonthly-activation-points.aspx or AppLogin.aspx, close it and call the Payment Status API.
+Note : The same request again within 20 seconds returns code 409.
 
-15.Payment Status Api
+15. Payment Status API
 Request:
-{"reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}
+{"reqtype":"paymentstatus","userid":"EPI123456","passwd":"EPI@123456","orderid":"20260924101511120"}
 Response:
 {
     "response": "OK",
@@ -599,11 +620,11 @@ Response:
     }
 }
 Note : status = SUCCESS / PENDING / FAILED.
-Note : PENDING aaye to 5-10 second ke gap par 3-4 baar dobara check karo.
+Note : If the status is PENDING, check again 3-4 times at an interval of 5-10 seconds.
 
-16.Delete Account Check Api
+16. Delete Account Check API
 Request:
-{"reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}
+{"reqtype":"deleteaccountcheck","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -612,15 +633,15 @@ Response:
     "reqtype": "deleteaccountcheck",
     "reqid": "20260924101700001100",
     "data": {
-        "idno": "EP100245",
-        "name": "Ravi Sharma"
+        "idno": "EPI123456",
+        "name": "EPay India"
     }
 }
-Note : Screen khulte hi call karo. response FAILED aaye to msg dikhao aur Submit button hata do.
+Note : Call this when the screen opens. If the response is FAILED, show msg and hide the Submit button.
 
-17.Delete Account Api
+17. Delete Account API
 Request:
-{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword"}
+{"reqtype":"deleteaccount","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -630,4 +651,4 @@ Response:
     "reqid": "20260924101705004433",
     "data": null
 }
-Note : User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.
+Note : Call this only after the user confirms. On success, log the user out and open the Login screen.
