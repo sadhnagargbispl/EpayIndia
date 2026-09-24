@@ -391,8 +391,11 @@ END
 GO
 
 /* Appsubscription-now.aspx  -  Check_IdNo() + fillkit() + BindPackages() ka logic
-   Result 0 : MemberOk (0 = ID block / nahi mili)
-   Result 1 : packages (4,6,7,11) + IsAllowed flag                         */
+   @FormNo = member ka FormNo (IDNo nahi)
+   Result 0 : MemberOk (0 = ID block hai ya FormNo mila hi nahi)
+   Result 1 : packages (4,6,7,11) + IsAllowed flag
+   Web jaisa: member ka kit M_KitMaster (RowStatus='Y') mein na mile to koi shart nahi,
+   saare subscription (ForType 'S') package allowed.                      */
 IF OBJECT_ID('dbo.Sp_App_GetSubscriptionPackages', 'P') IS NOT NULL DROP PROCEDURE dbo.Sp_App_GetSubscriptionPackages;
 GO
 CREATE PROCEDURE dbo.Sp_App_GetSubscriptionPackages
@@ -401,14 +404,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @KitId INT, @ActiveStatus VARCHAR(5), @MemberOk BIT = 0, @MinSeq INT = NULL;
+    DECLARE @KitId INT, @ActiveStatus VARCHAR(5), @MemberOk BIT = 0, @KitFound BIT = 0, @MinSeq INT = NULL;
 
-    SELECT TOP 1 @KitId = A.KitId, @ActiveStatus = A.ActiveStatus, @MemberOk = 1
+    -- Member hai aur block nahi hai
+    IF EXISTS (SELECT 1 FROM dbo.M_MemberMaster WHERE FormNo = @FormNo AND ISNULL(IsBlock, 'N') <> 'Y')
+        SET @MemberOk = 1;
+
+    -- Web ka Check_IdNo(): kit mila tabhi shart lagti hai
+    SELECT TOP 1 @KitId = A.KitId, @ActiveStatus = A.ActiveStatus, @KitFound = 1
       FROM dbo.M_MemberMaster A
      INNER JOIN dbo.M_KitMaster B ON A.KitId = B.KitId
      WHERE B.RowStatus = 'Y' AND A.IsBlock = 'N' AND A.FormNo = @FormNo;
 
-    IF @MemberOk = 1
+    IF @KitFound = 1
     BEGIN
         IF @ActiveStatus = 'Y'
             -- Active ID: pehle li hui subscription se upar wale package hi allowed

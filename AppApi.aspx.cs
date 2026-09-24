@@ -653,7 +653,7 @@ public partial class AppApi : System.Web.UI.Page
     private ApiResult SubscriptionPackages()
     {
         DataSet ds = GetSubscriptionPackages();
-        if (AppApiCore.Int(ds.Tables[0].Rows[0], "MemberOk") != 1)
+        if (!AppApiCore.Bool(ds.Tables[0].Rows[0], "MemberOk"))
             return Fail(403, "This ID is blocked. Please contact the Admin.");
 
         JArray arr = new JArray();
@@ -681,7 +681,7 @@ public partial class AppApi : System.Web.UI.Page
             return Fail(409, DuplicateMsg);
 
         DataSet ds = GetSubscriptionPackages();
-        if (AppApiCore.Int(ds.Tables[0].Rows[0], "MemberOk") != 1)
+        if (!AppApiCore.Bool(ds.Tables[0].Rows[0], "MemberOk"))
             return Fail(403, "This ID is blocked. Please contact the Admin.");
 
         DataRow kit = ds.Tables[1].AsEnumerable().FirstOrDefault(r => AppApiCore.Int(r, "KitId") == kitId);

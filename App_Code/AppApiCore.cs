@@ -105,8 +105,11 @@ public static class AppApiCore
         return decimal.TryParse(Str(r, col), NumberStyles.Any, CultureInfo.InvariantCulture, out d) ? d : 0;
     }
 
+    /// <summary>BIT column (True / False) bhi 1 / 0 ho jata hai.</summary>
     public static int Int(DataRow r, string col)
     {
+        if (r != null && r.Table.Columns.Contains(col) && r[col] is bool)
+            return (bool)r[col] ? 1 : 0;
         decimal d = Dec(r, col);
         return (int)d;
     }
