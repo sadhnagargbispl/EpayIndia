@@ -96,11 +96,7 @@ public partial class Appsubscription_now : System.Web.UI.Page
     }
     protected void BindPackages()
     {
-        string query = @"SELECT KitId,
-                            KitName,
-                            JoinAmount
-                     FROM m_kitmaster
-                     WHERE KitId IN (4,6,7,11) order by kitamount desc";
+        string query = @"SELECT * from v#PackageKit order by joinamount desc";
 
         DataTable dt = SqlHelper.ExecuteDataset(constr.ToString(), CommandType.Text, query).Tables[0];
 
