@@ -557,6 +557,8 @@
                     <thead><tr><th>Header / field</th><th>Kab</th><th>Detail</th></tr></thead>
                     <tbody>
                         <tr><td>reqtype</td><td>hamesha</td><td>Kaunsi API — neeche har screen par likha hai.</td></tr>
+                        <tr><td>islogin</td><td>hamesha</td><td><code>"N"</code> = <code>login</code>, <code>couponlist</code>, <code>monthlypackages</code> (header mein apikey nahi). <code>"Y"</code> = baaki sab APIs (header mein apikey). Galat value par <code>code: 400</code>.</td></tr>
+                        <tr><td>apikey <i>(header)</i></td><td>islogin = "Y"</td><td><code>login</code> response ki <code>data.apikey</code>. HTTP header mein bhejo, body mein nahi.</td></tr>
                         <tr><td>userid</td><td>har API mein (common list chhod ke)</td><td>Member ID, jaise web login mein.</td></tr>
                         <tr><td>passwd</td><td>har API mein (common list chhod ke)</td><td>Member ka password. Server log mein <code>****</code> ho jata hai.</td></tr>
                         <tr><td>deviceid</td><td>optional</td><td>Device ki unique id. Log mein jati hai, support ke liye kaam aati hai.</td></tr>
@@ -579,7 +581,7 @@
                     <tbody>
                         <tr><td>200</td><td>Success</td><td>—</td></tr>
                         <tr><td>400</td><td>Galat input ya business rule (balance kam, package allowed nahi…)</td><td><code>msg</code> dikhao</td></tr>
-                        <tr><td>401</td><td>userid / passwd galat (password badal gaya ho)</td><td>Saved ID-password delete karo, Login screen par bhejo</td></tr>
+                        <tr><td>401</td><td>userid / passwd galat (password badal gaya ho), ya apikey nahi / purani hai (dusre device par login ya logout)</td><td>Saved ID-password delete karo, Login screen par bhejo</td></tr>
                         <tr><td>403</td><td>ID block hai</td><td><code>msg</code> dikhao, logout karo</td></tr>
                         <tr><td>404</td><td>Package / order / member nahi mila</td><td><code>msg</code> dikhao</td></tr>
                         <tr><td>405</td><td>POST ke alawa method</td><td>POST use karo</td></tr>
@@ -591,11 +593,14 @@
         </section>
 
         <section class="block" id="token">
-            <h2>userid &amp; passwd</h2>
+            <h2>userid, passwd &amp; apikey</h2>
             <ul class="plain">
                 <li>Har API mein <code>userid</code> aur <code>passwd</code> bhejna zaroori hai. Server har call par web login jaisa hi check karta hai (<code>sp_Login1</code>).</li>
                 <li>Sirf common lists mein nahi chahiye, jo sabke liye same hoti hain: <code>couponlist</code>, <code>monthlypackages</code>.</li>
-                <li><code>login</code> successful ho jaye to app ID-password secure storage mein rakhe (Android Keystore / iOS Keychain), plain SharedPreferences mein nahi.</li>
+                <li>Har API mein <code>islogin</code> bhejo: <code>login</code>, <code>couponlist</code>, <code>monthlypackages</code> mein <code>"N"</code>, baaki sab mein <code>"Y"</code>.</li>
+                <li><code>islogin: "Y"</code> wali API mein HTTP header <code>apikey</code> bhejo (<code>login</code> response ki <code>data.apikey</code>). Apikey isi member ki honi chahiye.</li>
+                <li>Har <code>login</code> par nayi apikey milti hai aur purani band ho jati hai. <code>logout</code> par bhi band ho jati hai.</li>
+                <li><code>login</code> successful ho jaye to app ID-password aur apikey secure storage mein rakhe (Android Keystore / iOS Keychain), plain SharedPreferences mein nahi.</li>
                 <li><code>code: 401</code> aaye (jaise password badal gaya) to saved details hata ke Login screen par bhejo.</li>
                 <li>Missing <code>userid</code> ya <code>passwd</code> par <code>code: 400</code> aata hai.</li>
             </ul>
@@ -639,6 +644,7 @@
                 <div class="pair">
                     <div class="code">
                         <div class="lbl">Request<button type="button">Copy</button></div><pre>{
+  "islogin": "N",
   "reqtype": "login",
   "userid": "EPI123456",
   "passwd": "EPI@123456",
@@ -669,17 +675,19 @@
             "activationdate": "18-Dec-2025",
             "activestatus": "Y",
             "profilepic": "images/dollar.jpg"
-        }
+        },
+        "apikey": "5f1c9a0e7b3d4c2a8e6f0b9d1a3c5e7f9b2d4f6a8c0e2b4d6f8a0c2e4b6d8f0a"
     }
 }</pre>
                     </div>
                 </div>
                 <p style="margin-top:10px">Galat ID/password par: <code>code 401</code>, msg <i>"Please Enter valid UserName or Password."</i></p>
+                <p><code>data.apikey</code> save karo aur <code>islogin: "Y"</code> wali har API ke header <code>apikey</code> mein bhejo. Har login par nayi apikey milti hai.</p>
             </div>
             <!--<div class="api">
                 <div class="api-title"><span class="rt">logout</span><span class="pill auth">ID + password</span></div>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"logout","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"logout","userid":"EP100245","passwd":"mypassword"}</pre></div>
                     <div class="code"><div class="lbl">Response<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"Logout successful.","reqtype":"logout","reqid":"20260924183000456123","data":null}</pre></div>
                 </div>
             </div>-->
@@ -691,7 +699,7 @@
                 <div class="api-title"><span class="rt">profile</span><span class="pill auth">ID + password</span></div>
                 <p>Drawer ka avatar letter (<code>initial</code>), naam, ID aur wallet balance. Drawer menu app khud banayega.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -724,7 +732,7 @@
             <div class="api">
                 <div class="api-title"><span class="rt">walletbalance</span><span class="pill auth">ID + password</span></div>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -748,7 +756,7 @@
                 <p>Banner slider, All Services, Best Selling, Why Choose ePay aur bottom promo — sab admin tables se aate hain. <code>icon</code> Font Awesome class hai, app apne icon se map kar sakta hai. Har link wale item mein <code>screen</code> / <code>openurl</code> aata hai (<a href="#bridge">WebView bridge</a> dekho).</p>
                 <div class="pair">
                     <div class="code">
-                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
 </pre>
                     </div>
                     <div class="code">
@@ -879,7 +887,7 @@
                 <div class="api-title"><span class="rt">couponlist</span><span class="pill open">Common list</span></div>
                 <p>Movie aur Food, do tabs. Card par tap karo to us <code>kitid</code> ke saath <code>coupondetail</code> call karo.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponlist"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"N","reqtype":"couponlist"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -976,7 +984,7 @@
                 <p>Price breakup, wallet balance, description, "how to use" aur terms. Agar <code>canpay</code> false hai to Pay button disable rakho.</p>
                 <div class="pair">
                     <div class="code">
-                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
 </pre>
                     </div>
                     <div class="code">
@@ -1012,7 +1020,7 @@
                 <div class="api-title"><span class="rt">couponpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet debit</span></div>
                 <p>Web page ke "Proceed to Pay" jaisa: balance check, package condition, utility wallet, phir voucher. Amount server DB se leta hai, isliye app amount nahi bhejta. Success par <code>billno</code> ke saath <a href="#s-thankyou">Thank You</a> screen kholo.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"couponpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"couponpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -1052,7 +1060,7 @@
                 <div class="api-title"><span class="rt">orderdetail</span><span class="pill auth">ID + password</span></div>
                 <div class="pair">
                     <div class="code">
-                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"orderdetail","userid":"EPI123456","passwd":"EPI@123456","billno":"633846","kitid":1005}
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"orderdetail","userid":"EPI123456","passwd":"EPI@123456","billno":"633846","kitid":1005}
 </pre>
                     </div>
                     <div class="code">
@@ -1080,7 +1088,7 @@
                 <p>"Redeem Now" button ke liye hai. Jo <code>url</code> mile use browser ya WebView mein kholo, user Food/Movie portal par auto-login ho jayega. <code>redeemtype</code> khali ho to Redeem button mat dikhao.</p>
                 <div class="pair">
                     <div class="code">
-                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"redeemurl","userid":"EPI123456","passwd":"EPI@123456","type":"MOVIE"}
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"redeemurl","userid":"EPI123456","passwd":"EPI@123456","type":"MOVIE"}
 </pre>
                     </div>
                     <div class="code">
@@ -1108,7 +1116,7 @@
                 <p>Chaar packages aate hain. Jin par <code>isallowed: false</code> hai unka button disable ya "Not available" dikhao (member ke current package ke hisaab se).</p>
                 <div class="pair">
                     <div class="code">
-                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpackages","userid":"EPI123456","passwd":"EPI@123456"}
+                        <div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"subscriptionpackages","userid":"EPI123456","passwd":"EPI@123456"}
 </pre>
                     </div>
                     <div class="code">
@@ -1154,7 +1162,7 @@
                 <div class="api-title"><span class="rt">subscriptionpay</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
                 <p>Order bana ke UPI payment URL deta hai. Aage ka flow <a href="#payment">Payment flow</a> mein hai.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"subscriptionpay","userid":"EP100245","passwd":"mypassword","kitid":7}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
@@ -1174,7 +1182,7 @@
             <div class="api">
                 <div class="api-title"><span class="rt">monthlypackages</span><span class="pill open">Common list</span></div>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlypackages"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"N","reqtype":"monthlypackages"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -1222,7 +1230,7 @@
                 <div class="api-title"><span class="rt">monthlyactivate</span><span class="pill auth">ID + password</span><span class="pill money">UPI payment</span></div>
                 <p>Pehle ID active hai ya nahi aur is mahine activation allowed hai ya nahi, yeh check hota hai. Phir payment URL milta hai (<a href="#payment">Payment flow</a>).</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"monthlyactivate","userid":"EP100245","passwd":"mypassword","kitid":5}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "Payment initiated.",
@@ -1244,7 +1252,7 @@
                 <div class="api-title"><span class="rt">paymentstatus</span><span class="pill auth">ID + password</span></div>
                 <p><code>status</code> ki values: <code>SUCCESS</code>, <code>PENDING</code>, <code>FAILED</code> (ya gateway ne jo bheja ho). Sirf apne orders dikhte hain.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"paymentstatus","userid":"EP100245","passwd":"mypassword","orderid":"20260924101511120"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200, "msg": "", "reqtype": "paymentstatus",
@@ -1268,7 +1276,7 @@
                 <div class="api-title"><span class="rt">deleteaccountcheck</span><span class="pill auth">ID + password</span></div>
                 <p>Screen khulte hi call karo aur ID + naam dikhao. Agar <code>FAILED</code> aaye to <code>msg</code> dikhao aur submit button hata do.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"deleteaccountcheck","userid":"EP100245","passwd":"mypassword"}</pre></div>
                     <div class="code"><div class="lbl">Response · example<button type="button">Copy</button></div><pre>{"response":"OK","code":200,"msg":"","reqtype":"deleteaccountcheck","reqid":"20260924101700001100","data":{"idno":"EP100245","name":"Ravi Sharma"}}</pre></div>
                 </div>
             </div>
@@ -1276,7 +1284,7 @@
                 <div class="api-title"><span class="rt">deleteaccount</span><span class="pill auth">ID + password</span></div>
                 <p>User se confirm karwa ke hi call karo. Success ke baad logout karke Login screen par bhejo.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"deleteaccount","userid":"EP100245","passwd":"mypassword"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response<button type="button">Copy</button></div><pre>{
   "response": "OK", "code": 200,
@@ -1295,7 +1303,7 @@
                 <div class="api-title"><span class="rt">purchasehistory</span><span class="pill auth">ID + password</span></div>
                 <p>Member ke coupon purchase records, naya sabse pehle. <code>page</code> / <code>pagesize</code> optional hain — na bhejo to saare records aate hain.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"purchasehistory","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"purchasehistory","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -1335,7 +1343,7 @@
                 <div class="api-title"><span class="rt">petrocardreport</span><span class="pill auth">ID + password</span></div>
                 <p>Petro Card purchase history (<code>GetPetroCartReportINR</code>). Website jaise hi saare columns aate hain: <code>columns[]</code> mein har column ka <code>title</code> (heading) aur <code>key</code> hai, aur <code>records[]</code> ki har row mein wahi keys hain. Table isi se banao. Example ke column names asli SP ke hisaab se alag ho sakte hain.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardreport","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"petrocardreport","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -1376,7 +1384,7 @@
                 <div class="api-title"><span class="rt">petrocardkits</span><span class="pill auth">ID + password</span></div>
                 <p>Wallet balance, PAN KYC status aur saare Petro Card kits. Har kit ka <code>status</code>: <code>AVAILABLE</code> (Buy Now), <code>PURCHASED</code> (Already Purchased), <code>LOCKED</code> (dusra kit pehle se liya hai), <code>KYC_REQUIRED</code> (PAN verify nahi hai). <code>canbuy</code> true ho tabhi Buy Now chalao, warna <code>message</code> dikhao. <code>pankyc.verified</code> false ho to banner (<code>title</code>, <code>message</code>) aur button (<code>buttontext</code>) dikhao — button par <code>kycurl</code> browser mein kholo. <code>kycurl</code> thodi der hi chalta hai, isliye save mat karo. <code>benefits</code> mein HTML ho sakta hai.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardkits","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"petrocardkits","userid":"EPI123456","passwd":"EPI@123456"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -1420,7 +1428,7 @@
                 <div class="api-title"><span class="rt">petrocardform</span><span class="pill auth">ID + password</span></div>
                 <p>Purchase form ka data: kit amount, member ki details (pehle se bhari), payment modes, wallet types (balance ke saath), genders aur states. Jis field ka <code>...editable</code> false hai use sirf dikhao, edit mat karne do — server wahi value use karega. KYC verified na ho ya kit pehle se liya ho to <code>code 400</code> aur <code>msg</code>.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardform","userid":"EPI123456","passwd":"EPI@123456","kitid":12}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"petrocardform","userid":"EPI123456","passwd":"EPI@123456","kitid":12}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · example<button type="button">Copy</button></div><pre>{
     "response": "OK",
@@ -1467,7 +1475,7 @@
                 <div class="api-title"><span class="rt">petrocardpurchase</span><span class="pill auth">ID + password</span><span class="pill money">Wallet / UPI payment</span></div>
                 <p><code>paymentmode</code> = <code>WALLET</code> (wallet se turant purchase, <code>wallettype</code> zaroori) ya <code>PG</code> (UPI). <code>PG</code> par response mein <code>orderid</code> aur <code>paymenturl</code> aata hai — <code>paymenturl</code> WebView mein kholo, <code>PETROCARDPurchase.aspx</code> par pahunche to band karke <code>paymentstatus</code> call karo (<code>ordertype</code> = <code>PETROCARD</code>). <code>dob</code> ka format <code>dd-MMM-yyyy</code> hai. Amount server DB se leta hai. 20 second ke andar same request dobara aayi to <code>409</code>.</p>
                 <div class="pair">
-                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"reqtype":"petrocardpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":12,"paymentmode":"WALLET","wallettype":"S","gender":"M","dob":"15-Aug-1990","email":"member@example.com","mobile":"9876543210","whatsappno":"9876543210","panno":"ABCDE1234F","address":"12, MG Road","pincode":"302001","statecode":"8","city":"Jaipur","district":"Jaipur"}</pre></div>
+                    <div class="code"><div class="lbl">Request<button type="button">Copy</button></div><pre>{"islogin":"Y","reqtype":"petrocardpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":12,"paymentmode":"WALLET","wallettype":"S","gender":"M","dob":"15-Aug-1990","email":"member@example.com","mobile":"9876543210","whatsappno":"9876543210","panno":"ABCDE1234F","address":"12, MG Road","pincode":"302001","statecode":"8","city":"Jaipur","district":"Jaipur"}</pre></div>
                     <div class="code">
                         <div class="lbl">Response · WALLET example<button type="button">Copy</button></div><pre>{
     "response": "OK",

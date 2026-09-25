@@ -3,9 +3,19 @@
 URL : https://epayindia.in/AppApi.aspx
 Method : POST
 Header : Content-Type: application/json
+         apikey: <apikey from the Login response>   (only when islogin = "Y")
 
 Note : Send userid and passwd (website login) in every API call.
        Only couponlist and monthlypackages do not need userid / passwd.
+
+Note : Send "islogin" in every API call:
+       islogin = "N" (no apikey header) : login, couponlist, monthlypackages
+       islogin = "Y" (apikey in header)  : all other APIs
+       A wrong islogin value returns code 400.
+
+Note : The Login API returns a new "apikey" every time you log in. Save it and send it
+       in the "apikey" header of every islogin = "Y" call. The old apikey stops working
+       after a new login or a logout.
 
 Note : Every response contains these fields:
        response = OK / FAILED
@@ -18,7 +28,7 @@ Note : Every response contains these fields:
 Response codes:
        200 = Success
        400 = Invalid input or business rule failed - show msg
-       401 = Wrong userid / passwd - clear the saved login and open the Login screen
+       401 = Wrong userid / passwd, or apikey missing / expired - clear the saved login and open the Login screen
        403 = ID is blocked - show msg and log out
        404 = Package / order not found - show msg
        409 = Same request received again within 20 seconds - show msg, try again after a moment
@@ -30,7 +40,7 @@ Failed Response Example:
 
 1. Login API
 Request:
-{"reqtype":"login","userid":"EPI123456","passwd":"EPI@123456","deviceid":"a1b2c3d4-android","appversion":"1.0.0"}
+{"islogin":"N","reqtype":"login","userid":"EPI123456","passwd":"EPI@123456","deviceid":"a1b2c3d4-android","appversion":"1.0.0"}
 Response:
 {
     "response": "OK",
@@ -54,16 +64,18 @@ Response:
             "activationdate": "18-Dec-2025",
             "activestatus": "Y",
             "profilepic": "images/dollar.jpg"
-        }
+        },
+        "apikey": "5f1c9a0e7b3d4c2a8e6f0b9d1a3c5e7f9b2d4f6a8c0e2b4d6f8a0c2e4b6d8f0a"
     }
 }
 Note : Use the same user ID and password that the member uses on the website.
-Note : After a successful login, send the same userid and passwd in every other API call.
+Note : After a successful login, send the same userid and passwd in every other API call,
+       and the apikey in the "apikey" header (islogin = "Y").
 Note : A wrong user ID or password returns code 401.
 
 2. Logout API
 Request:
-{"reqtype":"logout","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"logout","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -77,7 +89,7 @@ Note : The app should delete the saved userid / passwd and take the user to the 
 
 3. Get Profile API
 Request:
-{"reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"profile","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -108,7 +120,7 @@ Note : Use this to show the name, ID, avatar letter (initial) and wallet balance
 
 4. Wallet Balance API
 Request:
-{"reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"walletbalance","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -124,7 +136,7 @@ Note : Returns the current wallet balance of the member.
 
 5. Home API
 Request:
-{"reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"home","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -248,7 +260,7 @@ Note : If screen is blank, open openurl in a WebView. openurl is valid for 1 day
 
 6. Coupon List API
 Request:
-{"reqtype":"couponlist"}
+{"islogin":"N","reqtype":"couponlist"}
 Response:
 {
     "response": "OK",
@@ -338,7 +350,7 @@ Note : Show two tabs: movies and food. When a card is tapped, call the Coupon De
 
 7. Coupon Detail API
 Request:
-{"reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
+{"islogin":"Y","reqtype":"coupondetail","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
 Response:
 {
     "response": "OK",
@@ -369,7 +381,7 @@ Note : If canpay is false, disable the Pay button (wallet balance is too low).
 
 8. Coupon Purchase API
 Request:
-{"reqtype":"couponpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
+{"islogin":"Y","reqtype":"couponpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":1005}
 Response:
 {
     "response": "OK",
@@ -392,7 +404,7 @@ Note : Disable the button as soon as it is tapped. The same request again within
 
 9. Order Detail API (Thank You)
 Request:
-{"reqtype":"orderdetail","userid":"EPI123456","passwd":"EPI@123456","billno":"633846","kitid":1005}
+{"islogin":"Y","reqtype":"orderdetail","userid":"EPI123456","passwd":"EPI@123456","billno":"633846","kitid":1005}
 Response:
 {
     "response": "OK",
@@ -414,7 +426,7 @@ Note : If redeemtype is blank, do not show the Redeem Now button.
 
 10. Redeem URL API
 Request:
-{"reqtype":"redeemurl","userid":"EPI123456","passwd":"EPI@123456","type":"MOVIE"}
+{"islogin":"Y","reqtype":"redeemurl","userid":"EPI123456","passwd":"EPI@123456","type":"MOVIE"}
 Response:
 {
     "response": "OK",
@@ -432,7 +444,7 @@ Note : Open url in a browser or WebView; the member is logged in to the Food / M
 
 11. Subscription Packages API
 Request:
-{"reqtype":"subscriptionpackages","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"subscriptionpackages","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -473,7 +485,7 @@ Note : Disable the button of every package where isallowed is false.
 
 12. Subscription Pay API
 Request:
-{"reqtype":"subscriptionpay","userid":"EPI123456","passwd":"EPI@123456","kitid":7}
+{"islogin":"Y","reqtype":"subscriptionpay","userid":"EPI123456","passwd":"EPI@123456","kitid":7}
 Response:
 {
     "response": "OK",
@@ -495,7 +507,7 @@ Note : The same request again within 20 seconds returns code 409.
 
 13. Activation Points (Monthly) Packages API
 Request:
-{"reqtype":"monthlypackages"}
+{"islogin":"N","reqtype":"monthlypackages"}
 Response:
 {
     "response": "OK",
@@ -540,7 +552,7 @@ Note : userid / passwd are not required (common list).
 
 14. Monthly Activate API
 Request:
-{"reqtype":"monthlyactivate","userid":"EPI123456","passwd":"EPI@123456","kitid":5}
+{"islogin":"Y","reqtype":"monthlyactivate","userid":"EPI123456","passwd":"EPI@123456","kitid":5}
 Response:
 {
     "response": "OK",
@@ -562,7 +574,7 @@ Note : The same request again within 20 seconds returns code 409.
 
 15. Payment Status API
 Request:
-{"reqtype":"paymentstatus","userid":"EPI123456","passwd":"EPI@123456","orderid":"20260924101511120"}
+{"islogin":"Y","reqtype":"paymentstatus","userid":"EPI123456","passwd":"EPI@123456","orderid":"20260924101511120"}
 Response:
 {
     "response": "OK",
@@ -586,7 +598,7 @@ Note : If the status is PENDING, check again 3-4 times at an interval of 5-10 se
 
 16. Delete Account Check API
 Request:
-{"reqtype":"deleteaccountcheck","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"deleteaccountcheck","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -603,7 +615,7 @@ Note : Call this when the screen opens. If the response is FAILED, show msg and 
 
 17. Delete Account API
 Request:
-{"reqtype":"deleteaccount","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"deleteaccount","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -617,7 +629,7 @@ Note : Call this only after the user confirms. On success, log the user out and 
 
 18. Purchase History API (My Purchase Detail)
 Request:
-{"reqtype":"purchasehistory","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}
+{"islogin":"Y","reqtype":"purchasehistory","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}
 Response:
 {
     "response": "OK",
@@ -656,7 +668,7 @@ Note : redeemtype FOOD / MOVIE can be used to show a Redeem button (Redeem URL A
 
 19. Petro Card Purchase Report API
 Request:
-{"reqtype":"petrocardreport","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}
+{"islogin":"Y","reqtype":"petrocardreport","userid":"EPI123456","passwd":"EPI@123456","page":1,"pagesize":20}
 Response:
 {
     "response": "OK",
@@ -704,7 +716,7 @@ Note : page and pagesize are optional (pagesize default 20, max 100). Without pa
 
 20. Petro Card Kits API
 Request:
-{"reqtype":"petrocardkits","userid":"EPI123456","passwd":"EPI@123456"}
+{"islogin":"Y","reqtype":"petrocardkits","userid":"EPI123456","passwd":"EPI@123456"}
 Response:
 {
     "response": "OK",
@@ -749,7 +761,7 @@ Note : benefits may contain HTML.
 
 21. Petro Card Form API
 Request:
-{"reqtype":"petrocardform","userid":"EPI123456","passwd":"EPI@123456","kitid":12}
+{"islogin":"Y","reqtype":"petrocardform","userid":"EPI123456","passwd":"EPI@123456","kitid":12}
 Response:
 {
     "response": "OK",
@@ -814,7 +826,7 @@ Note : Returns code 400 with msg if PAN KYC is not verified or a Petro Card kit 
 
 22. Petro Card Purchase API
 Request:
-{"reqtype":"petrocardpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":12,"paymentmode":"WALLET","wallettype":"S","gender":"M","dob":"15-Aug-1990","email":"member@example.com","mobile":"9876543210","whatsappno":"9876543210","panno":"ABCDE1234F","address":"12, MG Road","pincode":"302001","statecode":"8","city":"Jaipur","district":"Jaipur"}
+{"islogin":"Y","reqtype":"petrocardpurchase","userid":"EPI123456","passwd":"EPI@123456","kitid":12,"paymentmode":"WALLET","wallettype":"S","gender":"M","dob":"15-Aug-1990","email":"member@example.com","mobile":"9876543210","whatsappno":"9876543210","panno":"ABCDE1234F","address":"12, MG Road","pincode":"302001","statecode":"8","city":"Jaipur","district":"Jaipur"}
 Response:
 {
     "response": "OK",

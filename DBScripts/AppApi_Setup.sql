@@ -88,11 +88,14 @@ END
 GO
 
 /* =====================================================================
-   3. TOKEN TABLE  -  sirf AppWebBridge.aspx ke liye (home ke web links
-      WebView mein bina login khulein). API khud har call par userid /
-      passwd se check hoti hai. "home" call par 1 din ka token banta hai
-      (DeviceId = 'WEBBRIDGE', member ka ek hi active).
-      Token DB mein plain nahi, SHA-256 hash ke roop mein save hota hai.
+   3. TOKEN TABLE  -  do tarah ke token (DeviceId se pehchan):
+      'APIKEY'    : "login" par banta hai, response mein "apikey". islogin = 'Y'
+                    wali har API ke header "apikey" mein aata hai. Har login par
+                    naya (purana band), logout par band.
+      'WEBBRIDGE' : AppWebBridge.aspx ke liye (home ke web links WebView mein
+                    bina login khulein). "home" call par 1 din ka token.
+      Dono ka member ka ek hi active. Token DB mein plain nahi, SHA-256 hash
+      ke roop mein save hota hai.
    ===================================================================== */
 IF OBJECT_ID('dbo.Tbl_AppApiToken', 'U') IS NULL
 BEGIN
@@ -296,7 +299,8 @@ GO
 IF OBJECT_ID('dbo.Sp_AppApi_TokenValidate', 'P') IS NOT NULL DROP PROCEDURE dbo.Sp_AppApi_TokenValidate;
 GO
 CREATE PROCEDURE dbo.Sp_AppApi_TokenValidate
-    @TokenHash CHAR(64)
+    @TokenHash CHAR(64),
+    @DeviceId  NVARCHAR(200) = NULL   -- 'WEBBRIDGE' / 'APIKEY': ek type ka token dusre kaam mein na chale
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -305,7 +309,8 @@ BEGIN
 
     SELECT @TokenId = TokenId
       FROM dbo.Tbl_AppApiToken
-     WHERE TokenHash = @TokenHash AND IsActive = 1 AND ExpiresOn > GETDATE();
+     WHERE TokenHash = @TokenHash AND IsActive = 1 AND ExpiresOn > GETDATE()
+       AND (@DeviceId IS NULL OR DeviceId = @DeviceId);
 
     IF @TokenId IS NULL
         RETURN;   -- koi row nahi = token invalid / expired

@@ -36,7 +36,7 @@ public partial class AppWebBridge : System.Web.UI.Page
             }
             else
             {
-                member = AppApiCore.ValidateToken(Request.QueryString["token"]);
+                member = AppApiCore.ValidateToken(Request.QueryString["token"], AppApiCore.BridgeDevice);
                 if (member == null)
                     error = "Invalid / expired token";
                 else if (member.IsBlock.ToUpper() == "Y")

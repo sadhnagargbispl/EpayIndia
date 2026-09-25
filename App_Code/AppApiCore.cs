@@ -63,15 +63,23 @@ public static class AppApiCore
         return sb.ToString();
     }
 
-    /// <summary>Token valid ho to member lautata hai, warna null.</summary>
-    public static AppMember ValidateToken(string token)
+    /// <summary>Token ka type (Tbl_AppApiToken.DeviceId).</summary>
+    public const string ApiKeyDevice = "APIKEY";
+    public const string BridgeDevice = "WEBBRIDGE";
+
+    /// <summary>"login" par bani apikey kitne din chale (naye login / logout par pehle hi band ho jati hai).</summary>
+    public const int ApiKeyValidDays = 365;
+
+    /// <summary>Token valid ho (aur usi type ka ho) to member lautata hai, warna null.</summary>
+    public static AppMember ValidateToken(string token, string deviceId)
     {
         if (string.IsNullOrWhiteSpace(token) || token.Length > 200)
             return null;
 
         DataSet ds = SqlHelper.ExecuteDataset(Constr, CommandType.Text,
-            "EXEC Sp_AppApi_TokenValidate @TokenHash",
-            new SqlParameter("@TokenHash", SqlDbType.Char, 64) { Value = HashToken(token.Trim()) });
+            "EXEC Sp_AppApi_TokenValidate @TokenHash, @DeviceId",
+            new SqlParameter("@TokenHash", SqlDbType.Char, 64) { Value = HashToken(token.Trim()) },
+            new SqlParameter("@DeviceId", SqlDbType.NVarChar, 200) { Value = deviceId });
 
         if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             return null;
@@ -123,7 +131,7 @@ public static class AppApiCore
     /* ---------------- Log masking ---------------- */
 
     private static readonly Regex SecretJson = new Regex(
-        "(\"(?:passwd|password|pwd|token|securityCode|merchantID|key|tokenno)\"\\s*:\\s*)\"[^\"]*\"",
+        "(\"(?:passwd|password|pwd|token|securityCode|merchantID|key|tokenno|apikey)\"\\s*:\\s*)\"[^\"]*\"",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     /// <summary>Log mein password / token / keys "****" ho jate hain.</summary>

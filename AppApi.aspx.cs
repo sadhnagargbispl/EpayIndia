@@ -126,6 +126,15 @@ public partial class AppApi : System.Web.UI.Page
 
     private ApiResult Dispatch()
     {
+        // islogin: "N" = login / common list (header mein apikey nahi), "Y" = baaki sab (header "apikey" zaroori).
+        // Kaunsi reqtype kya hai ye server tay karta hai - app galat bheje to request rukti hai.
+        string expectedIsLogin = reqType == "login" || PublicReqTypes.Contains(reqType) ? "N" : "Y";
+        string isLogin = Val("islogin").ToUpper();
+        if (isLogin != "N" && isLogin != "Y")
+            return Fail(400, "islogin (N / Y) is required.");
+        if (isLogin != expectedIsLogin)
+            return Fail(400, "islogin must be " + expectedIsLogin + " for this reqtype.");
+
         if (!PublicReqTypes.Contains(reqType))
         {
             if (ClearInject(Val("userid")) == "" || ClearInject(Val("passwd")) == "")
@@ -141,6 +150,11 @@ public partial class AppApi : System.Web.UI.Page
 
             if (reqType == "login")
                 return Login(loginRow);
+
+            // islogin = Y: header ki apikey isi member ki honi chahiye (har login par nayi, logout par band)
+            AppMember keyOwner = AppApiCore.ValidateToken(Request.Headers["apikey"], AppApiCore.ApiKeyDevice);
+            if (keyOwner == null || keyOwner.FormNo != member.FormNo)
+                return Fail(401, "Invalid or expired apikey. Please login again.");
         }
 
         switch (reqType)
@@ -219,10 +233,11 @@ public partial class AppApi : System.Web.UI.Page
 
         JObject data = new JObject();
         data["member"] = m;
+        data["apikey"] = CreateToken(AppApiCore.ApiKeyDevice, AppApiCore.ApiKeyValidDays);
         return Success("Login successful.", data);
     }
 
-    /// <summary>App local data saaf kare; server par web links (bridge) ke token band.</summary>
+    /// <summary>App local data saaf kare; server par apikey aur web links (bridge) ke token band.</summary>
     private ApiResult Logout()
     {
         SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text, "EXEC Sp_AppApi_TokenRevoke @FormNo",
@@ -231,10 +246,10 @@ public partial class AppApi : System.Web.UI.Page
     }
 
     /// <summary>
-    /// Home ke web links (AppWebBridge.aspx) ke liye 1 din ka token.
-    /// Har member ka ek hi active bridge token rehta hai (naya banne par purana band).
+    /// Naya token: "login" par apikey (APIKEY), "home" par web links (AppWebBridge.aspx) ke liye 1 din ka (WEBBRIDGE).
+    /// Har member ka har type ka ek hi active token rehta hai (naya banne par purana band).
     /// </summary>
-    private string CreateBridgeToken()
+    private string CreateToken(string deviceId, int validDays)
     {
         string token = AppApiCore.NewToken();
         SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text,
@@ -242,9 +257,9 @@ public partial class AppApi : System.Web.UI.Page
             new SqlParameter("@FormNo", SqlDbType.Int) { Value = member.FormNo },
             new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo },
             new SqlParameter("@TokenHash", SqlDbType.Char, 64) { Value = AppApiCore.HashToken(token) },
-            new SqlParameter("@DeviceId", SqlDbType.NVarChar, 200) { Value = "WEBBRIDGE" },
+            new SqlParameter("@DeviceId", SqlDbType.NVarChar, 200) { Value = deviceId },
             new SqlParameter("@IPAddress", SqlDbType.VarChar, 50) { Value = DbNull(AppApiCore.ClientIp(Request)) },
-            new SqlParameter("@ValidDays", SqlDbType.Int) { Value = AppApiCore.BridgeTokenValidDays });
+            new SqlParameter("@ValidDays", SqlDbType.Int) { Value = validDays });
         return token;
     }
 
@@ -290,7 +305,7 @@ public partial class AppApi : System.Web.UI.Page
     private ApiResult Home()
     {
         DataSet ds = SqlHelper.ExecuteDataset(AppApiCore.Constr, CommandType.Text, "EXEC Sp_App_GetHomeData");
-        bridgeToken = CreateBridgeToken();
+        bridgeToken = CreateToken(AppApiCore.BridgeDevice, AppApiCore.BridgeTokenValidDays);
 
         JObject data = new JObject();
         data["banners"] = TableToArray(ds, 0);
