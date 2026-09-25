@@ -12,21 +12,6 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 
-/// <summary>
-/// ePay Mobile App API - ek hi endpoint, "reqtype" se kaam decide hota hai.
-///
-///   POST  /AppApi.aspx
-///   Header: Content-Type: application/json
-///   Body  : {"reqtype":"home","userid":"...","passwd":"...", ...}
-///           userid + passwd har reqtype mein zaroori hain, sirf common list
-///           (PublicReqTypes) mein nahi. Har call par sp_Login1 se check hota hai.
-///
-/// Response hamesha valid JSON (Newtonsoft se banta hai):
-///   {"response":"OK|FAILED","code":200,"msg":"","reqtype":"","reqid":"","data":{}}
-///
-/// Pages ke hisaab se reqtype ki list aur samples: AppApiDoc.html
-/// Log: Tbl_AppApiLog + Tbl_AppApiExtCallLog (script: DBScripts/AppApi_Setup.sql)
-/// </summary>
 public partial class AppApi : System.Web.UI.Page
 {
     // ---- Bahar ki services (web pages mein bhi yahi values use ho rahi hain) ----
@@ -918,8 +903,8 @@ public partial class AppApi : System.Web.UI.Page
         refNo = "DeleteAccount/" + member.IdNo;
         SqlHelper.ExecuteNonQuery(AppApiCore.Constr, CommandType.Text,
             "Exec SA_UpdateDeleteAccount @IdNo; " +
-            "insert into UserHistory(UserId, UserName, PageName, Activity, ModifiedFlds, RecTimeStamp, MemberId) " +
-            "Values (0, '', 'Delete Account Update', 'Delete Account Update (App)', @Remark, Getdate(), @IdNo)",
+            "insert into UserHistory(UserId, UserName, PageName, Activity, ModifiedFlds, RecTimeStamp) " +
+            "Values (0, '', 'Delete Account Update', 'Delete Account Update (App)', @Remark, Getdate())",
             new SqlParameter("@IdNo", SqlDbType.VarChar, 50) { Value = member.IdNo },
             new SqlParameter("@Remark", SqlDbType.VarChar, 200) { Value = "Delete Account Update " + member.IdNo });
 
