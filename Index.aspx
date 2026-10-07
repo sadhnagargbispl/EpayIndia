@@ -176,7 +176,7 @@
                 <a href="purchase-coupon.aspx" class="service-link">Get Coupon →</a>
             </div>
 
-            <div class="service-card-live">
+          <%--  <div class="service-card-live">
                 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
                 <div class="service-icon">👑</div>
                 <h3>Subscription Now</h3>
@@ -197,7 +197,7 @@
                 <h3>Petro Card Points</h3>
                 <p>Earn and redeem Petro Card points on every activity.</p>
                 <a href="PETROCARDPurchase.aspx" class="service-link">View Points →</a>
-            </div>
+            </div>--%>
         </div>
 
     </section>
