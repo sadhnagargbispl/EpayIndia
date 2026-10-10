@@ -175,8 +175,7 @@
                 <p>Get exclusive coupons and save big on every purchase.</p>
                 <a href="purchase-coupon.aspx" class="service-link">Get Coupon →</a>
             </div>
-
-          <%--  <div class="service-card-live">
+            <div class="service-card-live">
                 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
                 <div class="service-icon">👑</div>
                 <h3>Subscription Now</h3>
@@ -184,6 +183,7 @@
                 <a href="subscription-now.aspx" class="service-link">Subscribe Now →</a>
             </div>
 
+          <%--  
             <div class="service-card-live">
                 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
                 <div class="service-icon">⭐</div>

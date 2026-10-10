@@ -66,3 +66,9 @@
    at System.Web.HttpResponse.AbortCurrentThread()
    at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
    at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\SadhnaGithubC#\EpayIndia\subscription-now.aspx.cs:line 444
+08-10-2026 11.48.16 AM System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
+   at subscription_now.CheckLiveRateCoin(String auth, String orderid, String amount) in E:\Sadhna Garg\SadhnaGithubC#\EpayIndia\subscription-now.aspx.cs:line 440
