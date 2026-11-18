@@ -1397,6 +1397,24 @@
             return true;
         }
 
+        function onDigiLockerReg(btn) {
+            var a = document.getElementById('<%=txtAadhaarNo.ClientID%>').value.trim();
+            var consent = document.getElementById('<%=chkAadhaarConsent.ClientID%>');
+
+            if (a.length !== 12) {
+                alert('Please enter a valid 12-digit Aadhaar number.');
+                return false;
+            }
+            if (consent && !consent.checked) {
+                alert('Please give consent before verifying your Aadhaar.');
+                return false;
+            }
+
+            btn.value = 'Redirecting to DigiLocker...';
+            setTimeout(function () { btn.disabled = true; }, 10);
+            return true;
+        }
+
         function onVerifyOtp(btn) {
             var otp = document.getElementById('<%=txtAadhaarOtp.ClientID%>').value.trim();
             if (otp.length < 4) {
@@ -2012,9 +2030,9 @@
                                 <p class="rw-eyebrow">Step 3 of 4 &middot; Optional</p>
                                 <h3 class="rw-title">Aadhaar &amp; Address KYC</h3>
                                 <p class="rw-sub">
-                                    Verify your Aadhaar with an OTP. Your address is fetched straight from UIDAI,
-                                    so there is nothing to type or upload. If you verified your PAN, the name on
-                                    your Aadhaar must match the name on your PAN.
+                                    Verify your Aadhaar with DigiLocker. Your address is fetched straight from your
+                                    e-Aadhaar (UIDAI), so there is nothing to type or upload. If you verified your PAN,
+                                    the name on your Aadhaar must match the name on your PAN.
                                 </p>
                             </div>
 
@@ -2027,7 +2045,7 @@
                                             <asp:TextBox ID="txtAadhaarNo" runat="server" CssClass="form-control"
                                                 MaxLength="12" onkeyup="onlyDigits(this)" Style="letter-spacing: .08em;"
                                                 placeholder="12-digit Aadhaar number"></asp:TextBox>
-                                            <small class="rw-hint">An OTP will be sent to your Aadhaar-linked mobile number.</small>
+                                            <small class="rw-hint">You will be redirected to DigiLocker to sign in and give consent. Use the DigiLocker account of this Aadhaar and tick the Aadhaar Card document. Your details here will be kept.</small>
                                             <asp:Label ID="lblAadhaarLinkedNote" runat="server" Visible="false" CssClass="rw-hint"
                                                 Style="display: block; color: #15803d;"
                                                 Text="This is the Aadhaar linked with your PAN."></asp:Label>
@@ -2037,15 +2055,15 @@
                                             <div class="rw-consent">
                                                 <asp:CheckBox ID="chkAadhaarConsent" runat="server" />
                                                 <label for="<%=chkAadhaarConsent.ClientID%>">
-                                                    I consent to verify my Aadhaar and fetch my address through UIDAI Offline e-KYC.
+                                                    I consent to verify my Aadhaar and fetch my address through DigiLocker.
                                                 </label>
                                             </div>
                                         </div>
 
                                         <div class="col-12">
-                                            <asp:Button ID="btnSendOtpReg" runat="server" Text="Send OTP"
+                                            <asp:Button ID="btnSendOtpReg" runat="server" Text="Verify with DigiLocker"
                                                 CssClass="btn btn-rw-primary" CausesValidation="false"
-                                                OnClick="btnSendOtpReg_Click" OnClientClick="return onSendOtp(this);" />
+                                                OnClick="btnDigiLockerReg_Click" OnClientClick="return onDigiLockerReg(this);" />
                                         </div>
 
                                         <div id="divAadhaarOtp" runat="server" visible="false" class="col-12">
@@ -2077,7 +2095,7 @@
                                             <%-- Read-only on purpose: the save uses the UIDAI record, not this box. --%>
                                             <asp:TextBox ID="txtRegAddress" runat="server" CssClass="form-control"
                                                 TextMode="MultiLine" Rows="3" ReadOnly="true"></asp:TextBox>
-                                            <small class="rw-hint">Fetched from UIDAI and saved exactly as returned.</small>
+                                            <small class="rw-hint">Fetched from DigiLocker (UIDAI) and saved exactly as returned.</small>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Pincode</label>
@@ -2107,7 +2125,7 @@
                                 <div id="divUidFetched" runat="server" visible="false">
                                     <div class="rw-result">
                                         <div class="rw-result-head">
-                                            <i class="fas fa-check-circle"></i>UIDAI Verified Record
+                                            <i class="fas fa-check-circle"></i>DigiLocker Verified Record
                                         </div>
                                         <table class="rw-kv">
                                             <tr id="trUidName" runat="server">

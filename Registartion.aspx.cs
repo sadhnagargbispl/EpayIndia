@@ -377,8 +377,18 @@ public partial class Registration : System.Web.UI.Page
 
                 // A fresh visit must never inherit a PAN/Aadhaar verification that
                 // belonged to an earlier registration attempt in the same session.
-                ResetKycState();
+                // DigiLocker se wapas aaye hain to KYC state reset nahi - form snapshot se restore.
+                bool dlReturn = Session[SessDlPending] != null && Session[SessDlFormSnapshot] != null;
+                if (!dlReturn)
+                {
+                    Session[SessDlPending] = null;
+                    Session[SessDlFormSnapshot] = null;
+                    ResetKycState();
+                }
                 FillRegState();
+
+                if (dlReturn && RestoreFormSnapshot())
+                    HandleDigiLockerReturnReg();
             }
 
             try
@@ -2042,10 +2052,10 @@ public partial class Registration : System.Web.UI.Page
         lblAadhaarLinkedNote.Visible = locked != null;
 
         litAadhaarFootNote.Text = aadhaarDone
-            ? "This Aadhaar is already verified. <b>Next</b> moves on without another OTP. "
+            ? "This Aadhaar is already verified. <b>Next</b> moves on without another verification. "
             + "Use <b>Change Aadhaar</b> only if you need to verify a different number."
             : "<b>Skip</b> requires nothing at all. <b>Continue</b> needs your Aadhaar "
-            + "verified with an OTP first.";
+            + "verified with DigiLocker first.";
     }
 
     /// <summary>
@@ -2061,7 +2071,7 @@ public partial class Registration : System.Web.UI.Page
                 return "Verified online with the Income Tax Department. Skipping is fine, "
                      + "but payouts carry 20% TDS until a PAN is verified.";
             case 3:
-                return "Your address comes straight from UIDAI once the OTP is confirmed.";
+                return "Your address comes straight from DigiLocker (UIDAI) once you give consent there.";
             case 4:
                 return "Your member ID and password are e-mailed the moment you submit. "
                      + "Bank KYC is completed later, after login.";
@@ -2198,7 +2208,7 @@ public partial class Registration : System.Web.UI.Page
                 ClientIP = GetClientIp(),
                 UserAgent = Request.UserAgent,
                 SessionId = Session.SessionID,
-                PageName = "Registration.aspx"
+                PageName = "Registartion.aspx"
             });
         }
         catch { }
@@ -2473,7 +2483,7 @@ public partial class Registration : System.Web.UI.Page
                 ClientIP = ip,
                 UserAgent = ctx.Request.UserAgent,
                 SessionId = ctx.Session.SessionID,
-                PageName = "Registration.aspx"
+                PageName = "Registartion.aspx"
             });
         }
         catch { }
@@ -3143,7 +3153,7 @@ public partial class Registration : System.Web.UI.Page
         {
             if (!IsAadhaarStepVerified)
             {
-                Alert("Please verify your Aadhaar with OTP before continuing, or press Skip.");
+                Alert("Please verify your Aadhaar with DigiLocker before continuing, or press Skip.");
                 ShowStep(3);
                 return;
             }
@@ -3181,6 +3191,473 @@ public partial class Registration : System.Web.UI.Page
             Alert("Error: " + ex.Message);
             ShowStep(3);
         }
+    }
+
+    #endregion
+
+    #region Step 3 - DigiLocker
+
+    // DigiLocker member ko page se bahar bhejta hai. Wapas aane par wizard ka state
+    // (Step 1 details, PAN step, current step) isi snapshot se restore hota hai.
+    private const string SessDlSession = "RegDlSessionId";
+    private const string SessDlPending = "RegDlPending";
+    private const string SessDlFormSnapshot = "RegDlFormSnapshot";
+    private const string SnapWizardKey = "__wizard";
+
+    /// <summary>Form ke saare input controls ki values Session me rakhta hai (password chhod kar).</summary>
+    private void SaveFormSnapshot()
+    {
+        var snap = new System.Collections.Generic.Dictionary<string, object[]>();
+        CollectSnapshot(Page.Form, snap);
+        snap[SnapWizardKey] = new object[] { CurrentStep, PanSkipped, AadhaarSkipped };
+        Session[SessDlFormSnapshot] = snap;
+    }
+
+    private static void CollectSnapshot(System.Web.UI.Control parent,
+                                        System.Collections.Generic.Dictionary<string, object[]> snap)
+    {
+        foreach (System.Web.UI.Control c in parent.Controls)
+        {
+            var tb = c as System.Web.UI.WebControls.TextBox;
+            var dd = c as System.Web.UI.WebControls.DropDownList;
+            var rl = c as System.Web.UI.WebControls.RadioButtonList;
+            var cb = c as System.Web.UI.WebControls.CheckBox;
+            var hf = c as System.Web.UI.WebControls.HiddenField;
+
+            if (tb != null)
+            {
+                if (tb.TextMode != System.Web.UI.WebControls.TextBoxMode.Password)
+                    snap[c.UniqueID] = new object[] { tb.Text, tb.ReadOnly, tb.Enabled };
+            }
+            else if (dd != null) snap[c.UniqueID] = new object[] { dd.SelectedValue, dd.Enabled };
+            else if (rl != null) snap[c.UniqueID] = new object[] { rl.SelectedIndex, rl.Enabled };
+            else if (cb != null) snap[c.UniqueID] = new object[] { cb.Checked, cb.Enabled };
+            else if (hf != null) snap[c.UniqueID] = new object[] { hf.Value };
+
+            if (c.HasControls()) CollectSnapshot(c, snap);
+        }
+    }
+
+    /// <summary>DigiLocker se wapas aane par snapshot wapas controls me bharta hai.</summary>
+    private bool RestoreFormSnapshot()
+    {
+        var snap = Session[SessDlFormSnapshot] as System.Collections.Generic.Dictionary<string, object[]>;
+        if (snap == null) return false;
+
+        ApplySnapshot(Page.Form, snap);
+
+        object[] w;
+        if (snap.TryGetValue(SnapWizardKey, out w) && w != null && w.Length == 3)
+        {
+            CurrentStep = Convert.ToInt32(w[0]);
+            PanSkipped = (bool)w[1];
+            AadhaarSkipped = (bool)w[2];
+        }
+        return true;
+    }
+
+    private static void ApplySnapshot(System.Web.UI.Control parent,
+                                      System.Collections.Generic.Dictionary<string, object[]> snap)
+    {
+        foreach (System.Web.UI.Control c in parent.Controls)
+        {
+            object[] s;
+            if (snap.TryGetValue(c.UniqueID, out s) && s != null)
+            {
+                try
+                {
+                    var tb = c as System.Web.UI.WebControls.TextBox;
+                    var dd = c as System.Web.UI.WebControls.DropDownList;
+                    var rl = c as System.Web.UI.WebControls.RadioButtonList;
+                    var cb = c as System.Web.UI.WebControls.CheckBox;
+                    var hf = c as System.Web.UI.WebControls.HiddenField;
+
+                    if (tb != null)
+                    {
+                        tb.Text = (string)s[0];
+                        tb.ReadOnly = (bool)s[1];
+                        tb.Enabled = (bool)s[2];
+                    }
+                    else if (dd != null)
+                    {
+                        string val = (string)s[0];
+                        if (dd.Items.FindByValue(val) != null)
+                        {
+                            dd.ClearSelection();
+                            dd.SelectedValue = val;
+                        }
+                        dd.Enabled = (bool)s[1];
+                    }
+                    else if (rl != null)
+                    {
+                        int idx = (int)s[0];
+                        if (idx >= 0 && idx < rl.Items.Count) rl.SelectedIndex = idx;
+                        rl.Enabled = (bool)s[1];
+                    }
+                    else if (cb != null)
+                    {
+                        cb.Checked = (bool)s[0];
+                        cb.Enabled = (bool)s[1];
+                    }
+                    else if (hf != null)
+                    {
+                        hf.Value = (string)s[0];
+                    }
+                }
+                catch { }
+            }
+
+            if (c.HasControls()) ApplySnapshot(c, snap);
+        }
+    }
+
+    /// <summary>DigiLocker ka alag audit log (FormNo 0 - joining me member row nahi hoti).</summary>
+    private void RegDlSave(string step, bool ok, string aadhaarPlain, string maskedUid,
+                           AadhaarVerifyResult v = null, AadhaarOtpResult init = null, string msg = null)
+    {
+        try
+        {
+            var e = new DigiLockerLogger.Entry
+            {
+                FormNo = 0,
+                Step = step,
+                IsSuccess = ok,
+                SessionId = Session[SessAadhaarRefId] == null ? null : Session[SessAadhaarRefId].ToString(),
+                AadhaarMasked = !string.IsNullOrEmpty(aadhaarPlain) ? SandboxAadhaarVerify.MaskAadhaar(aadhaarPlain) : maskedUid,
+                AadhaarHash = SandboxAadhaarVerify.HashAadhaar(aadhaarPlain),
+                Message = msg,
+                Ip = GetClientIp(),
+                PageName = "Registartion.aspx"
+            };
+
+            if (init != null)
+            {
+                e.TransactionId = init.TransactionId;
+                e.HttpStatus = init.HttpStatusCode;
+                e.DurationMs = (int)init.DurationMs;
+                e.RequestJson = init.RequestJson;
+                e.ResponseJson = init.RawResponse;
+                if (msg == null) e.Message = init.ErrorMessage;
+            }
+
+            if (v != null)
+            {
+                e.TransactionId = v.TransactionId;
+                e.HttpStatus = v.HttpStatusCode;
+                e.DurationMs = (int)v.DurationMs;
+                e.RequestJson = v.RequestJson;
+                e.ResponseJson = v.RawResponse;
+                e.Name = v.Name;
+                e.Dob = v.Dob;
+                e.Gender = v.Gender;
+                e.Address = v.FullAddress;
+                e.City = v.Vtc;
+                e.District = v.District;
+                e.State = v.State;
+                e.Pincode = v.Pincode;
+                if (msg == null) e.Message = v.ErrorMessage;
+            }
+
+            DigiLockerLogger.Save(constr, e);
+        }
+        catch { }
+    }
+
+    private void RegDlSaveCalls(string aadhaarPlain, string sessionId,
+                                System.Collections.Generic.List<SandboxDigiLocker.ApiCall> calls)
+    {
+        if (calls == null) return;
+        foreach (var c in calls)
+        {
+            try
+            {
+                DigiLockerLogger.Save(constr, new DigiLockerLogger.Entry
+                {
+                    FormNo = 0,
+                    Step = "API_" + c.Step,
+                    IsSuccess = c.Error == null && c.HttpStatus >= 200 && c.HttpStatus < 300,
+                    SessionId = sessionId,
+                    HttpStatus = c.HttpStatus,
+                    DurationMs = c.DurationMs,
+                    AadhaarMasked = SandboxAadhaarVerify.MaskAadhaar(aadhaarPlain),
+                    AadhaarHash = SandboxAadhaarVerify.HashAadhaar(aadhaarPlain),
+                    Message = c.Error,
+                    RequestJson = c.Method + " " + c.Url + (c.RequestBody == null ? "" : Environment.NewLine + c.RequestBody),
+                    ResponseJson = c.ResponseBody,
+                    Ip = GetClientIp(),
+                    PageName = "Registartion.aspx"
+                });
+            }
+            catch { }
+        }
+    }
+
+    /// <summary>Step 3: DigiLocker session banao, form ka snapshot rakho, DigiLocker par bhejo.</summary>
+    protected void btnDigiLockerReg_Click(object sender, EventArgs e)
+    {
+        // PAN verified ho to PAN-linked Aadhaar hi; browser ka number nahi.
+        string aadhaar = LockedAadhaar ?? SandboxAadhaarVerify.Clean(txtAadhaarNo.Text);
+
+        try
+        {
+            if (!SandboxAadhaarVerify.IsValidAadhaarFormat(aadhaar))
+            {
+                LogAadhaarAttempt("VALIDATION", "FAILED", "Invalid Aadhaar format or checksum", aadhaar);
+                AadhaarMsg("Please enter a valid 12-digit Aadhaar number.", true);
+                return;
+            }
+
+            if (!chkAadhaarConsent.Checked)
+            {
+                LogAadhaarAttempt("CONSENT", "FAILED", "Consent not given", aadhaar);
+                AadhaarMsg("Please give consent before verifying your Aadhaar.", true);
+                return;
+            }
+
+            if (!IsAadhaarUnique(aadhaar))
+            {
+                LogAadhaarAttempt("DUPLICATE", "FAILED", "Aadhaar already registered with another ID", aadhaar);
+                RegDlSave("DL_INIT", false, aadhaar, null, null, null, "Aadhaar already registered with another ID");
+                AadhaarMsg("This Aadhaar is already registered with another ID.", true);
+                return;
+            }
+
+            if (HasRecentServiceFailure())
+            {
+                LogAadhaarAttempt("DL_INIT", "FAILED",
+                    "Blocked: a credit or auth failure was logged in the last 15 minutes", aadhaar);
+                RegDlSave("DL_INIT", false, aadhaar, null, null, null, "Blocked: recent service failure in last 15 minutes");
+                AadhaarMsg("Verification service is temporarily unavailable. " +
+                           "Please try again later, or Skip and complete Aadhaar KYC after login.", true);
+                return;
+            }
+
+            // DigiLocker isi page pe wapas bhejega
+            string redirectUrl = Request.Url.GetLeftPart(UriPartial.Authority) + ResolveUrl("~/Registartion.aspx");
+
+            string authUrl;
+            var calls = new System.Collections.Generic.List<SandboxDigiLocker.ApiCall>();
+            var init = SandboxDigiLocker.CreateSession(redirectUrl, out authUrl, calls);
+            RegDlSaveCalls(aadhaar, init.RefId, calls);
+
+            if (!init.Success || string.IsNullOrEmpty(authUrl))
+            {
+                LogAadhaarAttempt("DL_INIT", "FAILED", init.ErrorMessage, aadhaar, null, init);
+                RegDlSave("DL_INIT", false, aadhaar, null, null, init);
+                AadhaarMsg((init.ErrorMessage ?? "Could not start DigiLocker.") +
+                           " You can try again, or Skip and complete Aadhaar KYC after login.", true);
+                return;
+            }
+
+            Session[SessAadhaarRefId] = init.RefId;
+            Session[SessDlSession] = init.RefId;
+            Session[SessAadhaarNo] = aadhaar;
+            Session[SessAadhaarVerified] = null;
+            Session[SessAadhaarRecord] = null;
+
+            // Wapas aane par member isi step par aaye, bhara hua form ke saath
+            CurrentStep = 3;
+            SaveFormSnapshot();
+            Session[SessDlPending] = "Y";
+
+            LogAadhaarAttempt("DL_INIT", "VERIFIED", null, aadhaar, null, init);
+            RegDlSave("DL_INIT", true, aadhaar, null, null, init, "DigiLocker session created");
+
+            Response.Redirect(authUrl, false);
+            Context.ApplicationInstance.CompleteRequest();
+        }
+        catch (Exception ex)
+        {
+            LogAadhaarAttempt("EXCEPTION", "FAILED", ex.Message, aadhaar);
+            RegDlSave("DL_INIT", false, aadhaar, null, null, null, "Exception: " + ex.Message);
+            AadhaarMsg("Something went wrong while starting DigiLocker. Please try again.", true);
+        }
+        finally
+        {
+            ShowStep(3);
+        }
+    }
+
+    /// <summary>
+    /// DigiLocker se wapas aane ke baad (Page_Load, snapshot restore ke baad): profile +
+    /// e-Aadhaar XML, Aadhaar ke last-4 match, PAN verified ho to naam match, phir confirm panel.
+    /// </summary>
+    private void HandleDigiLockerReturnReg()
+    {
+        string aadhaar = Session[SessAadhaarNo] == null ? "" : Session[SessAadhaarNo].ToString();
+        string sid = Session[SessDlSession] == null ? "" : Session[SessDlSession].ToString();
+
+        // Refresh pe dobara na chale
+        Session[SessDlPending] = null;
+        Session[SessDlSession] = null;
+        Session[SessDlFormSnapshot] = null;
+
+        CurrentStep = 3;
+        chkAadhaarConsent.Checked = true;
+
+        RegDlSave("DL_CALLBACK", !string.IsNullOrEmpty(sid), aadhaar, null, null, null,
+                  "Returned from DigiLocker: " + Request.RawUrl);
+
+        try
+        {
+            if (string.IsNullOrEmpty(sid) || string.IsNullOrEmpty(aadhaar))
+            {
+                LogAadhaarAttempt("DL_FETCH", "FAILED", "DigiLocker/Aadhaar session missing on return", aadhaar);
+                AadhaarMsg("Session expired. Please start DigiLocker verification again.", true);
+                return;
+            }
+
+            // Deny / cancel
+            string dlError = Request.QueryString["error"];
+            if (!string.IsNullOrEmpty(dlError))
+            {
+                string dlDesc = Request.QueryString["error_description"];
+                string why = "DigiLocker returned error: " + dlError + (string.IsNullOrEmpty(dlDesc) ? "" : " - " + dlDesc);
+                LogAadhaarAttempt("DL_CALLBACK", "FAILED", why, aadhaar);
+                RegDlSave("DL_CALLBACK", false, aadhaar, null, null, null, why);
+
+                AadhaarMsg(dlError == "access_denied"
+                    ? "You denied consent on DigiLocker, so your Aadhaar could not be verified. " +
+                      "Please try again, sign in with the DigiLocker account of this Aadhaar, tick the " +
+                      "Aadhaar Card document and click Allow - or Skip and complete it after login."
+                    : "DigiLocker verification was not completed. Please try again, or Skip for now.", true);
+                return;
+            }
+
+            string qsSid = Request.QueryString["session_id"];
+            if (!string.IsNullOrEmpty(qsSid) && !string.Equals(qsSid, sid, StringComparison.OrdinalIgnoreCase))
+            {
+                LogAadhaarAttempt("DL_CALLBACK", "FAILED", "Callback session_id does not match the started session", aadhaar);
+                RegDlSave("DL_CALLBACK", false, aadhaar, null, null, null, "Session mismatch: callback " + qsSid + " vs started " + sid);
+                AadhaarMsg("Session mismatch. Please start DigiLocker verification again.", true);
+                return;
+            }
+
+            var calls = new System.Collections.Generic.List<SandboxDigiLocker.ApiCall>();
+            string maskedUid;
+            var v = SandboxDigiLocker.FetchAadhaar(sid, out maskedUid, calls);
+            RegDlSaveCalls(aadhaar, sid, calls);
+
+            if (!v.Success)
+            {
+                LogAadhaarAttempt("DL_FETCH", "FAILED", v.ErrorMessage, aadhaar, v);
+                RegDlSave("DL_FETCH", false, aadhaar, maskedUid, v);
+                AadhaarMsg((v.ErrorMessage ?? "DigiLocker verification failed.") +
+                           " You can try again, or Skip for now.", true);
+                return;
+            }
+
+            // DigiLocker sirf masked uid deta hai: diye gaye Aadhaar se last 4 digits match karo.
+            string uidDigits = System.Text.RegularExpressions.Regex.Replace(maskedUid ?? "", "[^0-9]", "");
+            string last4 = uidDigits.Length >= 4 ? uidDigits.Substring(uidDigits.Length - 4) : "";
+
+            if (last4.Length < 4 || !aadhaar.EndsWith(last4))
+            {
+                LogAadhaarAttempt("DL_FETCH", "FAILED",
+                    "DigiLocker Aadhaar (" + maskedUid + ") does not match the entered Aadhaar", aadhaar, v);
+                RegDlSave("DL_FETCH", false, aadhaar, maskedUid, v, null,
+                    "Aadhaar mismatch: DigiLocker " + maskedUid + " vs entered " + SandboxAadhaarVerify.MaskAadhaar(aadhaar));
+                AadhaarMsg("The Aadhaar in your DigiLocker does not match the Aadhaar number given here. " +
+                           "Please sign in with the DigiLocker account of the same Aadhaar.", true);
+                return;
+            }
+
+            // PAN verified ho to Aadhaar ka naam PAN ke naam se match hona chahiye.
+            if (IsPanStepVerified)
+            {
+                string panName = Session[SessPanName] == null ? "" : Session[SessPanName].ToString();
+                if (!NamesMatch(v.Name, panName))
+                {
+                    LogAadhaarAttempt("NAME_MATCH", "FAILED", "DigiLocker name does not match PAN name", aadhaar, v);
+                    RegDlSave("DL_FETCH", false, aadhaar, maskedUid, v, null, "Name mismatch with PAN: " + panName);
+
+                    ResetAadhaarStep("Aadhaar name did not match PAN name");
+
+                    AadhaarMsg("Name on Aadhaar (" + Server.HtmlEncode(v.Name ?? "") +
+                               ") does not match the name on PAN (" + Server.HtmlEncode(panName) +
+                               "). Both must be the same. You can Skip this step and complete Address KYC after login.", true);
+                    return;
+                }
+            }
+
+            ApplyDigiLockerRecordReg(v, aadhaar);
+
+            LogAadhaarAttempt("DL_FETCH", "VERIFIED", null, aadhaar, v);
+            RegDlSave("DL_FETCH", true, aadhaar, maskedUid, v, null, "Aadhaar and address verified via DigiLocker (joining)");
+        }
+        catch (Exception ex)
+        {
+            LogAadhaarAttempt("EXCEPTION", "FAILED", ex.Message, aadhaar);
+            RegDlSave("DL_FETCH", false, aadhaar, null, null, null, "Exception: " + ex.Message);
+            AadhaarMsg("Something went wrong while reading your DigiLocker details. Please try again, or Skip for now.", true);
+        }
+    }
+
+    /// <summary>Verified DigiLocker record se confirm panel aur right-side summary bharta hai.</summary>
+    private void ApplyDigiLockerRecordReg(AadhaarVerifyResult v, string aadhaar)
+    {
+        txtRegAddress.Text = (v.FullAddress ?? "").ToUpper();
+        txtRegPincode.Text = v.Pincode ?? "";
+
+        string msg = "DigiLocker verification successful for " + v.Name + ".";
+        bool warn = false;
+
+        if (ResolveByPincode(v.Pincode))
+        {
+            bool districtDiffers =
+                !string.IsNullOrEmpty(v.District) &&
+                !string.IsNullOrEmpty(txtRegDistrict.Text) &&
+                txtRegDistrict.Text.Trim().IndexOf(v.District.Trim(), StringComparison.OrdinalIgnoreCase) < 0 &&
+                v.District.Trim().IndexOf(txtRegDistrict.Text.Trim(), StringComparison.OrdinalIgnoreCase) < 0;
+
+            if (districtDiffers)
+            {
+                warn = true;
+                msg += " Note: pincode " + v.Pincode + " maps to " + txtRegDistrict.Text +
+                       ", while your Aadhaar shows " + v.District + ". Please confirm which is correct.";
+            }
+        }
+        else
+        {
+            ResolveStateByName(v.State);
+
+            txtRegDistrict.Text = (v.District ?? "").ToUpper();
+            txtRegCity.Text = (v.Vtc ?? "").ToUpper();
+            HDistrictCode.Value = "0";
+            HCityCode.Value = "0";
+
+            ResolveDistrictCityByName(StateCode.Value, v.District, v.Vtc);
+
+            if (HDistrictCode.Value == "0" || HCityCode.Value == "0")
+            {
+                warn = true;
+                msg += " Pincode " + v.Pincode + " is not in our records, so please confirm your district and city.";
+            }
+        }
+
+        ShowUidRow(trUidName, lblUidName, v.Name);
+        ShowUidRow(trUidDob, lblUidDob, v.Dob);
+        ShowUidRow(trUidGender, lblUidGender,
+                   v.Gender == "M" ? "Male" : (v.Gender == "F" ? "Female" : v.Gender));
+        ShowUidRow(trUidCareOf, lblUidCareOf, v.CareOf);
+
+        lblUidAadhaar.Text = SandboxAadhaarVerify.MaskAadhaar(aadhaar);
+        lblUidAddress.Text = v.FullAddress;
+        lblUidPincode.Text = v.Pincode;
+        lblUidTxnId.Text = v.TransactionId;
+        trUidTxnId.Visible = !string.IsNullOrEmpty(v.TransactionId);
+        divUidFetched.Visible = true;
+
+        // Step 4 isi server-side record se save karega, browser se nahi
+        Session[SessAadhaarRecord] = v;
+        Session[SessAadhaarVerified] = "Y";
+        AadhaarSkipped = false;
+
+        divAadhaarOtp.Visible = false;
+        divAadhaarEntry.Visible = false;
+        divAadhaarConfirm.Visible = true;
+
+        AadhaarMsg(msg, warn);
     }
 
     #endregion
