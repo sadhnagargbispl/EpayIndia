@@ -2783,32 +2783,35 @@ public partial class Registration : System.Web.UI.Page
     }
 
     /// <summary>
-    /// Checks the shared KYC log by hash. FormNo 0 is passed because no member row
-    /// exists yet, so nothing is excluded from the duplicate search.
+    /// Step 3 duplicate check (m_MemberMaster only). Returns null when the Aadhaar
+    /// may proceed, else the message to show; <paramref name="logReason"/> carries
+    /// the exact cause.
+    ///
+    /// The PAN-linked Aadhaar was already checked on step 2 (PanAadhaarLinkCheck),
+    /// so it is not checked again here. With the PAN skipped, the same shared
+    /// check runs, FormNo 0 because no member row exists yet.
     /// </summary>
-    private bool IsAadhaarUnique(string aadhaarPlain)
+    private string AadhaarDuplicateError(string aadhaarPlain, out string logReason)
     {
-        try
-        {
-            using (SqlConnection con = new SqlConnection(constr))
-            using (SqlCommand cmd = new SqlCommand("sp_CheckAadhaarUnique", con))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@FormNo", 0);
-                cmd.Parameters.AddWithValue("@AadhaarHash", SandboxAadhaarVerify.HashAadhaar(aadhaarPlain));
-                cmd.Parameters.AddWithValue("@AadhaarPlain", aadhaarPlain);
-                cmd.Parameters.AddWithValue("@AadhaarMasked", SandboxAadhaarVerify.MaskAadhaar(aadhaarPlain));
+        logReason = null;
 
-                con.Open();
-                object o = cmd.ExecuteScalar();
-                return o != null && Convert.ToInt32(o) == 1;
-            }
-        }
-        catch
+        string locked = LockedAadhaar;
+        if (locked != null && locked == aadhaarPlain) return null;
+
+        string detail;
+        switch (PanAadhaarLinkCheck.CheckAadhaar(aadhaarPlain, 0, out detail))
         {
-            // Fail closed: an unverifiable duplicate check must not let a possible
-            // duplicate through.
-            return false;
+            case PanAadhaarLinkCheck.AadhaarCheck.Free:
+                return null;
+
+            case PanAadhaarLinkCheck.AadhaarCheck.Duplicate:
+                logReason = "Aadhaar already registered with another ID (" + detail + ")";
+                return "This Aadhaar is already registered with another ID.";
+
+            default:
+                // Still fails closed, but says so honestly instead of calling it a duplicate.
+                logReason = "Aadhaar duplicate check failed: " + detail;
+                return "Could not verify your Aadhaar right now. Please try again in a few minutes.";
         }
     }
 
@@ -2858,10 +2861,12 @@ public partial class Registration : System.Web.UI.Page
 
             // Duplicate check runs before the paid call so a duplicate never burns
             // an API credit.
-            if (!IsAadhaarUnique(aadhaar))
+            string dupReason;
+            string dupMsg = AadhaarDuplicateError(aadhaar, out dupReason);
+            if (dupMsg != null)
             {
-                LogAadhaarAttempt("DUPLICATE", "FAILED", "Aadhaar already registered with another ID", aadhaar);
-                AadhaarMsg("This Aadhaar is already registered with another ID.", true);
+                LogAadhaarAttempt("DUPLICATE", "FAILED", dupReason, aadhaar);
+                AadhaarMsg(dupMsg, true);
                 return;
             }
 
@@ -3414,11 +3419,13 @@ public partial class Registration : System.Web.UI.Page
                 return;
             }
 
-            if (!IsAadhaarUnique(aadhaar))
+            string dupReason;
+            string dupMsg = AadhaarDuplicateError(aadhaar, out dupReason);
+            if (dupMsg != null)
             {
-                LogAadhaarAttempt("DUPLICATE", "FAILED", "Aadhaar already registered with another ID", aadhaar);
-                RegDlSave("DL_INIT", false, aadhaar, null, null, null, "Aadhaar already registered with another ID");
-                AadhaarMsg("This Aadhaar is already registered with another ID.", true);
+                LogAadhaarAttempt("DUPLICATE", "FAILED", dupReason, aadhaar);
+                RegDlSave("DL_INIT", false, aadhaar, null, null, null, dupReason);
+                AadhaarMsg(dupMsg, true);
                 return;
             }
 
@@ -3966,6 +3973,10 @@ public partial class Registration : System.Web.UI.Page
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
+
+            // The duplicate check reads m_MemberMaster only, so the verified number
+            // must land there too, whatever sp_SaveAddressKYC does with it.
+            PanAadhaarLinkCheck.SaveMemberAadhaar(formNo, aadhaar);
         }
         catch (Exception ex)
         {

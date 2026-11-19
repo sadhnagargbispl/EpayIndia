@@ -83,8 +83,17 @@ public static class PanAadhaarLinkCheck
                 return Fail(formNo, pan, aadhaar, consent, "PAN already registered with another ID",
                             "This PAN is already registered with another ID.");
 
-            if (!IsAadhaarFree(aadhaar, formNo))
-                return Fail(formNo, pan, aadhaar, consent, "Aadhaar already registered with another ID",
+            string dupDetail;
+            AadhaarCheck dup = CheckAadhaar(aadhaar, formNo, out dupDetail);
+
+            // A check that could not run is reported as such, not as a duplicate:
+            // otherwise a DB error tells a genuine member their Aadhaar is taken.
+            if (dup == AadhaarCheck.Error)
+                return Fail(formNo, pan, aadhaar, consent, "Aadhaar duplicate check failed: " + dupDetail,
+                            "Could not verify your Aadhaar right now. Please try again in a few minutes.");
+
+            if (dup == AadhaarCheck.Duplicate)
+                return Fail(formNo, pan, aadhaar, consent, "Aadhaar already registered with another ID (" + dupDetail + ")",
                             "This Aadhaar is already registered with another ID.");
 
             // ---------- Paid call ----------
@@ -151,48 +160,54 @@ public static class PanAadhaarLinkCheck
         catch { }
     }
 
+    public enum AadhaarCheck { Free, Duplicate, Error }
+
     /// <summary>
     /// True only when every check ran and none found the Aadhaar under another
     /// member. Fails closed: a check that cannot run counts as a duplicate.
     /// </summary>
     public static bool IsAadhaarFree(string aadhaar, long formNo)
     {
+        string detail;
+        return CheckAadhaar(aadhaar, formNo, out detail) == AadhaarCheck.Free;
+    }
+
+    /// <summary>
+    /// Looks for the Aadhaar under another member, in m_MemberMaster only - the
+    /// member record is the single source of truth for duplicates. KycVerify and
+    /// the KYC API log (sp_CheckAadhaarUnique) are deliberately not consulted.
+    /// <paramref name="detail"/> names the matching Formno (for a duplicate) or the
+    /// exception (for an error), so the attempt log shows exactly why.
+    /// </summary>
+    public static AadhaarCheck CheckAadhaar(string aadhaar, long formNo, out string detail)
+    {
+        detail = null;
+
         try
         {
-            const string sql = @"SELECT
-                (SELECT COUNT(1) FROM KycVerify WHERE IdProofNo = @Aadhaar AND FormNo <> @FormNo) +
-                (SELECT COUNT(1) FROM m_MemberMaster
-                  WHERE Formno <> @FormNo
-                    AND (AadharNo = @Aadhaar
-                         OR ISNULL(AadharNo, '') + ISNULL(AadharNo2, '') + ISNULL(AAdharNo3, '') = @Aadhaar))";
+            const string sql = @"SELECT TOP 1 Formno FROM m_MemberMaster
+                WHERE Formno <> @FormNo
+                  AND (AadharNo = @Aadhaar
+                       OR ISNULL(AadharNo, '') + ISNULL(AadharNo2, '') + ISNULL(AAdharNo3, '') = @Aadhaar)";
 
             using (SqlConnection con = new SqlConnection(Cs))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
             {
+                cmd.Parameters.Add("@Aadhaar", SqlDbType.VarChar, 20).Value = aadhaar;
+                cmd.Parameters.Add("@FormNo", SqlDbType.Decimal).Value = formNo;
                 con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(sql, con))
-                {
-                    cmd.Parameters.Add("@Aadhaar", SqlDbType.VarChar, 20).Value = aadhaar;
-                    cmd.Parameters.Add("@FormNo", SqlDbType.Decimal).Value = formNo;
-                    if (Convert.ToInt32(cmd.ExecuteScalar()) > 0) return false;
-                }
+                object o = cmd.ExecuteScalar();
+                if (o == null || o == DBNull.Value) return AadhaarCheck.Free;
 
-                using (SqlCommand cmd = new SqlCommand("sp_CheckAadhaarUnique", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@FormNo", formNo);
-                    cmd.Parameters.AddWithValue("@AadhaarHash", SandboxAadhaarVerify.HashAadhaar(aadhaar));
-                    cmd.Parameters.AddWithValue("@AadhaarPlain", aadhaar);
-                    cmd.Parameters.AddWithValue("@AadhaarMasked", SandboxAadhaarVerify.MaskAadhaar(aadhaar));
-
-                    object o = cmd.ExecuteScalar();
-                    return o != null && o != DBNull.Value && Convert.ToInt32(o) == 1;
-                }
+                detail = "matched m_MemberMaster Formno " + o;
+                return AadhaarCheck.Duplicate;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            detail = ex.GetType().Name + ": " + ex.Message;
+            return AadhaarCheck.Error;
         }
     }
 
