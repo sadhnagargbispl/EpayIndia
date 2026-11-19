@@ -3032,7 +3032,7 @@ public partial class Registration : System.Web.UI.Page
                        v.Gender == "M" ? "Male" : (v.Gender == "F" ? "Female" : v.Gender));
             ShowUidRow(trUidCareOf, lblUidCareOf, v.CareOf);
 
-            lblUidAadhaar.Text = SandboxAadhaarVerify.MaskAadhaar(aadhaar);
+            lblUidAadhaar.Text = Server.HtmlEncode(aadhaar);
             lblUidAddress.Text = v.FullAddress;
             lblUidPincode.Text = v.Pincode;
             lblUidTxnId.Text = v.TransactionId;
@@ -3648,7 +3648,7 @@ public partial class Registration : System.Web.UI.Page
                    v.Gender == "M" ? "Male" : (v.Gender == "F" ? "Female" : v.Gender));
         ShowUidRow(trUidCareOf, lblUidCareOf, v.CareOf);
 
-        lblUidAadhaar.Text = SandboxAadhaarVerify.MaskAadhaar(aadhaar);
+        lblUidAadhaar.Text = Server.HtmlEncode(aadhaar);
         lblUidAddress.Text = v.FullAddress;
         lblUidPincode.Text = v.Pincode;
         lblUidTxnId.Text = v.TransactionId;
@@ -3829,7 +3829,7 @@ public partial class Registration : System.Web.UI.Page
         {
             var v = (AadhaarVerifyResult)Session[SessAadhaarRecord];
             lblSumAadhaar.Text = pillOk + noteOpen +
-                                 Server.HtmlEncode(SandboxAadhaarVerify.MaskAadhaar(Session[SessAadhaarNo].ToString())) +
+                                 Server.HtmlEncode(Session[SessAadhaarNo].ToString()) +
                                  "<br />" + Server.HtmlEncode(v.FullAddress ?? "") + "</div>";
         }
         else

@@ -285,7 +285,7 @@ public static class PanAadhaarLinkCheck
     public static string ReadAadhaarForDisplay(long formNo)
     {
         string full = ReadSavedAadhaar(formNo);
-        if (full != "") return SandboxAadhaarVerify.MaskAadhaar(full);
+        if (full != "") return full;   // shown in full, as entered
 
         try
         {
