@@ -2463,14 +2463,14 @@ public partial class Registration : System.Web.UI.Page
                 msg = "Your session has expired. Please refresh the page and start again."
             };
 
-        int used = ctx.Session[SessLinkChecks] == null ? 0 : Convert.ToInt32(ctx.Session[SessLinkChecks]);
-        if (used >= MaxLinkChecksPerSession)
-            return new PanAadhaarLinkCheck.Response
-            {
-                ok = false,
-                linked = false,
-                msg = "Too many attempts. Please skip PAN for now and complete PAN KYC after login."
-            };
+        //int used = ctx.Session[SessLinkChecks] == null ? 0 : Convert.ToInt32(ctx.Session[SessLinkChecks]);
+        //if (used >= MaxLinkChecksPerSession)
+        //    return new PanAadhaarLinkCheck.Response
+        //    {
+        //        ok = false,
+        //        linked = false,
+        //        msg = "Too many attempts. Please skip PAN for now and complete PAN KYC after login."
+        //    };
 
         try
         {
@@ -2493,7 +2493,7 @@ public partial class Registration : System.Web.UI.Page
 
         // Counted up front: a failed HTTP call can still be billed, and the page
         // validates the inputs before calling, so honest members never hit invalid ones.
-        ctx.Session[SessLinkChecks] = used + 1;
+        //ctx.Session[SessLinkChecks] = used + 1;
 
         return PanAadhaarLinkCheck.Run(0, pan, aadhaar, consent,
             p => IsPanFreeCore(cs, p), panVerified,
